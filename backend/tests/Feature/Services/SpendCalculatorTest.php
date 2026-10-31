@@ -2,10 +2,12 @@
 
 use App\Models\Category;
 use App\Models\ExchangeRate;
+use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\DashboardCache;
 use App\Services\SpendCalculator;
+use Illuminate\Support\Facades\Http;
 
 function category(string $key): int
 {
@@ -59,16 +61,95 @@ it('lists every payment in the next 30 days, including repeats of weekly subscri
     expect($dates)->toBe(['2026-11-05', '2026-11-05', '2026-11-12', '2026-11-19', '2026-11-26']);
 });
 
-it('invalidates the cached dashboard when subscriptions or currency change', function () {
-    $build = fn () => DashboardCache::remember($this->user, fn () => $this->calc->dashboard($this->user->fresh()));
+function cachedDashboard(): array
+{
+    return DashboardCache::remember(test()->user, fn () => test()->calc->dashboard(test()->user->fresh()));
+}
 
-    expect($build()['count'])->toBe(0);
+/** Adds a subscription without firing model events, so the cache is not invalidated. */
+function silentSubscription(): Subscription
+{
+    $service = Service::factory()->create();
+
+    return Subscription::withoutEvents(fn () => Subscription::factory()->for(test()->user)->create([
+        'service_id' => $service->id,
+        'next_payment_date' => '2026-11-05',
+    ]));
+}
+
+it('invalidates the cached dashboard when a subscription is created', function () {
+    expect(cachedDashboard()['count'])->toBe(0);
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(0);
+
     Subscription::factory()->for($this->user)->create();
-    expect($build()['count'])->toBe(1);
+
+    expect(cachedDashboard()['count'])->toBe(2);
+});
+
+it('invalidates the cached dashboard when a subscription is deleted and restored', function () {
+    $sub = Subscription::factory()->for($this->user)->create();
+    expect(cachedDashboard()['count'])->toBe(1);
+
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(1);
+
+    $sub->delete();
+    expect(cachedDashboard()['count'])->toBe(1);
+
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(1);
+
+    $sub->restore();
+    expect(cachedDashboard()['count'])->toBe(3);
+});
+
+it('invalidates the cached dashboard when the user currency changes', function () {
+    expect(cachedDashboard()['currency'])->toBe('EUR');
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(0);
 
     $this->user->update(['currency' => 'USD']);
-    expect($build()['currency'])->toBe('USD');
+
+    expect(cachedDashboard())->toMatchArray(['currency' => 'USD', 'count' => 1]);
+});
+
+it('invalidates the cached dashboard when the user timezone changes', function () {
+    expect(cachedDashboard()['count'])->toBe(0);
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(0);
+
+    $this->user->update(['timezone' => 'Asia/Tokyo']);
+
+    expect(cachedDashboard()['count'])->toBe(1);
+});
+
+it('keeps the cache when an unrelated user attribute changes', function () {
+    expect(cachedDashboard()['count'])->toBe(0);
+    silentSubscription();
+
+    $this->user->update(['name' => 'Someone Else']);
+
+    expect(cachedDashboard()['count'])->toBe(0);
+});
+
+it('invalidates every cached dashboard on flushAll', function () {
+    expect(cachedDashboard()['count'])->toBe(0);
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(0);
 
     DashboardCache::flushAll();
-    expect($build()['count'])->toBe(1);
+
+    expect(cachedDashboard()['count'])->toBe(1);
+});
+
+it('invalidates every cached dashboard when exchange rates are fetched', function () {
+    Http::fake([config('subs.ecb_url') => Http::response(file_get_contents(base_path('tests/Fixtures/ecb-daily.xml')))]);
+    expect(cachedDashboard()['count'])->toBe(0);
+    silentSubscription();
+    expect(cachedDashboard()['count'])->toBe(0);
+
+    $this->artisan('rates:fetch')->assertSuccessful();
+
+    expect(cachedDashboard()['count'])->toBe(1);
 });
