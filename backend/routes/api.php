@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\EmailVerificationController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
 use App\Http\Controllers\Api\V1\ServiceController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -36,5 +37,11 @@ Route::prefix('v1')->group(function () {
 
         Route::get('services', [ServiceController::class, 'index']);
         Route::post('services', [ServiceController::class, 'store']);
+
+        Route::get('subscriptions', [SubscriptionController::class, 'index']);
+        Route::post('subscriptions', [SubscriptionController::class, 'store']);
+        Route::get('subscriptions/{subscription}', [SubscriptionController::class, 'show'])->whereNumber('subscription');
+        Route::patch('subscriptions/{subscription}', [SubscriptionController::class, 'update'])->whereNumber('subscription');
+        Route::delete('subscriptions/{subscription}', [SubscriptionController::class, 'destroy'])->whereNumber('subscription');
     });
 });
