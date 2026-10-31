@@ -12,9 +12,11 @@ class RegisterRequest extends FormRequest
     {
         $locale = $this->input('locale');
 
+        $email = $this->input('email');
+
         $this->merge([
-            'email' => Str::lower((string) $this->input('email')),
-            'locale' => in_array($locale, config('subs.locales'), true) ? $locale : config('app.locale'),
+            'email' => is_string($email) ? Str::lower($email) : $email,
+            'locale' => is_string($locale) && in_array($locale, config('subs.locales'), true) ? $locale : config('app.locale'),
         ]);
     }
 

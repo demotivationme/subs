@@ -93,6 +93,7 @@ it('rejects a tampered verification link', function () {
 it('sends a reset link pointing to the app and resets the password', function () {
     Notification::fake();
     $user = User::factory()->create(['email' => 'ana@example.com']);
+    $oldToken = $user->createToken('x')->plainTextToken;
 
     $this->postJson('/api/v1/auth/forgot-password', ['email' => 'ana@example.com'])->assertOk();
     Notification::assertSentTo($user, ResetPassword::class, function (ResetPassword $n) use ($user) {
@@ -103,5 +104,62 @@ it('sends a reset link pointing to the app and resets the password', function ()
         'email' => 'ana@example.com', 'token' => Password::createToken($user), 'password' => 'brand-new-pass-2',
     ])->assertOk();
 
+    $this->app['auth']->forgetGuards();
+    $this->withToken($oldToken)->getJson('/api/v1/me')->assertUnauthorized();
+
     $this->postJson('/api/v1/auth/login', ['email' => 'ana@example.com', 'password' => 'brand-new-pass-2', 'device_name' => 'web'])->assertOk();
+});
+
+it('answers forgot-password identically for unknown and known emails', function () {
+    Notification::fake();
+    User::factory()->create(['email' => 'ana@example.com']);
+
+    $known = $this->postJson('/api/v1/auth/forgot-password', ['email' => 'ana@example.com'])->assertOk();
+    $unknown = $this->postJson('/api/v1/auth/forgot-password', ['email' => 'ghost@example.com'])->assertOk();
+
+    expect($unknown->json())->toBe($known->json());
+});
+
+it('rejects a signed verification link with the wrong hash', function () {
+    $user = User::factory()->unverified()->create();
+    $url = URL::temporarySignedRoute('verification.verify', now()->addHour(), ['id' => $user->id, 'hash' => sha1('other@x.com')]);
+
+    $this->get($url)->assertForbidden();
+
+    expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
+});
+
+it('rejects a password reset with an invalid token', function () {
+    User::factory()->create(['email' => 'ana@example.com']);
+
+    $this->postJson('/api/v1/auth/reset-password', [
+        'email' => 'ana@example.com', 'token' => 'bogus', 'password' => 'brand-new-pass-2',
+    ])->assertUnprocessable()->assertJsonValidationErrors('email');
+});
+
+it('rate limits the api per user', function () {
+    actingAsUser();
+
+    foreach (range(1, 120) as $_) {
+        $this->getJson('/api/v1/me')->assertOk();
+    }
+
+    $this->getJson('/api/v1/me')->assertTooManyRequests();
+});
+
+it('uses the user locale when supported and falls back otherwise', function () {
+    config(['subs.locales' => ['en', 'xx']]);
+    actingAsUser(['locale' => 'xx']);
+
+    $this->getJson('/api/v1/me')->assertOk();
+    expect(app()->getLocale())->toBe('xx');
+
+    $this->app['auth']->forgetGuards();
+    $this->withHeader('Accept-Language', 'de')->postJson('/api/v1/auth/forgot-password', ['email' => 'a@b.co'])->assertOk();
+    expect(app()->getLocale())->toBe('en');
+});
+
+it('returns 422 for array-valued emails', function () {
+    $this->postJson('/api/v1/auth/login', ['email' => ['x'], 'password' => 'p', 'device_name' => 'web'])->assertUnprocessable();
+    $this->postJson('/api/v1/auth/register', registerPayload(['email' => ['x']]))->assertUnprocessable();
 });

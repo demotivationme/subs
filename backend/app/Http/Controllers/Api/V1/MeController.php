@@ -31,6 +31,7 @@ class MeController extends Controller
         DB::transaction(function () use ($user) {
             $user->tokens()->delete();
             $user->notifications()->delete();
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
             $user->delete();
         });
 
