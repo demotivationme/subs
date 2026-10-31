@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Period;
 use App\Enums\SubscriptionStatus;
 use App\Services\BillingCycle;
+use App\Services\DashboardCache;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,6 +50,10 @@ class Subscription extends Model
                 );
             }
         });
+
+        static::saved(fn (Subscription $subscription) => DashboardCache::forget($subscription->user));
+        static::deleted(fn (Subscription $subscription) => DashboardCache::forget($subscription->user));
+        static::restored(fn (Subscription $subscription) => DashboardCache::forget($subscription->user));
     }
 
     public function user(): BelongsTo

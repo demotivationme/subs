@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\DashboardCache;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -18,6 +19,15 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     protected $fillable = ['name', 'email', 'password', 'timezone', 'currency', 'locale'];
 
     protected $hidden = ['password', 'remember_token'];
+
+    protected static function booted(): void
+    {
+        static::updated(function (User $user) {
+            if ($user->wasChanged(['currency', 'timezone'])) {
+                DashboardCache::forget($user);
+            }
+        });
+    }
 
     protected function casts(): array
     {

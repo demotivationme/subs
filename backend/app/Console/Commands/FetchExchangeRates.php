@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\ExchangeRate;
 use App\Services\CurrencyConverter;
+use App\Services\DashboardCache;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use SimpleXMLElement;
@@ -34,6 +35,7 @@ class FetchExchangeRates extends Command
 
         ExchangeRate::query()->upsert($rows, ['date', 'quote'], ['rate']);
         CurrencyConverter::forgetRates();
+        DashboardCache::flushAll();
 
         $this->info(sprintf('Stored %d rates for %s.', count($rows), $date));
 
