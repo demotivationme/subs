@@ -7,7 +7,8 @@
 
 Subs is a subscription tracker for iOS, Android and web. Users record every recurring
 subscription they pay for (YouTube, Spotify, Netflix, …), see how much they spend per
-month and per year, and get reminders before each payment through the channels they choose.
+month and per year, and get reminders before each payment through the channels they choose, so they can get rid of
+subscriptions that they are already not using. 
 
 ### MVP scope
 
@@ -17,7 +18,8 @@ In scope:
   amount + currency, period, first payment date
 - Dashboard: monthly total, yearly total, by-category breakdown, upcoming 30 days, most expensive
 - Reminders: N days before payment, at a user-chosen time of day, via push, in-app and/or email
-- Multi-currency with totals in the user's main currency
+- Multi-currency with totals in the user's main currency. When adding a subscription, the
+  currency field is prefilled with the user's main currency and can be changed.
 - English UI with full i18n infrastructure on backend and app
 
 Deferred to launch (design must not block them):
