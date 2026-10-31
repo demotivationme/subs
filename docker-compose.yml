@@ -1,0 +1,35 @@
+services:
+  php:
+    build: ./docker/php
+    volumes:
+      - ./backend:/var/www/backend
+    depends_on: [postgres, redis]
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports: ["8080:80"]
+    volumes:
+      - ./backend:/var/www/backend:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on: [php]
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: subs
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: subs
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  redis:
+    image: redis:7-alpine
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports: ["8025:8025"]
+
+volumes:
+  pgdata:
