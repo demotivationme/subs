@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\EmailVerificationController;
 use App\Http\Controllers\Api\V1\MeController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
 use App\Http\Controllers\Api\V1\ReminderRuleController;
 use App\Http\Controllers\Api\V1\ServiceController;
@@ -54,6 +55,11 @@ Route::prefix('v1')->group(function () {
         Route::put('reminder-defaults', [ReminderRuleController::class, 'updateDefaults']);
         Route::get('subscriptions/{subscription}/reminders', [ReminderRuleController::class, 'showForSubscription'])->whereNumber('subscription');
         Route::put('subscriptions/{subscription}/reminders', [ReminderRuleController::class, 'updateForSubscription'])->whereNumber('subscription');
+
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::post('notifications/read-all', [NotificationController::class, 'readAll']);
+        Route::post('notifications/{id}/read', [NotificationController::class, 'read'])->whereUuid('id');
 
         Route::post('devices', [DeviceController::class, 'store']);
         Route::delete('devices/{token}', [DeviceController::class, 'destroy'])->where('token', '.*');
