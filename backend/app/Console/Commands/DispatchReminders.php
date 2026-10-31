@@ -12,6 +12,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 class DispatchReminders extends Command
 {
@@ -31,10 +32,15 @@ class DispatchReminders extends Command
             ->with(['user.defaultReminderRules', 'reminderRules', 'service'])
             ->chunkById(500, function (Collection $subscriptions) use ($now, &$queued) {
                 foreach ($subscriptions as $subscription) {
-                    $this->advance($subscription);
+                    try {
+                        $this->advance($subscription);
 
-                    foreach ($subscription->effectiveReminderRules() as $rule) {
-                        $queued += $this->remind($subscription, $rule, $now);
+                        foreach ($subscription->effectiveReminderRules() as $rule) {
+                            $queued += $this->remind($subscription, $rule, $now);
+                        }
+                    } catch (Throwable $e) {
+                        // One bad row must not stall the whole run.
+                        report($e);
                     }
                 }
             });
@@ -59,8 +65,11 @@ class DispatchReminders extends Command
 
     /**
      * A reminder is due when (payment date − days_before) at time_of_day, in the user's
-     * timezone, lies in (now − 24h, now]. Such a moment falls on the user's local today
-     * or yesterday, so only two candidate payment dates need checking.
+     * timezone, lies in (now − 24h, now]. Across a DST spring-forward 24 elapsed hours span
+     * 25 wall-clock hours, so such a moment can fall on the local day before yesterday:
+     * three candidate dates are checked. The window and the dedupe table keep it exact.
+     * The payment date may already be in the past (e.g. a same-day rule that fires just
+     * after midnight local time), so it is not bounded by today.
      */
     private function remind(Subscription $subscription, ReminderRule $rule, CarbonImmutable $now): int
     {
@@ -68,10 +77,10 @@ class DispatchReminders extends Command
         $today = $user->today();
         $queued = 0;
 
-        foreach ([$today, $today->subDay()] as $momentDate) {
+        foreach ([$today, $today->subDay(), $today->subDays(2)] as $momentDate) {
             $paymentDate = $momentDate->addDays($rule->days_before);
 
-            if ($paymentDate->lt($today) || ! $subscription->isOccurrence($paymentDate)) {
+            if (! $subscription->isOccurrence($paymentDate)) {
                 continue;
             }
 
