@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'expo' => [
+        'access_token' => env('EXPO_ACCESS_TOKEN'),
+    ],
+
 ];
