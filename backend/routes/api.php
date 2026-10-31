@@ -3,11 +3,14 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\EmailVerificationController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
+use App\Http\Controllers\Api\V1\ReminderRuleController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
+use App\Http\Controllers\Api\V1\WebPushController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -46,5 +49,15 @@ Route::prefix('v1')->group(function () {
         Route::get('subscriptions/{subscription}', [SubscriptionController::class, 'show'])->whereNumber('subscription');
         Route::patch('subscriptions/{subscription}', [SubscriptionController::class, 'update'])->whereNumber('subscription');
         Route::delete('subscriptions/{subscription}', [SubscriptionController::class, 'destroy'])->whereNumber('subscription');
+
+        Route::get('reminder-defaults', [ReminderRuleController::class, 'showDefaults']);
+        Route::put('reminder-defaults', [ReminderRuleController::class, 'updateDefaults']);
+        Route::get('subscriptions/{subscription}/reminders', [ReminderRuleController::class, 'showForSubscription'])->whereNumber('subscription');
+        Route::put('subscriptions/{subscription}/reminders', [ReminderRuleController::class, 'updateForSubscription'])->whereNumber('subscription');
+
+        Route::post('devices', [DeviceController::class, 'store']);
+        Route::delete('devices/{token}', [DeviceController::class, 'destroy'])->where('token', '.*');
+        Route::post('webpush/subscribe', [WebPushController::class, 'store']);
+        Route::delete('webpush/subscribe', [WebPushController::class, 'destroy']);
     });
 });

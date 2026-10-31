@@ -32,6 +32,7 @@ class MeController extends Controller
             $user->tokens()->delete();
             $user->notifications()->delete();
             DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+            $user->pushSubscriptions()->delete();
             $user->delete();
         });
 

@@ -32,6 +32,7 @@ it('deletes the account and all its data', function () {
     Subscription::factory()->for($user)->create(['service_id' => $service->id]);
     $user->reminderRules()->create(config('subs.default_reminder'));
     $user->deviceTokens()->create(['token' => 'expo-token', 'platform' => 'ios']);
+    $user->updatePushSubscription('https://push.example.com/abc', 'pk', 'au');
     DB::table('notifications')->insert([
         'id' => (string) Str::uuid(), 'type' => 'x', 'notifiable_type' => User::class,
         'notifiable_id' => $user->id, 'data' => '{}', 'created_at' => now(), 'updated_at' => now(),
@@ -40,6 +41,7 @@ it('deletes the account and all its data', function () {
 
     expect($user->reminderRules()->count())->toBe(1)
         ->and($user->deviceTokens()->count())->toBe(1)
+        ->and($user->pushSubscriptions()->count())->toBe(1)
         ->and($user->notifications()->count())->toBe(1)
         ->and(DB::table('password_reset_tokens')->count())->toBe(1)
         ->and($user->tokens()->count())->toBe(1);
@@ -52,6 +54,7 @@ it('deletes the account and all its data', function () {
         ->and(Service::whereNotNull('user_id')->count())->toBe(0)
         ->and(ReminderRule::count())->toBe(0)
         ->and(DeviceToken::count())->toBe(0)
+        ->and(DB::table('push_subscriptions')->count())->toBe(0)
         ->and(DB::table('notifications')->count())->toBe(0)
         ->and(DB::table('password_reset_tokens')->count())->toBe(0)
         ->and(DB::table('personal_access_tokens')->count())->toBe(0);
