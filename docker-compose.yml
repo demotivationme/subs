@@ -31,5 +31,19 @@ services:
     image: axllent/mailpit:latest
     ports: ["8025:8025"]
 
+  horizon:
+    build: ./docker/php
+    command: php artisan horizon
+    volumes:
+      - ./backend:/var/www/backend
+    depends_on: [postgres, redis]
+
+  scheduler:
+    build: ./docker/php
+    command: php artisan schedule:work
+    volumes:
+      - ./backend:/var/www/backend
+    depends_on: [postgres, redis]
+
 volumes:
   pgdata:

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Schedule::command('reminders:dispatch')->everyFifteenMinutes()->withoutOverlapping();
+
+// The ECB publishes around 16:00 CET.
+Schedule::command('rates:fetch')->dailyAt('16:30')->timezone('Europe/Berlin');

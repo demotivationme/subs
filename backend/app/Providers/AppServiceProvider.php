@@ -2,13 +2,18 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\DispatchReminders;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,5 +38,13 @@ class AppServiceProvider extends ServiceProvider
 
         ResetPassword::createUrlUsing(fn (User $user, string $token) => config('subs.frontend_url').'/reset-password?'
             .http_build_query(['token' => $token, 'email' => $user->email]));
+
+        Event::listen(DiagnosingHealth::class, function () {
+            $last = Cache::get(DispatchReminders::HEARTBEAT_KEY);
+
+            if ($last === null || now()->getTimestamp() - $last > 30 * 60) {
+                throw new RuntimeException('The reminder scheduler has not run in the last 30 minutes.');
+            }
+        });
     }
 }
