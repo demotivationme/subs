@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('timezone', 64)->default('UTC');
+            $table->char('currency', 3)->default('EUR');
+            $table->string('locale', 10)->default('en');
+            $table->boolean('is_premium')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
