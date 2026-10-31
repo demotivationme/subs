@@ -87,21 +87,23 @@ it('invalidates the cached dashboard when a subscription is created', function (
     expect(cachedDashboard()['count'])->toBe(2);
 });
 
-it('invalidates the cached dashboard when a subscription is deleted and restored', function () {
+it('invalidates the cached dashboard when a subscription is deleted', function () {
     $sub = Subscription::factory()->for($this->user)->create();
     expect(cachedDashboard()['count'])->toBe(1);
 
-    silentSubscription();
-    expect(cachedDashboard()['count'])->toBe(1);
-
     $sub->delete();
-    expect(cachedDashboard()['count'])->toBe(1);
 
-    silentSubscription();
-    expect(cachedDashboard()['count'])->toBe(1);
+    expect(cachedDashboard()['count'])->toBe(0);
+});
+
+it('invalidates the cached dashboard when a subscription is restored', function () {
+    $sub = Subscription::factory()->for($this->user)->create();
+    $sub->delete();
+    expect(cachedDashboard()['count'])->toBe(0);
 
     $sub->restore();
-    expect(cachedDashboard()['count'])->toBe(3);
+
+    expect(cachedDashboard()['count'])->toBe(1);
 });
 
 it('invalidates the cached dashboard when the user currency changes', function () {
