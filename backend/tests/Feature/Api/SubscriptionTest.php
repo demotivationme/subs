@@ -79,11 +79,14 @@ it('sorts by price across currencies and filters by status', function () {
 
 it('hides other users subscriptions', function () {
     actingAsUser();
-    $foreign = Subscription::factory()->create();
+    $foreign = Subscription::factory()->create(['amount' => 555]);
 
     $this->getJson("/api/v1/subscriptions/{$foreign->id}")->assertNotFound();
     $this->patchJson("/api/v1/subscriptions/{$foreign->id}", ['amount' => 1])->assertNotFound();
     $this->deleteJson("/api/v1/subscriptions/{$foreign->id}")->assertNotFound();
+
+    expect(Subscription::find($foreign->id))->not->toBeNull()
+        ->and(Subscription::find($foreign->id)->amount)->toBe(555);
 });
 
 it('updates, pauses and recomputes the next payment date', function () {
@@ -115,4 +118,81 @@ it('enforces the free limit only when configured and only for non-premium users'
 
     $me->forceFill(['is_premium' => true])->save();
     $this->postJson('/api/v1/subscriptions', payload(['service_name' => 'X']))->assertCreated();
+});
+
+it('does not limit subscriptions when the limit is unconfigured', function () {
+    actingAsUser();
+
+    foreach (range(1, 6) as $i) {
+        $this->postJson('/api/v1/subscriptions', payload(['service_name' => "Svc $i"]))->assertCreated();
+    }
+});
+
+it('changes the service on update by name or by id', function () {
+    $me = actingAsUser();
+    $sub = Subscription::factory()->for($me)->create();
+    $spotify = Service::whereNull('user_id')->where('name', 'Spotify')->first();
+
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['service_name' => 'Spotify'])
+        ->assertOk()->assertJsonPath('data.service.id', $spotify->id);
+
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['service_id' => netflix()->id])
+        ->assertOk()->assertJsonPath('data.service.id', netflix()->id);
+});
+
+it('keeps the category when the service changes unless category_id is sent', function () {
+    $me = actingAsUser();
+    $sub = Subscription::factory()->for($me)->create();
+    $original = $sub->category_id;
+    $other = Category::other();
+
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['service_id' => netflix()->id])
+        ->assertOk()->assertJsonPath('data.category.id', $original);
+
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['service_id' => netflix()->id, 'category_id' => $other->id])
+        ->assertOk()->assertJsonPath('data.category.id', $other->id);
+});
+
+it('rejects another users category on store and update', function () {
+    $me = actingAsUser();
+    $foreignCategory = Category::factory()->create(['user_id' => User::factory()->create()->id]);
+    $sub = Subscription::factory()->for($me)->create();
+
+    $this->postJson('/api/v1/subscriptions', payload(['service_name' => 'X', 'category_id' => $foreignCategory->id]))
+        ->assertJsonValidationErrors('category_id');
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['category_id' => $foreignCategory->id])
+        ->assertJsonValidationErrors('category_id');
+});
+
+it('lets an explicit category override the service default on store', function () {
+    actingAsUser();
+    $other = Category::other();
+
+    $this->postJson('/api/v1/subscriptions', payload(['service_id' => netflix()->id, 'category_id' => $other->id]))
+        ->assertCreated()
+        ->assertJsonPath('data.category.id', $other->id);
+});
+
+it('filters by category and sorts by name and next payment', function () {
+    $me = actingAsUser();
+    $catA = Category::factory()->create(['user_id' => $me->id]);
+    $b = Subscription::factory()->for($me)->create([
+        'service_id' => Service::factory()->create(['user_id' => $me->id, 'name' => 'banana'])->id,
+        'first_payment_date' => '2026-01-20',
+    ]);
+    $a = Subscription::factory()->for($me)->create([
+        'service_id' => Service::factory()->create(['user_id' => $me->id, 'name' => 'Apple'])->id,
+        'category_id' => $catA->id,
+        'first_payment_date' => '2026-01-25',
+    ]);
+    $c = Subscription::factory()->for($me)->create([
+        'service_id' => Service::factory()->create(['user_id' => $me->id, 'name' => 'Cherry'])->id,
+        'first_payment_date' => '2026-01-10',
+    ]);
+    $ids = fn (string $qs) => collect($this->getJson("/api/v1/subscriptions?$qs")->assertOk()->json('data'))->pluck('id')->all();
+
+    expect($ids("category_id={$catA->id}"))->toBe([$a->id])
+        ->and($ids('sort=name'))->toBe([$a->id, $b->id, $c->id])
+        ->and($ids('sort=next_payment'))->toBe([$c->id, $b->id, $a->id])
+        ->and($ids(''))->toBe([$c->id, $b->id, $a->id]);
 });
