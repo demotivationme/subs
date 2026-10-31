@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\EmailVerificationController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
@@ -25,6 +26,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout']);
         Route::post('auth/email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:auth');
+
+        Route::get('dashboard', DashboardController::class);
 
         Route::get('me', [MeController::class, 'show']);
         Route::patch('me', [MeController::class, 'update']);
