@@ -36,3 +36,7 @@ it('returns null when a rate is missing', function () {
     expect($this->converter->convert(1000, 'XYZ', 'EUR'))->toBeNull()
         ->and($this->converter->convert(1000, 'EUR', 'XYZ'))->toBeNull();
 });
+
+it('takes minor-unit digits from CLDR', function (string $currency, int $digits) {
+    expect(CurrencyConverter::decimals($currency))->toBe($digits);
+})->with([['XPF', 0], ['LYD', 3], ['EUR', 2], ['JPY', 0], ['KWD', 3]]);

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ExchangeRate;
 use Illuminate\Support\Facades\Cache;
+use NumberFormatter;
 
 final class CurrencyConverter
 {
@@ -12,9 +13,14 @@ final class CurrencyConverter
     /** @var array<string, float>|null */
     private ?array $rates = null;
 
+    /** @var array<string, int> */
+    private static array $decimals = [];
+
+    /** Minor-unit digits of $currency per CLDR (via intl), the same digits Number::currency() prints. */
     public static function decimals(string $currency): int
     {
-        return config('subs.currency_decimals')[$currency] ?? 2;
+        return self::$decimals[$currency] ??= (new NumberFormatter('en@currency='.$currency, NumberFormatter::CURRENCY))
+            ->getAttribute(NumberFormatter::FRACTION_DIGITS);
     }
 
     public static function forgetRates(): void

@@ -51,6 +51,13 @@ it('formats zero-decimal currencies', function () {
     expect(reminder($user, ['in_app'], 1, ['amount' => 1600, 'currency' => 'JPY'])->toArray($user)['body'])->toStartWith('¥1,600');
 });
 
+it('formats currencies whose digits come from CLDR', function () {
+    $user = User::factory()->create();
+    $body = reminder($user, ['in_app'], 1, ['amount' => 1000, 'currency' => 'XPF'])->toArray($user)['body'];
+
+    expect($body)->toContain('1,000')->not->toContain('1,000.00')->not->toContain('10.00');
+});
+
 it('stores an in-app notification', function () {
     $user = User::factory()->create();
     $user->notify(reminder($user, ['in_app']));
