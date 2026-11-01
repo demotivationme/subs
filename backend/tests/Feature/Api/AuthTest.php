@@ -2,9 +2,12 @@
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\QueuedVerifyEmail;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
 
 function registerPayload(array $overrides = []): array
@@ -28,7 +31,16 @@ it('registers a user with a token, a default reminder and a verification email',
         ->days_before->toBe(1)
         ->time_of_day->toBe('09:00')
         ->channels->toBe(['push', 'in_app']);
-    Notification::assertSentTo($user, VerifyEmail::class);
+    Notification::assertSentTo($user, QueuedVerifyEmail::class);
+});
+
+it('queues the verification email instead of sending it during the request', function () {
+    Queue::fake();
+
+    $this->postJson('/api/v1/auth/register', registerPayload())->assertCreated();
+
+    Queue::assertPushed(SendQueuedNotifications::class, fn ($job) => $job->notification instanceof QueuedVerifyEmail
+        && $job->notification instanceof VerifyEmail);
 });
 
 it('falls back to English for an unsupported locale', function () {

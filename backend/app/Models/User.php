@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\QueuedVerifyEmail;
 use App\Services\DashboardCache;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -67,6 +68,11 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function deviceTokens(): HasMany
     {
         return $this->hasMany(DeviceToken::class);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new QueuedVerifyEmail);
     }
 
     public function preferredLocale(): string
