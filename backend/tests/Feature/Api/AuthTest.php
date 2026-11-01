@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
 use App\Notifications\QueuedVerifyEmail;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Notification;
