@@ -35,7 +35,7 @@ On the server, one time:
    - a strong `DB_PASSWORD`, plus Postmark/SES `MAIL_*`
    - VAPID keys and `EXPO_ACCESS_TOKEN`
 3. Copy `.env.prod.example` to `.env` (repo root, git-ignored; Docker Compose loads it automatically) and fill in `API_DOMAIN`, `APP_DOMAIN` and `POSTGRES_PASSWORD` (same value as `DB_PASSWORD`), plus `BACKUP_BUCKET` and `BACKUP_ENDPOINT`.
-4. Run `./docker/bin/deploy.sh`.
+4. Run `./docker/bin/deploy.sh`. Besides migrating, it seeds the preset categories and service catalog (`db:seed --class=CatalogSeeder`, safe to rerun) and fetches today's exchange rates (`rates:fetch`; if the ECB is unreachable it only warns, and the daily schedule retries).
 5. Cron: `0 3 * * * /path/to/subs/docker/bin/backup.sh` (reads `BACKUP_*` from the root `.env`).
 
 To deploy updates, run `./docker/bin/deploy.sh` again. The web app is built into `app/dist` (Plan 2) and served by Caddy.
