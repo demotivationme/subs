@@ -4,33 +4,24 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceRequest;
+use App\Http\Requests\ServiceSearchRequest;
 use App\Http\Resources\ServiceResource;
-use App\Models\Service;
-use App\Services\ServiceResolver;
+use App\Services\ServiceCatalog;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ServiceController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
-    {
-        $request->validate(['q' => ['nullable', 'string', 'max:100']]);
-        $q = $request->input('q');
+    public function __construct(private readonly ServiceCatalog $catalog) {}
 
-        return ServiceResource::collection(
-            Service::visibleTo($request->user())
-                ->when($q, fn ($query) => $query->where('name', 'ilike', '%'.addcslashes($q, '%_\\').'%'))
-                ->orderByRaw('user_id IS NULL')
-                ->orderBy('name')
-                ->limit(50)
-                ->get()
-        );
+    public function index(ServiceSearchRequest $request): AnonymousResourceCollection
+    {
+        return ServiceResource::collection($this->catalog->search($request->user(), $request->searchQuery()));
     }
 
-    public function store(ServiceRequest $request, ServiceResolver $resolver): JsonResponse
+    public function store(ServiceRequest $request): JsonResponse
     {
-        $service = $resolver->resolve($request->user(), $request->input('name'), $request->input('default_category_id'));
+        $service = $this->catalog->findOrCreate($request->user(), $request->toInput());
 
         return (new ServiceResource($service))->response()->setStatusCode($service->wasRecentlyCreated ? 201 : 200);
     }
