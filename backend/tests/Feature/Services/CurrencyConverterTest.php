@@ -10,7 +10,7 @@ beforeEach(function () {
         ['date' => '2026-10-30', 'base' => 'EUR', 'quote' => 'JPY', 'rate' => 160],
         ['date' => '2026-10-30', 'base' => 'EUR', 'quote' => 'KWD', 'rate' => 0.5],
     ]);
-    $this->converter = new CurrencyConverter;
+    $this->converter = app(CurrencyConverter::class);
 });
 
 it('returns the same amount for the same currency', function () {

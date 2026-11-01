@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\ExchangeRate;
+use App\Repositories\ExchangeRateRepository;
 use Illuminate\Support\Facades\Cache;
 use NumberFormatter;
 
@@ -15,6 +15,8 @@ final class CurrencyConverter
 
     /** @var array<string, int> */
     private static array $decimals = [];
+
+    public function __construct(private readonly ExchangeRateRepository $exchangeRates) {}
 
     /** Minor-unit digits of $currency per CLDR (via intl), the same digits Number::currency() prints. */
     public static function decimals(string $currency): int
@@ -54,13 +56,7 @@ final class CurrencyConverter
             return 1.0;
         }
 
-        $this->rates ??= Cache::remember(self::CACHE_KEY, now()->addDay(), fn () => ExchangeRate::query()
-            ->selectRaw('DISTINCT ON (quote) quote, rate')
-            ->orderBy('quote')
-            ->orderByDesc('date')
-            ->pluck('rate', 'quote')
-            ->map(fn ($rate) => (float) $rate)
-            ->all());
+        $this->rates ??= Cache::remember(self::CACHE_KEY, now()->addDay(), fn () => $this->exchangeRates->latest());
 
         return $this->rates[$currency] ?? null;
     }

@@ -28,12 +28,12 @@ it('does not duplicate rows when run twice on the same day', function () {
 });
 
 it('refreshes the cached rates', function () {
-    $converter = new CurrencyConverter;
+    $converter = app(CurrencyConverter::class);
     expect($converter->rate('USD'))->toBeNull();
 
     $this->artisan('rates:fetch');
 
-    expect((new CurrencyConverter)->rate('USD'))->toBe(1.0812);
+    expect((app(CurrencyConverter::class))->rate('USD'))->toBe(1.0812);
 });
 
 it('fails loudly when the ECB is down', function () {

@@ -2,8 +2,8 @@
 
 namespace App\Notifications\Channels;
 
-use App\Models\DeviceToken;
 use App\Models\User;
+use App\Repositories\DeviceTokenRepository;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
 
@@ -11,9 +11,11 @@ final class ExpoChannel
 {
     public const URL = 'https://exp.host/--/api/v2/push/send';
 
+    public function __construct(private readonly DeviceTokenRepository $tokens) {}
+
     public function send(User $notifiable, Notification $notification): void
     {
-        $tokens = $notifiable->deviceTokens()->pluck('token')->all();
+        $tokens = $this->tokens->tokensFor($notifiable);
         if ($tokens === []) {
             return;
         }
@@ -31,7 +33,7 @@ final class ExpoChannel
 
             foreach ($tickets as $i => $ticket) {
                 if (($ticket['details']['error'] ?? null) === 'DeviceNotRegistered') {
-                    DeviceToken::where('token', $chunk[$i])->delete();
+                    $this->tokens->delete($chunk[$i]);
                 }
             }
         }

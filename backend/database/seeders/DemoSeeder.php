@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use App\Models\Service;
 use App\Models\User;
+use App\Repositories\CategoryRepository;
 use Illuminate\Database\Seeder;
 
 class DemoSeeder extends Seeder
@@ -34,7 +34,7 @@ class DemoSeeder extends Seeder
             $service = Service::query()->whereNull('user_id')->where('name', $name)->firstOrFail();
             $user->subscriptions()->create([
                 'service_id' => $service->id,
-                'category_id' => $service->default_category_id ?? Category::other()->id,
+                'category_id' => $service->default_category_id ?? app(CategoryRepository::class)->other()->id,
                 'amount' => $amount, 'currency' => $currency, 'period' => $period,
                 'interval_count' => $interval, 'first_payment_date' => $first,
             ]);

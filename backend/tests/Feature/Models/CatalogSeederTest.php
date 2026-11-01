@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\Service;
+use App\Repositories\CategoryRepository;
 use Database\Seeders\CatalogSeeder;
 
 it('seeds 12 preset categories and a catalog where every service has a category', function () {
@@ -20,7 +21,7 @@ it('is idempotent', function () {
 it('labels preset categories by translation key and custom ones by name', function () {
     $custom = Category::factory()->create(['name' => 'Kids']);
 
-    expect(Category::other()->label())->toBe('Other')
+    expect(app(CategoryRepository::class)->other()->label())->toBe('Other')
         ->and(Category::where('key', 'video_streaming')->first()->label())->toBe('Video Streaming')
         ->and($custom->label())->toBe('Kids')
         ->and($custom->isCustom())->toBeTrue();

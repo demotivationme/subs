@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\Subscription;
+use App\Repositories\CategoryRepository;
 
 it('lists presets plus my own categories only', function () {
     $me = actingAsUser();
@@ -29,7 +30,7 @@ it('forbids editing presets and hides other users categories', function () {
     actingAsUser();
     $foreign = Category::factory()->create();
 
-    $this->patchJson('/api/v1/categories/'.Category::other()->id, ['name' => 'X'])->assertForbidden();
+    $this->patchJson('/api/v1/categories/'.app(CategoryRepository::class)->other()->id, ['name' => 'X'])->assertForbidden();
     $this->patchJson("/api/v1/categories/{$foreign->id}", ['name' => 'X'])->assertNotFound();
     $this->deleteJson("/api/v1/categories/{$foreign->id}")->assertNotFound();
 });
@@ -43,8 +44,8 @@ it('moves subscriptions (including deleted ones) to Other when a category is del
 
     $this->deleteJson("/api/v1/categories/{$kids->id}")->assertNoContent();
 
-    expect($active->fresh()->category_id)->toBe(Category::other()->id)
-        ->and(Subscription::withTrashed()->find($trashed->id)->category_id)->toBe(Category::other()->id)
+    expect($active->fresh()->category_id)->toBe(app(CategoryRepository::class)->other()->id)
+        ->and(Subscription::withTrashed()->find($trashed->id)->category_id)->toBe(app(CategoryRepository::class)->other()->id)
         ->and(Category::find($kids->id))->toBeNull();
 });
 

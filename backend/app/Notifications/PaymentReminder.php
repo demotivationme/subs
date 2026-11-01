@@ -9,6 +9,9 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Notifications\Channels\ExpoChannel;
 use App\Notifications\Channels\ExpoMessage;
+use App\Repositories\DeviceTokenRepository;
+use App\Repositories\PushSubscriptionRepository;
+use App\Repositories\SubscriptionRepository;
 use App\Services\CurrencyConverter;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
@@ -41,7 +44,7 @@ class PaymentReminder extends Notification implements ShouldQueue
     /** The job may run minutes after dispatch: skip it if the subscription was deleted or paused meanwhile. */
     public function shouldSend(User $notifiable, string $channel): bool
     {
-        $current = Subscription::withTrashed()->find($this->subscription->id);
+        $current = app(SubscriptionRepository::class)->findWithTrashed($this->subscription->id);
 
         return $current !== null && ! $current->trashed() && $current->status === SubscriptionStatus::Active;
     }
@@ -51,10 +54,10 @@ class PaymentReminder extends Notification implements ShouldQueue
         $channels = [];
 
         if ($this->rule->hasChannel(Channel::Push)) {
-            if ($notifiable->deviceTokens()->exists()) {
+            if (app(DeviceTokenRepository::class)->hasAny($notifiable)) {
                 $channels[] = ExpoChannel::class;
             }
-            if ($notifiable->pushSubscriptions()->exists()) {
+            if (app(PushSubscriptionRepository::class)->hasAny($notifiable)) {
                 $channels[] = WebPushChannel::class;
             }
         }

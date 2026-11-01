@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Category;
 use App\Models\Service;
 use App\Models\User;
+use App\Repositories\CategoryRepository;
 
 it('searches the catalog case-insensitively', function () {
     actingAsUser();
@@ -36,7 +36,7 @@ it('creates a custom service in Other by default, and reuses it next time', func
 
     $id = $this->postJson('/api/v1/services', ['name' => 'Local Gym'])
         ->assertCreated()
-        ->assertJsonPath('data.default_category_id', Category::other()->id)
+        ->assertJsonPath('data.default_category_id', app(CategoryRepository::class)->other()->id)
         ->json('data.id');
 
     $this->postJson('/api/v1/services', ['name' => 'LOCAL GYM'])->assertOk()->assertJsonPath('data.id', $id);

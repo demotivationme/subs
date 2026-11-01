@@ -17,11 +17,6 @@ class Category extends Model
         $query->where(fn (Builder $q) => $q->whereNull('user_id')->orWhere('user_id', $user->id));
     }
 
-    public static function other(): self
-    {
-        return static::query()->whereNull('user_id')->where('key', 'other')->firstOrFail();
-    }
-
     public function label(): string
     {
         return $this->key !== null ? __('categories.'.$this->key) : (string) $this->name;

@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ReminderRulesRequest;
 use App\Http\Resources\ReminderRuleResource;
 use App\Services\ReminderRuleService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Collection;
 
 class ReminderRuleController extends Controller
 {

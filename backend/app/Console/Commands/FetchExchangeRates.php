@@ -2,12 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\ExchangeRate;
-use App\Services\CurrencyConverter;
-use App\Services\DashboardCache;
+use App\Services\ExchangeRateImporter;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
-use SimpleXMLElement;
 
 class FetchExchangeRates extends Command
 {
@@ -15,29 +11,17 @@ class FetchExchangeRates extends Command
 
     protected $description = 'Fetch the daily ECB euro reference rates';
 
-    public function handle(): int
+    public function handle(ExchangeRateImporter $importer): int
     {
-        $body = Http::timeout(20)->retry(3, 1000)->get(config('subs.ecb_url'))->throw()->body();
+        ['date' => $date, 'count' => $count] = $importer->import();
 
-        $day = (new SimpleXMLElement($body))->Cube->Cube;
-        $date = (string) $day['time'];
-
-        $rows = [];
-        foreach ($day->Cube as $cube) {
-            $rows[] = ['date' => $date, 'base' => 'EUR', 'quote' => (string) $cube['currency'], 'rate' => (string) $cube['rate']];
-        }
-
-        if ($rows === []) {
+        if ($count === 0) {
             $this->error('The ECB response contained no rates.');
 
             return self::FAILURE;
         }
 
-        ExchangeRate::query()->upsert($rows, ['date', 'quote'], ['rate']);
-        CurrencyConverter::forgetRates();
-        DashboardCache::flushAll();
-
-        $this->info(sprintf('Stored %d rates for %s.', count($rows), $date));
+        $this->info(sprintf('Stored %d rates for %s.', $count, $date));
 
         return self::SUCCESS;
     }

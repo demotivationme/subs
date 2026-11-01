@@ -5,6 +5,7 @@ use App\Models\ExchangeRate;
 use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Repositories\CategoryRepository;
 
 function netflix(): Service
 {
@@ -45,7 +46,7 @@ it('creates an own service in Other for unknown names', function () {
 
     $this->postJson('/api/v1/subscriptions', payload(['service_name' => 'Local Gym']))
         ->assertCreated()
-        ->assertJsonPath('data.category.id', Category::other()->id);
+        ->assertJsonPath('data.category.id', app(CategoryRepository::class)->other()->id);
 
     expect($me->services()->pluck('name')->all())->toBe(['Local Gym']);
 });
@@ -144,7 +145,7 @@ it('keeps the category when the service changes unless category_id is sent', fun
     $me = actingAsUser();
     $sub = Subscription::factory()->for($me)->create();
     $original = $sub->category_id;
-    $other = Category::other();
+    $other = app(CategoryRepository::class)->other();
 
     $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['service_id' => netflix()->id])
         ->assertOk()->assertJsonPath('data.category.id', $original);
@@ -166,7 +167,7 @@ it('rejects another users category on store and update', function () {
 
 it('lets an explicit category override the service default on store', function () {
     actingAsUser();
-    $other = Category::other();
+    $other = app(CategoryRepository::class)->other();
 
     $this->postJson('/api/v1/subscriptions', payload(['service_id' => netflix()->id, 'category_id' => $other->id]))
         ->assertCreated()
