@@ -46,7 +46,7 @@ Monorepo:
 
 ```
 subs/
-├── backend/                  Laravel 12, PHP 8.4+
+├── backend/                  Laravel 12, PHP 8.5+
 │   ├── app/Http/Controllers/Api/V1/
 │   ├── app/Models/
 │   ├── app/Services/         BillingCycle, SpendCalculator, CurrencyConverter
@@ -267,7 +267,7 @@ categories                  Manage custom categories
 
 ## 11. Local development
 
-`docker compose up` starts nginx, php-fpm 8.4, postgres 17, redis, horizon, scheduler and
+`docker compose up` starts nginx, php-fpm 8.5, postgres 17, redis, horizon, scheduler and
 mailpit (UI on :8025). The Expo app runs on the host (`npx expo start`) with
 `EXPO_PUBLIC_API_URL` pointing to the Docker API.
 
