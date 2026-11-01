@@ -2,6 +2,9 @@
 
 use App\Models\ReminderRule;
 use App\Models\Subscription;
+use App\Models\User;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 it('shows and replaces default rules', function () {
     $me = actingAsUser();
@@ -65,4 +68,17 @@ it('rejects duplicate channels within one rule', function () {
     $this->putJson('/api/v1/reminder-defaults', ['rules' => [
         ['days_before' => 1, 'time_of_day' => '09:00', 'channels' => ['push', 'push']],
     ]])->assertJsonValidationErrors('rules.0.channels');
+});
+
+it('rejects a duplicate days_before within a scope at the database level', function () {
+    $user = User::factory()->create();
+    $sub = Subscription::factory()->for($user)->create();
+    ReminderRule::factory()->for($user)->create(['days_before' => 1]);
+    ReminderRule::factory()->for($user)->create(['days_before' => 1, 'subscription_id' => $sub->id]); // other scope: fine
+
+    // Each attempt runs in a savepoint so the first violation doesn't abort the test transaction.
+    $insert = fn (array $attributes) => fn () => DB::transaction(fn () => ReminderRule::factory()->for($user)->create($attributes));
+
+    expect($insert(['days_before' => 1]))->toThrow(QueryException::class, 'reminder_rules_scope_days_before_unique')
+        ->and($insert(['days_before' => 1, 'subscription_id' => $sub->id]))->toThrow(QueryException::class, 'reminder_rules_scope_days_before_unique');
 });

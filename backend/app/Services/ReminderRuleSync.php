@@ -19,6 +19,9 @@ final class ReminderRuleSync
     public function sync(User $user, ?Subscription $subscription, array $rules): Collection
     {
         return DB::transaction(function () use ($user, $subscription, $rules) {
+            // Serializes concurrent PUTs for this user; the unique index is the backstop.
+            User::query()->whereKey($user->id)->lockForUpdate()->first();
+
             $scope = fn () => $user->reminderRules()->where('subscription_id', $subscription?->id);
             $existing = $scope()->get()->keyBy('days_before');
             $keep = [];
