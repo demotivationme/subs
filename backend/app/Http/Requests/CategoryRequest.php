@@ -20,6 +20,12 @@ class CategoryRequest extends FormRequest
 
     public function toInput(): CategoryInput
     {
-        return new CategoryInput(...$this->validated());
+        $data = $this->validated();
+
+        return new CategoryInput(
+            name: $data['name'] ?? null,
+            icon: $data['icon'] ?? null,
+            color: $data['color'] ?? null,
+        );
     }
 }

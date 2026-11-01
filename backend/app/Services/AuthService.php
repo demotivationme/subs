@@ -11,13 +11,13 @@ use App\Models\User;
 use App\Repositories\ReminderRuleRepository;
 use App\Repositories\TransactionRunner;
 use App\Repositories\UserRepository;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class AuthService
 {
@@ -62,13 +62,13 @@ final class AuthService
         $this->users->revokeCurrentToken($user);
     }
 
-    /** @throws AuthorizationException when $hash does not match the user's email */
+    /** @throws AccessDeniedHttpException when $hash does not match the user's email */
     public function verifyEmail(int $userId, string $hash): void
     {
         $user = $this->users->findOrFail($userId);
 
         if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
-            throw new AuthorizationException;
+            throw new AccessDeniedHttpException;
         }
 
         if (! $user->hasVerifiedEmail() && $this->users->markEmailVerified($user)) {

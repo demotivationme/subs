@@ -20,6 +20,13 @@ class UpdateMeRequest extends FormRequest
 
     public function toInput(): ProfileChanges
     {
-        return new ProfileChanges(...$this->validated());
+        $data = $this->validated();
+
+        return new ProfileChanges(
+            name: $data['name'] ?? null,
+            timezone: $data['timezone'] ?? null,
+            currency: $data['currency'] ?? null,
+            locale: $data['locale'] ?? null,
+        );
     }
 }

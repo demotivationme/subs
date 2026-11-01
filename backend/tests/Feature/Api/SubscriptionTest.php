@@ -115,7 +115,9 @@ it('enforces the free limit only when configured and only for non-premium users'
     $me = actingAsUser();
     Subscription::factory()->for($me)->create();
 
-    $this->postJson('/api/v1/subscriptions', payload(['service_name' => 'X']))->assertForbidden();
+    $this->postJson('/api/v1/subscriptions', payload(['service_name' => 'X']))
+        ->assertForbidden()
+        ->assertJsonPath('message', __('subscriptions.limit_reached', ['limit' => config('subs.free_subscription_limit')]));
 
     $me->forceFill(['is_premium' => true])->save();
     $this->postJson('/api/v1/subscriptions', payload(['service_name' => 'X']))->assertCreated();

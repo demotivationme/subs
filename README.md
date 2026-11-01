@@ -26,7 +26,7 @@ Request → DTO → service → repository, enforced by `tests/Arch/LayersTest.p
 - **FormRequest** (`app/Http/Requests`) validates and returns a DTO via `toInput()`.
 - **DTO** (`app/Data`) is a `final readonly` class carrying that input.
 - **Controller** passes the DTO to one service and wraps the result in a Resource; it never touches models or repositories.
-- **Service** (`app/Services`) holds the business rules and reads and writes only through repositories (`TransactionRunner` for atomic groups).
+- **Service** (`app/Services`) holds the business rules, including policy checks (`Gate::forUser($user)->authorize(...)`), and reads and writes only through repositories (`TransactionRunner` for atomic groups).
 - **Repository** (`app/Repositories`) is an interface plus an `Eloquent…` implementation, bound in `RepositoryServiceProvider`. It is the only place that runs queries.
 
 ## Adding a language
