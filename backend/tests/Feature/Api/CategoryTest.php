@@ -47,3 +47,10 @@ it('moves subscriptions (including deleted ones) to Other when a category is del
         ->and(Subscription::withTrashed()->find($trashed->id)->category_id)->toBe(Category::other()->id)
         ->and(Category::find($kids->id))->toBeNull();
 });
+
+it('returns 404 for a non-numeric category id', function () {
+    actingAsUser();
+
+    $this->patchJson('/api/v1/categories/abc', ['name' => 'Kids'])->assertNotFound();
+    $this->deleteJson('/api/v1/categories/abc')->assertNotFound();
+});

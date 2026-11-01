@@ -39,8 +39,8 @@ Route::prefix('v1')->group(function () {
 
         Route::get('categories', [CategoryController::class, 'index']);
         Route::post('categories', [CategoryController::class, 'store']);
-        Route::patch('categories/{category}', [CategoryController::class, 'update']);
-        Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+        Route::patch('categories/{category}', [CategoryController::class, 'update'])->whereNumber('category');
+        Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->whereNumber('category');
 
         Route::get('services', [ServiceController::class, 'index']);
         Route::post('services', [ServiceController::class, 'store']);
