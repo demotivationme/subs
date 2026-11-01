@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Data\SubscriptionInput;
 use App\Enums\Period;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -22,6 +23,21 @@ class StoreSubscriptionRequest extends FormRequest
             'first_payment_date' => ['required', 'date_format:Y-m-d'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
+    }
+
+    public function toInput(): SubscriptionInput
+    {
+        return new SubscriptionInput(
+            serviceId: $this->filled('service_id') ? $this->integer('service_id') : null,
+            serviceName: $this->filled('service_id') ? null : $this->string('service_name')->toString(),
+            categoryId: $this->filled('category_id') ? $this->integer('category_id') : null,
+            amount: $this->integer('amount'),
+            currency: $this->string('currency')->toString(),
+            period: $this->enum('period', Period::class),
+            intervalCount: $this->integer('interval_count', 1),
+            firstPaymentDate: $this->string('first_payment_date')->toString(),
+            notes: $this->filled('notes') ? $this->string('notes')->toString() : null,
+        );
     }
 
     /** Exists among global rows or rows owned by the current user. */

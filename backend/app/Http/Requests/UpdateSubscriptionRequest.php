@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Data\SubscriptionChanges;
 use App\Enums\Period;
 use App\Enums\SubscriptionStatus;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 class UpdateSubscriptionRequest extends StoreSubscriptionRequest
@@ -22,5 +24,16 @@ class UpdateSubscriptionRequest extends StoreSubscriptionRequest
             'status' => ['sometimes', Rule::enum(SubscriptionStatus::class)],
             'notes' => ['sometimes', 'nullable', 'string', 'max:1000'],
         ];
+    }
+
+    public function toChanges(): SubscriptionChanges
+    {
+        $data = $this->validated();
+
+        return new SubscriptionChanges(
+            attributes: Arr::except($data, ['service_id', 'service_name']),
+            serviceId: isset($data['service_id']) ? (int) $data['service_id'] : null,
+            serviceName: isset($data['service_id']) ? null : ($data['service_name'] ?? null),
+        );
     }
 }

@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\DashboardCache;
-use App\Services\SpendCalculator;
+use App\Services\DashboardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request, SpendCalculator $spend): JsonResponse
+    public function __invoke(Request $request, DashboardService $dashboard): JsonResponse
     {
-        $user = $request->user();
-
-        return response()->json(DashboardCache::remember($user, fn () => $spend->dashboard($user)));
+        return response()->json($dashboard->for($request->user()));
     }
 }

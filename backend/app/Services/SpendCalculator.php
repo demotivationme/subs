@@ -3,13 +3,16 @@
 namespace App\Services;
 
 use App\Enums\Period;
-use App\Enums\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Repositories\SubscriptionRepository;
 
 final class SpendCalculator
 {
-    public function __construct(private readonly CurrencyConverter $converter) {}
+    public function __construct(
+        private readonly CurrencyConverter $converter,
+        private readonly SubscriptionRepository $subscriptions,
+    ) {}
 
     /** Monthly cost in the subscription's own currency, minor units. */
     public function monthlyEquivalent(Subscription $subscription): float
@@ -33,10 +36,7 @@ final class SpendCalculator
     {
         $today = $user->today();
         $until = $today->addDays(30);
-        $subscriptions = $user->subscriptions()
-            ->where('status', SubscriptionStatus::Active)
-            ->with(['service', 'category'])
-            ->get();
+        $subscriptions = $this->subscriptions->activeForUser($user);
 
         $total = 0.0;
         $byCategory = [];
