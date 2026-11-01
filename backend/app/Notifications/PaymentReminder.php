@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Enums\Channel;
+use App\Enums\SubscriptionStatus;
 use App\Models\ReminderRule;
 use App\Models\Subscription;
 use App\Models\User;
@@ -35,6 +36,14 @@ class PaymentReminder extends Notification implements ShouldQueue
     public function backoff(): array
     {
         return [60, 300, 900];
+    }
+
+    /** The job may run minutes after dispatch: skip it if the subscription was deleted or paused meanwhile. */
+    public function shouldSend(User $notifiable, string $channel): bool
+    {
+        $current = Subscription::withTrashed()->find($this->subscription->id);
+
+        return $current !== null && ! $current->trashed() && $current->status === SubscriptionStatus::Active;
     }
 
     public function via(User $notifiable): array

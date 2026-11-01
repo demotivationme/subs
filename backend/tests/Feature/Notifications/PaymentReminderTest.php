@@ -65,6 +65,21 @@ it('stores an in-app notification', function () {
     expect($user->notifications()->first()->data)->toMatchArray(['title' => 'Netflix renews tomorrow', 'days_before' => 1, 'payment_date' => '2026-11-30']);
 });
 
+it('is not sent once the subscription was deleted or paused before the job ran', function () {
+    $user = User::factory()->create();
+
+    $deleted = reminder($user, ['in_app']);
+    $deleted->subscription->delete();
+    $paused = reminder($user, ['in_app']);
+    Subscription::whereKey($paused->subscription->id)->update(['status' => 'paused']);
+
+    $user->notify($deleted);
+    $user->notify($paused);
+    $user->notify(reminder($user, ['in_app']));
+
+    expect($user->notifications()->count())->toBe(1);
+});
+
 it('sends Expo pushes and drops tokens Expo no longer knows', function () {
     Http::fake([ExpoChannel::URL => Http::response(['data' => [
         ['status' => 'ok', 'id' => 'x'],
