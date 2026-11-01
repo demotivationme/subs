@@ -29,7 +29,7 @@ Route::prefix('v1')->group(function () {
     // Authenticated routes
     Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout']);
-        Route::post('auth/email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:auth');
+        Route::post('auth/email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:verification');
 
         Route::get('dashboard', DashboardController::class);
 

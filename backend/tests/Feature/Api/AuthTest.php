@@ -75,6 +75,39 @@ it('rate limits login attempts', function () {
     $this->postJson('/api/v1/auth/login', $payload)->assertTooManyRequests();
 });
 
+it('keys the auth limiter on the client ip forwarded by a trusted proxy', function () {
+    $payload = ['email' => 'ana@example.com', 'password' => 'nope', 'device_name' => 'web'];
+    $from = fn (string $remote, string $client) => $this->withServerVariables(['REMOTE_ADDR' => $remote])
+        ->withHeader('X-Forwarded-For', $client);
+
+    foreach (range(1, 5) as $_) {
+        $from('172.18.0.5', '203.0.113.1')->postJson('/api/v1/auth/login', $payload)->assertUnprocessable();
+    }
+    $from('172.18.0.5', '203.0.113.1')->postJson('/api/v1/auth/login', $payload)->assertTooManyRequests();
+
+    // Another client behind the same proxy has its own budget for the same email.
+    $from('172.18.0.5', '203.0.113.2')->postJson('/api/v1/auth/login', $payload)->assertUnprocessable();
+
+    // An untrusted peer can't buy a fresh budget by spoofing the header.
+    foreach (range(1, 5) as $i) {
+        $from('198.51.100.7', "203.0.113.1{$i}")->postJson('/api/v1/auth/login', $payload)->assertUnprocessable();
+    }
+    $from('198.51.100.7', '203.0.113.99')->postJson('/api/v1/auth/login', $payload)->assertTooManyRequests();
+});
+
+it('limits verification resends per user', function () {
+    Notification::fake();
+    $ana = User::factory()->unverified()->create();
+    $bob = User::factory()->unverified()->create();
+
+    foreach (range(1, 5) as $_) {
+        $this->actingAs($ana)->postJson('/api/v1/auth/email/resend')->assertNoContent();
+    }
+    $this->actingAs($ana)->postJson('/api/v1/auth/email/resend')->assertTooManyRequests();
+
+    $this->actingAs($bob)->postJson('/api/v1/auth/email/resend')->assertNoContent();
+});
+
 it('verifies email through the signed link and redirects to the app', function () {
     $user = User::factory()->unverified()->create();
     $url = URL::temporarySignedRoute('verification.verify', now()->addHour(), ['id' => $user->id, 'hash' => sha1($user->email)]);
