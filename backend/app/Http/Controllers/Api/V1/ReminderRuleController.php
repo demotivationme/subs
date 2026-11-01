@@ -5,34 +5,37 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReminderRulesRequest;
 use App\Http\Resources\ReminderRuleResource;
-use App\Services\ReminderRuleSync;
+use App\Services\ReminderRuleService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ReminderRuleController extends Controller
 {
+    public function __construct(private readonly ReminderRuleService $rules) {}
+
     public function showDefaults(Request $request): AnonymousResourceCollection
     {
-        return ReminderRuleResource::collection($request->user()->defaultReminderRules()->orderBy('days_before')->get());
+        return ReminderRuleResource::collection($this->rules->defaults($request->user()));
     }
 
-    public function updateDefaults(ReminderRulesRequest $request, ReminderRuleSync $sync): AnonymousResourceCollection
+    public function updateDefaults(ReminderRulesRequest $request): AnonymousResourceCollection
     {
-        return ReminderRuleResource::collection($sync->sync($request->user(), null, $request->validated('rules')));
+        return ReminderRuleResource::collection($this->rules->replaceDefaults($request->user(), $request->toInput()));
     }
 
     public function showForSubscription(Request $request, int $subscription): AnonymousResourceCollection
     {
-        $rules = $request->user()->subscriptions()->findOrFail($subscription)->reminderRules()->orderBy('days_before')->get();
-
-        return ReminderRuleResource::collection($rules)->additional(['meta' => ['uses_defaults' => $rules->isEmpty()]]);
+        return $this->subscriptionRules($this->rules->forSubscription($request->user(), $subscription));
     }
 
-    public function updateForSubscription(ReminderRulesRequest $request, ReminderRuleSync $sync, int $subscription): AnonymousResourceCollection
+    public function updateForSubscription(ReminderRulesRequest $request, int $subscription): AnonymousResourceCollection
     {
-        $model = $request->user()->subscriptions()->findOrFail($subscription);
-        $rules = $sync->sync($request->user(), $model, $request->validated('rules'));
+        return $this->subscriptionRules($this->rules->replaceForSubscription($request->user(), $subscription, $request->toInput()));
+    }
 
+    private function subscriptionRules(Collection $rules): AnonymousResourceCollection
+    {
         return ReminderRuleResource::collection($rules)->additional(['meta' => ['uses_defaults' => $rules->isEmpty()]]);
     }
 }

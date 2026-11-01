@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Data\ReminderRuleInput;
 use App\Enums\Channel;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,5 +25,15 @@ class ReminderRulesRequest extends FormRequest
             ],
             'rules.*.channels.*' => ['required', Rule::enum(Channel::class)],
         ];
+    }
+
+    /** @return list<ReminderRuleInput> */
+    public function toInput(): array
+    {
+        return array_map(fn (array $rule) => new ReminderRuleInput(
+            daysBefore: (int) $rule['days_before'],
+            timeOfDay: $rule['time_of_day'],
+            channels: array_values($rule['channels']),
+        ), array_values($this->validated('rules')));
     }
 }

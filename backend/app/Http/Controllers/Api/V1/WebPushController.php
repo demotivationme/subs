@@ -3,32 +3,25 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\WebPushSubscribeRequest;
+use App\Http\Requests\WebPushUnsubscribeRequest;
+use App\Services\DeviceService;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 
 class WebPushController extends Controller
 {
-    public function store(Request $request): Response
-    {
-        $data = $request->validate([
-            'endpoint' => ['required', 'url', 'max:500'],
-            'keys.p256dh' => ['required', 'string'],
-            'keys.auth' => ['required', 'string'],
-            'content_encoding' => ['nullable', Rule::in(['aesgcm', 'aes128gcm'])],
-        ]);
+    public function __construct(private readonly DeviceService $devices) {}
 
-        $request->user()->updatePushSubscription(
-            $data['endpoint'], $data['keys']['p256dh'], $data['keys']['auth'], $data['content_encoding'] ?? 'aes128gcm',
-        );
+    public function store(WebPushSubscribeRequest $request): Response
+    {
+        $this->devices->subscribeWebPush($request->user(), $request->toInput());
 
         return response()->noContent();
     }
 
-    public function destroy(Request $request): Response
+    public function destroy(WebPushUnsubscribeRequest $request): Response
     {
-        $request->validate(['endpoint' => ['required', 'url']]);
-        $request->user()->deletePushSubscription($request->input('endpoint'));
+        $this->devices->unsubscribeWebPush($request->user(), $request->endpoint());
 
         return response()->noContent();
     }

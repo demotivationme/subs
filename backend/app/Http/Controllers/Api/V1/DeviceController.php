@@ -2,33 +2,26 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\Platform;
 use App\Http\Controllers\Controller;
-use App\Models\DeviceToken;
+use App\Http\Requests\DeviceRequest;
+use App\Services\DeviceService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 
 class DeviceController extends Controller
 {
-    public function store(Request $request): Response
-    {
-        $data = $request->validate([
-            'token' => ['required', 'string', 'max:255', 'regex:/^Expo(nent)?PushToken\[.+\]$/'],
-            'platform' => ['required', Rule::enum(Platform::class)],
-        ]);
+    public function __construct(private readonly DeviceService $devices) {}
 
-        DeviceToken::updateOrCreate(
-            ['token' => $data['token']],
-            ['user_id' => $request->user()->id, 'platform' => $data['platform'], 'last_seen_at' => now()],
-        );
+    public function store(DeviceRequest $request): Response
+    {
+        $this->devices->register($request->user(), $request->toInput());
 
         return response()->noContent();
     }
 
     public function destroy(Request $request, string $token): Response
     {
-        $request->user()->deviceTokens()->where('token', $token)->delete();
+        $this->devices->forget($request->user(), $token);
 
         return response()->noContent();
     }
