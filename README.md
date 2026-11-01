@@ -34,9 +34,9 @@ On the server, one time:
    - `APP_URL=https://api.<domain>`, `FRONTEND_URL=https://app.<domain>`
    - a strong `DB_PASSWORD`, plus Postmark/SES `MAIL_*`
    - VAPID keys and `EXPO_ACCESS_TOKEN`
-3. Export `API_DOMAIN`, `APP_DOMAIN` and `POSTGRES_PASSWORD` (same value as `DB_PASSWORD`).
+3. Copy `.env.prod.example` to `.env` (repo root, git-ignored; Docker Compose loads it automatically) and fill in `API_DOMAIN`, `APP_DOMAIN` and `POSTGRES_PASSWORD` (same value as `DB_PASSWORD`), plus `BACKUP_BUCKET` and `BACKUP_ENDPOINT`.
 4. Run `./docker/bin/deploy.sh`.
-5. Cron: `0 3 * * * BACKUP_BUCKET=… BACKUP_ENDPOINT=https://s3.<region>.io.cloud.ovh.net /path/to/subs/docker/bin/backup.sh`
+5. Cron: `0 3 * * * /path/to/subs/docker/bin/backup.sh` (reads `BACKUP_*` from the root `.env`).
 
 To deploy updates, run `./docker/bin/deploy.sh` again. The web app is built into `app/dist` (Plan 2) and served by Caddy.
 

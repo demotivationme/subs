@@ -9,7 +9,7 @@ $COMPOSE build php
 # Stop containers (never -v: pgdata must survive) so the public volume can be
 # removed and refilled from the new image.
 $COMPOSE down
-docker volume rm "$(basename "$PWD")_public" 2>/dev/null || true
+docker volume rm subs_public 2>/dev/null || true
 $COMPOSE up -d
 $COMPOSE exec -T php php artisan migrate --force
 $COMPOSE exec -T php php artisan optimize

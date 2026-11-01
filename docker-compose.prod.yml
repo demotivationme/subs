@@ -44,3 +44,4 @@ services:
 volumes:
   caddy_data:
   public:
+    name: subs_public
