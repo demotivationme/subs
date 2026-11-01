@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Data\LoginInput;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -13,5 +14,14 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'string'],
             'device_name' => ['required', 'string', 'max:100'],
         ];
+    }
+
+    public function toInput(): LoginInput
+    {
+        return new LoginInput(
+            email: $this->string('email')->toString(),
+            password: $this->string('password')->toString(),
+            deviceName: $this->string('device_name')->toString(),
+        );
     }
 }

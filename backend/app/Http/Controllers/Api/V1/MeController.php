@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\UpdateMeRequest;
 use App\Http\Resources\UserResource;
+use App\Services\AccountService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 
 class MeController extends Controller
 {
+    public function __construct(private readonly AccountService $account) {}
+
     public function show(Request $request): UserResource
     {
         return new UserResource($request->user());
@@ -18,23 +21,12 @@ class MeController extends Controller
 
     public function update(UpdateMeRequest $request): UserResource
     {
-        $request->user()->update($request->validated());
-
-        return new UserResource($request->user());
+        return new UserResource($this->account->update($request->user(), $request->toInput()));
     }
 
-    public function destroy(Request $request): Response
+    public function destroy(DeleteAccountRequest $request): Response
     {
-        $request->validate(['password' => ['required', 'current_password:sanctum']]);
-        $user = $request->user();
-
-        DB::transaction(function () use ($user) {
-            $user->tokens()->delete();
-            $user->notifications()->delete();
-            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
-            $user->pushSubscriptions()->delete();
-            $user->delete();
-        });
+        $this->account->delete($request->user());
 
         return response()->noContent();
     }

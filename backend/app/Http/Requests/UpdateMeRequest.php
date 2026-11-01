@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Data\ProfileChanges;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,5 +16,10 @@ class UpdateMeRequest extends FormRequest
             'currency' => ['sometimes', 'string', 'regex:/^[A-Z]{3}$/'],
             'locale' => ['sometimes', Rule::in(config('subs.locales'))],
         ];
+    }
+
+    public function toInput(): ProfileChanges
+    {
+        return new ProfileChanges(...$this->validated());
     }
 }

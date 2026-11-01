@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Data\RegisterInput;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -31,5 +32,18 @@ class RegisterRequest extends FormRequest
             'locale' => ['required', 'string'],
             'device_name' => ['required', 'string', 'max:100'],
         ];
+    }
+
+    public function toInput(): RegisterInput
+    {
+        return new RegisterInput(
+            name: $this->string('name')->toString(),
+            email: $this->string('email')->toString(),
+            password: $this->string('password')->toString(),
+            timezone: $this->string('timezone')->toString(),
+            currency: $this->string('currency')->toString(),
+            locale: $this->string('locale')->toString(),
+            deviceName: $this->string('device_name')->toString(),
+        );
     }
 }
