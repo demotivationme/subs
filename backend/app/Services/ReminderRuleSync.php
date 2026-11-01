@@ -11,8 +11,8 @@ final class ReminderRuleSync
 {
     /**
      * Replaces the rules of one scope (user defaults when $subscription is null).
-     * Rules are matched by days_before and updated in place, so their ids — and the
-     * sent_reminders rows that reference them — survive an edit.
+     * Rules are matched by days_before and updated in place, so their ids survive an edit.
+     * (sent_reminders dedupes by days_before, so even a replaced rule does not resend.)
      *
      * @param  list<array{days_before:int, time_of_day:string, channels:list<string>}>  $rules
      */

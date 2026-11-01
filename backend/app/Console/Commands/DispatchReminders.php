@@ -68,6 +68,8 @@ class DispatchReminders extends Command
      * timezone, lies in (now − 24h, now]. Across a DST spring-forward 24 elapsed hours span
      * 25 wall-clock hours, so such a moment can fall on the local day before yesterday:
      * three candidate dates are checked. The window and the dedupe table keep it exact.
+     * Dedupe is keyed by (subscription, payment date, days_before), not by rule id, so a
+     * replaced or reverted rule with the same lead time does not resend.
      * The payment date may already be in the past (e.g. a same-day rule that fires just
      * after midnight local time), so it is not bounded by today.
      */
@@ -93,6 +95,7 @@ class DispatchReminders extends Command
                 'subscription_id' => $subscription->id,
                 'reminder_rule_id' => $rule->id,
                 'payment_date' => $paymentDate->toDateString(),
+                'days_before' => $rule->days_before,
             ]);
 
             if ($inserted === 1) {

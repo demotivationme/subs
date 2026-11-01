@@ -156,3 +156,28 @@ it('keeps going when one subscription fails', function () {
     Notification::assertNotSentTo($bad->user, PaymentReminder::class);
     Exceptions::assertReported(InvalidTimeZoneException::class);
 });
+
+it('does not resend when a subscription override with the same lead time replaces the default', function () {
+    $sub = subscriber(); // default: 1 day before at 09:00 Paris = 08:00 UTC
+    dispatchAt('2026-11-04 08:00:00');
+
+    Sanctum::actingAs($sub->user);
+    $this->putJson("/api/v1/subscriptions/{$sub->id}/reminders", ['rules' => [
+        ['days_before' => 1, 'time_of_day' => '09:30', 'channels' => ['in_app']],
+    ]])->assertOk();
+
+    dispatchAt('2026-11-04 08:45:00');
+    Notification::assertSentToTimes($sub->user, PaymentReminder::class, 1);
+});
+
+it('does not resend when a subscription override is reverted to defaults', function () {
+    $sub = subscriber(); // default: 1 day before at 09:00 Paris
+    ReminderRule::factory()->for($sub->user)->create(['subscription_id' => $sub->id, 'days_before' => 1, 'time_of_day' => '08:30']);
+    dispatchAt('2026-11-04 07:30:00'); // override fires
+
+    Sanctum::actingAs($sub->user);
+    $this->putJson("/api/v1/subscriptions/{$sub->id}/reminders", ['rules' => []])->assertOk();
+
+    dispatchAt('2026-11-04 08:15:00'); // default moment has passed
+    Notification::assertSentToTimes($sub->user, PaymentReminder::class, 1);
+});
