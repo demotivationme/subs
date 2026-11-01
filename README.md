@@ -24,3 +24,20 @@ docker compose exec php php artisan rates:fetch
 1. Copy `backend/lang/en/` to `backend/lang/<xx>/` and translate.
 2. Add `<xx>` to `locales` in `backend/config/subs.php`.
 3. Do the same in the app (`app/src/i18n/`).
+
+## Production (OVH)
+
+On the server, one time:
+1. Point DNS for `api.<domain>` and `app.<domain>` at the server.
+2. Clone the repo and create `backend/.env` from `.env.example`:
+   - `APP_ENV=production`, `APP_DEBUG=false`
+   - `APP_URL=https://api.<domain>`, `FRONTEND_URL=https://app.<domain>`
+   - a strong `DB_PASSWORD`, plus Postmark/SES `MAIL_*`
+   - VAPID keys and `EXPO_ACCESS_TOKEN`
+3. Export `API_DOMAIN`, `APP_DOMAIN` and `POSTGRES_PASSWORD` (same value as `DB_PASSWORD`).
+4. Run `./docker/bin/deploy.sh`.
+5. Cron: `0 3 * * * BACKUP_BUCKET=… BACKUP_ENDPOINT=https://s3.<region>.io.cloud.ovh.net /path/to/subs/docker/bin/backup.sh`
+
+To deploy updates, run `./docker/bin/deploy.sh` again. The web app is built into `app/dist` (Plan 2) and served by Caddy.
+
+Note: the Horizon dashboard gate (`app/Providers/HorizonServiceProvider.php`) has an empty email list, so `/horizon` is denied outside local. Add the allowed admin emails there before using `/horizon` in production.

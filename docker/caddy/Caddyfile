@@ -1,0 +1,11 @@
+{$API_DOMAIN} {
+    encode gzip
+    reverse_proxy nginx:80
+}
+
+{$APP_DOMAIN} {
+    encode gzip
+    root * /srv/app
+    try_files {path} {path}.html /index.html
+    file_server
+}
