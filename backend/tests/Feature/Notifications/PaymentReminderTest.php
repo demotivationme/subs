@@ -15,7 +15,8 @@ function reminder(User $user, array $channels, int $days = 1, array $sub = []): 
 {
     $service = Service::whereNull('user_id')->where('name', 'Netflix')->first();
     $subscription = Subscription::factory()->for($user)->create(['service_id' => $service->id, 'amount' => 1299, ...$sub]);
-    $rule = ReminderRule::factory()->for($user)->create(['days_before' => $days, 'channels' => $channels]);
+    // Scoped to the new subscription so repeated calls for one user don't collide on days_before.
+    $rule = ReminderRule::factory()->for($user)->create(['subscription_id' => $subscription->id, 'days_before' => $days, 'channels' => $channels]);
 
     return new PaymentReminder($subscription, $rule, CarbonImmutable::parse('2026-11-30'));
 }
