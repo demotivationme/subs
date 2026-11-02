@@ -15,11 +15,11 @@ final class ServiceResolver
     ) {}
 
     /** Catalog match first, then the user's own; otherwise a new service owned by the user. */
-    public function resolve(User $user, string $name, ?int $defaultCategoryId = null): Service
+    public function resolve(User $user, string $name, ?int $defaultCategoryId = null, ?string $color = null): Service
     {
         $name = trim($name);
 
         return $this->services->findVisibleByName($user, $name)
-            ?? $this->services->create($user, $name, $defaultCategoryId ?? $this->categories->other()->id);
+            ?? $this->services->create($user, $name, $defaultCategoryId ?? $this->categories->other()->id, $color);
     }
 }

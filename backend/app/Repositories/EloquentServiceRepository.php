@@ -32,9 +32,24 @@ final class EloquentServiceRepository implements ServiceRepository
         return Service::findOrFail($id);
     }
 
-    public function create(User $user, string $name, int $defaultCategoryId): Service
+    public function create(User $user, string $name, int $defaultCategoryId, ?string $color = null): Service
     {
-        return $user->services()->create(['name' => $name, 'default_category_id' => $defaultCategoryId]);
+        return $user->services()->create(['name' => $name, 'default_category_id' => $defaultCategoryId, 'color' => $color]);
+    }
+
+    public function findVisibleOrFail(User $user, int $id): Service
+    {
+        return Service::visibleTo($user)->findOrFail($id);
+    }
+
+    public function update(Service $service, array $attributes): void
+    {
+        $service->update($attributes);
+    }
+
+    public function logoPathsOwnedBy(User $user): array
+    {
+        return $user->services()->whereNotNull('logo_path')->pluck('logo_path')->all();
     }
 
     public function reassignDefaultCategory(int $fromCategoryId, int $toCategoryId): void

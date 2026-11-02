@@ -44,6 +44,9 @@ Route::prefix('v1')->group(function () {
 
         Route::get('services', [ServiceController::class, 'index']);
         Route::post('services', [ServiceController::class, 'store']);
+        Route::patch('services/{service}', [ServiceController::class, 'update'])->whereNumber('service');
+        Route::post('services/{service}/logo', [ServiceController::class, 'storeLogo'])->whereNumber('service');
+        Route::delete('services/{service}/logo', [ServiceController::class, 'destroyLogo'])->whereNumber('service');
 
         Route::get('subscriptions', [SubscriptionController::class, 'index']);
         Route::post('subscriptions', [SubscriptionController::class, 'store']);

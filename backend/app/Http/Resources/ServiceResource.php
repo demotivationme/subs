@@ -16,6 +16,7 @@ class ServiceResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'logo_url' => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : null,
+            'color' => $this->color,
             'default_category_id' => $this->default_category_id,
             'is_custom' => $this->user_id !== null,
         ];

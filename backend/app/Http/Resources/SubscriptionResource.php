@@ -20,6 +20,7 @@ class SubscriptionResource extends JsonResource
                 'id' => $this->service->id,
                 'name' => $this->service->name,
                 'logo_url' => (new ServiceResource($this->service))->toArray($request)['logo_url'],
+                'color' => $this->service->color,
             ],
             'category' => [
                 'id' => $this->category->id,
