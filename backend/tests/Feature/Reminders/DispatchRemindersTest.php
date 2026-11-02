@@ -181,3 +181,23 @@ it('does not resend when a subscription override is reverted to defaults', funct
     dispatchAt('2026-11-04 08:15:00'); // default moment has passed
     Notification::assertSentToTimes($sub->user, PaymentReminder::class, 1);
 });
+
+it('queues nothing for a subscription with reminders off but still sends an identical enabled one', function () {
+    $off = subscriber('Europe/Paris', ['reminders_enabled' => false]);
+    $on = subscriber();
+
+    dispatchAt('2026-11-04 08:00:00');
+
+    Notification::assertNotSentTo($off->user, PaymentReminder::class);
+    Notification::assertSentTo($on->user, PaymentReminder::class);
+});
+
+it('still advances an overdue payment date when reminders are off', function () {
+    $off = subscriber('Europe/Paris', ['reminders_enabled' => false]);
+    Subscription::whereKey($off->id)->update(['next_payment_date' => '2026-10-05']);
+
+    dispatchAt('2026-11-04 08:00:00');
+
+    expect($off->fresh()->next_payment_date->toDateString())->toBe('2026-11-05');
+    Notification::assertNothingSent();
+});

@@ -105,3 +105,11 @@ it('builds the email', function () {
     expect($mail->subject)->toBe('Netflix payment reminder')
         ->and($mail->introLines[0])->toBe('Your Netflix subscription renews on November 30, 2026 for €12.99.');
 });
+
+it('is not sent once reminders were switched off after queueing', function () {
+    $user = User::factory()->create();
+    $notification = reminder($user, ['in_app']);
+    Subscription::whereKey($notification->subscription->id)->update(['reminders_enabled' => false]);
+
+    expect($notification->shouldSend($user, 'database'))->toBeFalse();
+});

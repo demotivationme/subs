@@ -35,6 +35,7 @@ class SubscriptionResource extends JsonResource
             'next_payment_date' => $this->next_payment_date->toDateString(),
             'status' => $this->status->value,
             'notes' => $this->notes,
+            'reminders_enabled' => $this->reminders_enabled,
             'monthly_equivalent' => $monthly === null ? null : (int) round($monthly),
         ];
     }

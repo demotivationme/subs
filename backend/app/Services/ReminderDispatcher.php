@@ -29,6 +29,11 @@ final class ReminderDispatcher
                 try {
                     $this->advance($subscription);
 
+                    // Disabled subscriptions are still advanced above, just never reminded.
+                    if (! $subscription->reminders_enabled) {
+                        continue;
+                    }
+
                     foreach ($subscription->effectiveReminderRules() as $rule) {
                         $queued += $this->remind($subscription, $rule, $now);
                     }

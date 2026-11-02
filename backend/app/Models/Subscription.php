@@ -20,16 +20,17 @@ class Subscription extends Model
 
     protected $fillable = [
         'service_id', 'category_id', 'amount', 'currency', 'period',
-        'interval_count', 'first_payment_date', 'status', 'notes',
+        'interval_count', 'first_payment_date', 'status', 'notes', 'reminders_enabled',
     ];
 
-    protected $attributes = ['interval_count' => 1, 'status' => 'active'];
+    protected $attributes = ['interval_count' => 1, 'status' => 'active', 'reminders_enabled' => true];
 
     protected function casts(): array
     {
         return [
             'amount' => 'integer',
             'interval_count' => 'integer',
+            'reminders_enabled' => 'boolean',
             'period' => Period::class,
             'status' => SubscriptionStatus::class,
             'first_payment_date' => 'immutable_date',

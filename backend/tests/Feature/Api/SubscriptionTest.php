@@ -199,3 +199,37 @@ it('filters by category and sorts by name and next payment', function () {
         ->and($ids('sort=next_payment'))->toBe([$c->id, $b->id, $a->id])
         ->and($ids(''))->toBe([$c->id, $b->id, $a->id]);
 });
+
+it('defaults reminders_enabled to true and accepts false on create', function () {
+    actingAsUser();
+
+    $this->postJson('/api/v1/subscriptions', payload(['service_id' => netflix()->id]))
+        ->assertCreated()
+        ->assertJsonPath('data.reminders_enabled', true);
+
+    $this->postJson('/api/v1/subscriptions', payload(['service_id' => netflix()->id, 'reminders_enabled' => false]))
+        ->assertCreated()
+        ->assertJsonPath('data.reminders_enabled', false);
+});
+
+it('toggles reminders_enabled on update and leaves it alone when omitted', function () {
+    $me = actingAsUser();
+    $sub = Subscription::factory()->for($me)->create();
+
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['reminders_enabled' => false])
+        ->assertOk()->assertJsonPath('data.reminders_enabled', false);
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['notes' => 'x'])
+        ->assertOk()->assertJsonPath('data.reminders_enabled', false);
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['reminders_enabled' => true])
+        ->assertOk()->assertJsonPath('data.reminders_enabled', true);
+});
+
+it('rejects a non-boolean reminders_enabled', function () {
+    $me = actingAsUser();
+    $sub = Subscription::factory()->for($me)->create();
+
+    $this->postJson('/api/v1/subscriptions', payload(['service_id' => netflix()->id, 'reminders_enabled' => 'nope']))
+        ->assertUnprocessable()->assertJsonValidationErrors('reminders_enabled');
+    $this->patchJson("/api/v1/subscriptions/{$sub->id}", ['reminders_enabled' => 'nope'])
+        ->assertUnprocessable()->assertJsonValidationErrors('reminders_enabled');
+});

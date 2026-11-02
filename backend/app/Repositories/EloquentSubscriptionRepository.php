@@ -56,6 +56,7 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
             'interval_count' => $input->intervalCount,
             'first_payment_date' => $input->firstPaymentDate,
             'notes' => $input->notes,
+            'reminders_enabled' => $input->remindersEnabled,
         ])->load(['service', 'category']);
     }
 

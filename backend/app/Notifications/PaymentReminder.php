@@ -41,12 +41,13 @@ class PaymentReminder extends Notification implements ShouldQueue
         return [60, 300, 900];
     }
 
-    /** The job may run minutes after dispatch: skip it if the subscription was deleted or paused meanwhile. */
+    /** The job may run minutes after dispatch: skip it if the subscription was deleted, paused or muted meanwhile. */
     public function shouldSend(User $notifiable, string $channel): bool
     {
         $current = app(SubscriptionRepository::class)->findWithTrashed($this->subscription->id);
 
-        return $current !== null && ! $current->trashed() && $current->status === SubscriptionStatus::Active;
+        return $current !== null && ! $current->trashed() && $current->status === SubscriptionStatus::Active
+            && $current->reminders_enabled;
     }
 
     public function via(User $notifiable): array

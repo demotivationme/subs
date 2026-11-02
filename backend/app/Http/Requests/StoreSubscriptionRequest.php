@@ -22,6 +22,7 @@ class StoreSubscriptionRequest extends FormRequest
             'interval_count' => ['sometimes', 'integer', 'min:1', 'max:365'],
             'first_payment_date' => ['required', 'date_format:Y-m-d'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'reminders_enabled' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -37,6 +38,7 @@ class StoreSubscriptionRequest extends FormRequest
             intervalCount: $this->integer('interval_count', 1),
             firstPaymentDate: $this->string('first_payment_date')->toString(),
             notes: $this->filled('notes') ? $this->string('notes')->toString() : null,
+            remindersEnabled: $this->boolean('reminders_enabled', true),
         );
     }
 

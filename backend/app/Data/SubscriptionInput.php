@@ -17,5 +17,6 @@ final readonly class SubscriptionInput
         public int $intervalCount,
         public string $firstPaymentDate,
         public ?string $notes,
+        public bool $remindersEnabled = true,
     ) {}
 }

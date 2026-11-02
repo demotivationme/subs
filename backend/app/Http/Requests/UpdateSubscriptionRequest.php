@@ -23,6 +23,7 @@ class UpdateSubscriptionRequest extends StoreSubscriptionRequest
             'first_payment_date' => ['sometimes', 'date_format:Y-m-d'],
             'status' => ['sometimes', Rule::enum(SubscriptionStatus::class)],
             'notes' => ['sometimes', 'nullable', 'string', 'max:1000'],
+            'reminders_enabled' => ['sometimes', 'boolean'],
         ];
     }
 
