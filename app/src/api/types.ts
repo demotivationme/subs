@@ -37,13 +37,14 @@ export type Service = {
   id: number;
   name: string;
   logo_url: string | null;
+  color: string | null;
   default_category_id: number | null;
   is_custom: boolean;
 };
 
 export type Subscription = {
   id: number;
-  service: { id: number; name: string; logo_url: string | null };
+  service: { id: number; name: string; logo_url: string | null; color: string | null };
   category: { id: number; label: string; icon: string | null; color: string | null };
   amount: number;
   currency: string;
@@ -53,6 +54,7 @@ export type Subscription = {
   next_payment_date: string;
   status: SubscriptionStatus;
   notes: string | null;
+  reminders_enabled: boolean;
   /** In the user's main currency, minor units; null when the currency has no rate. */
   monthly_equivalent: number | null;
 };

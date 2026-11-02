@@ -33,3 +33,10 @@ jest.mock('expo-router', () => {
     Tabs: Object.assign(() => null, { Screen: () => null }),
   };
 });
+
+// Icon fonts (Ionicons) load through expo-font, which has no asset registry under Jest.
+jest.mock('expo-font', () => ({
+  isLoaded: jest.fn(() => true),
+  loadAsync: jest.fn(async () => undefined),
+  useFonts: jest.fn(() => [true, null]),
+}));

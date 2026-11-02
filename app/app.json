@@ -36,7 +36,9 @@
       ],
       "expo-secure-store",
       "expo-localization",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-font",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": false,

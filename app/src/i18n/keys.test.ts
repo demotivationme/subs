@@ -31,6 +31,6 @@ test('every translation key used in src exists in en.json', () => {
     for (const m of code.matchAll(/['"](validation\.[\w.]+)['"]/g)) used.add(m[1]);
   }
 
-  if (used.size === 0) return; // Task 5 makes this strict once code uses keys
+  expect(used.size).toBeGreaterThan(0);
   expect([...used].filter((key) => !hasKey(en as Tree, key))).toEqual([]);
 });

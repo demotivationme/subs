@@ -9,7 +9,13 @@ module.exports = defineConfig([
     files: ['src/**/*.tsx'],
     ignores: ['src/**/*.test.tsx', 'src/test/**'],
     plugins: { i18next },
-    rules: { 'i18next/no-literal-string': ['error', { mode: 'jsx-only', 'jsx-attributes': { exclude: ['className', 'testID', 'style', 'name', 'key', 'id', 'href'] } }] },
+    rules: { 'i18next/no-literal-string': ['error', { mode: 'jsx-only', 'jsx-attributes': { exclude: [
+            'className', 'contentContainerClassName', 'testID', 'style', 'name', 'key', 'id', 'href',
+            // non-text props: component variants, roles, colors and native input hints
+            'variant', 'tone', 'accessibilityRole', 'color', 'trackColor', 'placeholderTextColor', 'contentFit',
+            'animationType', 'keyboardShouldPersistTaps', 'keyboardType', 'autoCapitalize', 'autoComplete',
+            'textContentType', 'returnKeyType', 'inputMode', 'size',
+          ] } }] },
   },
   { ignores: ['dist/*', '.expo/*'] },
 ]);

@@ -21,6 +21,7 @@ export type SubscriptionPayload = {
   first_payment_date: string;
   notes: string | null;
   status?: SubscriptionStatus;
+  reminders_enabled?: boolean;
 };
 
 function useInvalidateSpend() {
