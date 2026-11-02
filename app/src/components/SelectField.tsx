@@ -13,11 +13,21 @@ type Props<T extends string | number | null> = {
   onChange: (value: T) => void;
   searchable?: boolean;
   error?: string;
+  /** Controlled open state, for screens that open the picker from their own button. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Hide the built-in trigger (use with `open`). */
+  hideTrigger?: boolean;
 };
 
-export function SelectField<T extends string | number | null>({ label, value, options, onChange, searchable, error }: Props<T>) {
+export function SelectField<T extends string | number | null>({ label, value, options, onChange, searchable, error, open: openProp, onOpenChange, hideTrigger }: Props<T>) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (next: boolean) => {
+    setOpenState(next);
+    onOpenChange?.(next);
+  };
   const [query, setQuery] = useState('');
   const selected = options.find((o) => o.value === value);
   const showSearch = searchable ?? options.length > 10;
@@ -29,15 +39,19 @@ export function SelectField<T extends string | number | null>({ label, value, op
   };
 
   return (
-    <View className="gap-1">
-      <AppText variant="muted" className="font-medium text-[13px]">{label}</AppText>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={label}
-        onPress={() => setOpen(true)}
-        className="h-12 justify-center rounded-xl border border-line bg-surface px-3.5 dark:border-line-dark dark:bg-surface-dark">
-        <AppText>{selected?.label ?? ''}</AppText>
-      </Pressable>
+    <View className={hideTrigger ? undefined : 'gap-1'}>
+      {hideTrigger ? null : (
+        <>
+          <AppText variant="muted" className="font-medium text-[13px]">{label}</AppText>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            onPress={() => setOpen(true)}
+            className="h-12 justify-center rounded-xl border border-line bg-surface px-3.5 dark:border-line-dark dark:bg-surface-dark">
+            <AppText>{selected?.label ?? ''}</AppText>
+          </Pressable>
+        </>
+      )}
       {error ? <AppText variant="error">{error}</AppText> : null}
       <Modal visible={open} animationType="slide" onRequestClose={close}>
         <View className="flex-1 gap-3 bg-ground p-4 pt-12 dark:bg-ground-dark">

@@ -1,4 +1,5 @@
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
+import type { ReactNode } from 'react';
 import type { TextInputProps } from 'react-native';
 
 import { translateError } from '@/lib/errors';
@@ -9,6 +10,8 @@ type Props<T extends FieldValues> = Omit<TextInputProps, 'value' | 'onChangeText
   control: Control<T>;
   name: Path<T>;
   label: string;
+  hint?: string;
+  trailing?: ReactNode;
 };
 
 export function FormTextField<T extends FieldValues>({ control, name, label, ...input }: Props<T>) {

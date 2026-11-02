@@ -14,7 +14,7 @@ module.exports = defineConfig([
             // non-text props: component variants, roles, colors and native input hints
             'variant', 'tone', 'accessibilityRole', 'color', 'trackColor', 'placeholderTextColor', 'contentFit',
             'animationType', 'keyboardShouldPersistTaps', 'keyboardType', 'autoCapitalize', 'autoComplete',
-            'textContentType', 'returnKeyType', 'inputMode', 'size',
+            'textContentType', 'returnKeyType', 'inputMode', 'size', 'importantForAccessibility',
           ] } }] },
   },
   { ignores: ['dist/*', '.expo/*'] },

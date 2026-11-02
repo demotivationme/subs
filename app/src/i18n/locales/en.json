@@ -52,7 +52,21 @@
     "sendLink": "Send reset link",
     "resetPassword": "Set new password",
     "backToLogin": "Back to log in",
-    "invalidLink": "This reset link is incomplete. Request a new one."
+    "invalidLink": "This reset link is incomplete. Request a new one.",
+    "welcomeTitle": "Welcome",
+    "createTitle": "Create your account",
+    "createSubtitle": "Takes less than a minute. Your first subscription is next.",
+    "passwordHint": "At least 8 characters",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "totalsIn": "Totals shown in",
+    "change": "Change",
+    "haveAccountPrompt": "Already have an account?",
+    "loginLink": "Log in",
+    "loginHeadline": "Know what you pay for.",
+    "loginSubtitle": "Track every subscription and get reminded before it renews.",
+    "noAccountPrompt": "No account yet?",
+    "createLink": "Create one"
   },
   "tabs": {
     "dashboard": "Dashboard",
@@ -213,5 +227,44 @@
   },
   "languages": {
     "en": "English"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "back": "Back",
+    "getStarted": "Get started",
+    "haveAccount": "I already have an account",
+    "step": "Step {{current}} of {{total}}",
+    "slide1Title": "All your subscriptions, one number.",
+    "slide1Body": "Add what you pay for and Subs adds it up — per month and per year, in your own currency.",
+    "slide2Title": "Add one in seconds.",
+    "slide2Body": "Pick from popular services or type your own. Any currency, weekly, monthly or yearly — we do the math.",
+    "slide3Title": "Know before you pay.",
+    "slide3Body": "Get a heads-up before every renewal — when you want it, by push, email or in the app. Time to cancel what you don't use.",
+    "slide4Title": "Keep only what you use.",
+    "slide4Body": "See where the money goes, spot what you forgot about, and watch your monthly total drop.",
+    "demo": {
+      "perMonthLabel": "You spend per month",
+      "perYearLine": "€563.52 per year · 4 subscriptions",
+      "search": "spo",
+      "save": "Save",
+      "week": "Week",
+      "month": "Month",
+      "year": "Year",
+      "notifApp": "Subs",
+      "notifNow": "now",
+      "notifTitle": "Netflix renews tomorrow",
+      "notifBody": "€12.99 on Nov 5, 2026",
+      "remindMe": "Remind me",
+      "oneDay": "1 day before",
+      "sevenDays": "7 days before",
+      "onDay": "On the day",
+      "via": "Via",
+      "push": "Push",
+      "inApp": "In-app",
+      "email": "Email",
+      "nowPerMonth": "Now per month",
+      "cancelled": "Cancelled"
+    }
   }
 }
