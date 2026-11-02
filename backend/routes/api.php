@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PasswordResetController;
 use App\Http\Controllers\Api\V1\ReminderRuleController;
 use App\Http\Controllers\Api\V1\ServiceController;
+use App\Http\Controllers\Api\V1\StatsController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\WebPushController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,7 @@ Route::prefix('v1')->group(function () {
         Route::post('auth/email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:verification');
 
         Route::get('dashboard', DashboardController::class);
+        Route::get('stats', StatsController::class);
 
         Route::get('me', [MeController::class, 'show']);
         Route::patch('me', [MeController::class, 'update']);

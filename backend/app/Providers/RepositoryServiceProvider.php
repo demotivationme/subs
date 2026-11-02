@@ -14,6 +14,7 @@ use App\Repositories\EloquentReminderRuleRepository;
 use App\Repositories\EloquentSentReminderRepository;
 use App\Repositories\EloquentServiceRepository;
 use App\Repositories\EloquentSubscriptionRepository;
+use App\Repositories\EloquentSubscriptionStatusChangeRepository;
 use App\Repositories\EloquentUserRepository;
 use App\Repositories\ExchangeRateRepository;
 use App\Repositories\NotificationRepository;
@@ -22,6 +23,7 @@ use App\Repositories\ReminderRuleRepository;
 use App\Repositories\SentReminderRepository;
 use App\Repositories\ServiceRepository;
 use App\Repositories\SubscriptionRepository;
+use App\Repositories\SubscriptionStatusChangeRepository;
 use App\Repositories\TransactionRunner;
 use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +37,7 @@ class RepositoryServiceProvider extends ServiceProvider
         CategoryRepository::class => EloquentCategoryRepository::class,
         ServiceRepository::class => EloquentServiceRepository::class,
         SubscriptionRepository::class => EloquentSubscriptionRepository::class,
+        SubscriptionStatusChangeRepository::class => EloquentSubscriptionStatusChangeRepository::class,
         ReminderRuleRepository::class => EloquentReminderRuleRepository::class,
         SentReminderRepository::class => EloquentSentReminderRepository::class,
         DeviceTokenRepository::class => EloquentDeviceTokenRepository::class,

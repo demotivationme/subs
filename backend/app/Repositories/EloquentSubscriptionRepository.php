@@ -30,6 +30,17 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
             ->get();
     }
 
+    public function allForUserWithHistory(User $user): Collection
+    {
+        return $user->subscriptions()
+            ->with([
+                'service',
+                'category',
+                'statusChanges' => fn ($q) => $q->orderBy('changed_at')->orderBy('id'),
+            ])
+            ->get();
+    }
+
     public function countForUser(User $user): int
     {
         return $user->subscriptions()->count();

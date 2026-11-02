@@ -72,6 +72,11 @@ class Subscription extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function statusChanges(): HasMany
+    {
+        return $this->hasMany(SubscriptionStatusChange::class);
+    }
+
     public function reminderRules(): HasMany
     {
         return $this->hasMany(ReminderRule::class);

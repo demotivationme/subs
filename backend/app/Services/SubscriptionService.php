@@ -12,6 +12,9 @@ use App\Models\User;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ServiceRepository;
 use App\Repositories\SubscriptionRepository;
+use App\Repositories\SubscriptionStatusChangeRepository;
+use App\Repositories\TransactionRunner;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 final class SubscriptionService
@@ -22,6 +25,8 @@ final class SubscriptionService
         private readonly CategoryRepository $categories,
         private readonly ServiceResolver $resolver,
         private readonly SpendCalculator $spend,
+        private readonly SubscriptionStatusChangeRepository $statusChanges,
+        private readonly TransactionRunner $transactions,
     ) {}
 
     /** @return Collection<int, Subscription> sorted as $filter->sort asks */
@@ -53,7 +58,12 @@ final class SubscriptionService
         $service = $this->service($user, $input->serviceId, $input->serviceName);
         $categoryId = $input->categoryId ?? $service->default_category_id ?? $this->categories->other()->id;
 
-        return $this->subscriptions->create($user, $input, $service->id, $categoryId);
+        return $this->transactions->run(function () use ($user, $input, $service, $categoryId) {
+            $subscription = $this->subscriptions->create($user, $input, $service->id, $categoryId);
+            $this->statusChanges->record($subscription, $subscription->status, CarbonImmutable::now());
+
+            return $subscription;
+        });
     }
 
     public function find(User $user, int $id): Subscription
@@ -69,7 +79,15 @@ final class SubscriptionService
             ? $this->service($user, $changes->serviceId, $changes->serviceName)->id
             : null;
 
-        $this->subscriptions->update($subscription, $changes, $serviceId);
+        $before = $subscription->status;
+
+        $this->transactions->run(function () use ($subscription, $changes, $serviceId, $before) {
+            $this->subscriptions->update($subscription, $changes, $serviceId);
+
+            if ($subscription->status !== $before) {
+                $this->statusChanges->record($subscription, $subscription->status, CarbonImmutable::now());
+            }
+        });
 
         return $subscription;
     }

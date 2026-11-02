@@ -19,6 +19,9 @@ interface SubscriptionRepository
     /** @return Collection<int, Subscription> active ones, with service and category */
     public function activeForUser(User $user): Collection;
 
+    /** @return Collection<int, Subscription> every one (any status), with service, category and status changes oldest first */
+    public function allForUserWithHistory(User $user): Collection;
+
     public function countForUser(User $user): int;
 
     /** One of the user's own, with service and category; 404 otherwise. */
