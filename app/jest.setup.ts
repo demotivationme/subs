@@ -40,3 +40,19 @@ jest.mock('expo-font', () => ({
   loadAsync: jest.fn(async () => undefined),
   useFonts: jest.fn(() => [true, null]),
 }));
+
+jest.mock('expo-notifications', () => ({
+  setNotificationHandler: jest.fn(),
+  setNotificationChannelAsync: jest.fn(async () => null),
+  getPermissionsAsync: jest.fn(async () => ({ status: 'undetermined' })),
+  requestPermissionsAsync: jest.fn(async () => ({ status: 'granted' })),
+  getExpoPushTokenAsync: jest.fn(async () => ({ type: 'expo', data: 'ExponentPushToken[test]' })),
+  useLastNotificationResponse: jest.fn(() => undefined),
+  AndroidImportance: { DEFAULT: 3 },
+  DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
+}));
+
+jest.mock('expo-constants', () => ({
+  __esModule: true,
+  default: { expoConfig: { extra: { eas: { projectId: 'test-project' } } } },
+}));
