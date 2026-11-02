@@ -83,6 +83,32 @@ test('month view requests month= and lists payments including the expected ones'
   expect(screen.getAllByText('Expected').length).toBeGreaterThan(0);
 });
 
+test('a payment in an unconverted currency shows only its original amount', async () => {
+  const odd = [{ subscription_id: 8, name: 'Odd', date: '2026-11-09', amount: 500, currency: 'XYZ', converted: null, state: 'paid' as const }];
+  mockApi({ 'GET /stats': { body: fixtures.stats({ payments: odd }) } });
+  await renderWithProviders(<StatsScreen />, withMe());
+  await fireEvent.press(await screen.findByRole('radio', { name: 'Month' }));
+  expect(await screen.findByText('Odd')).toBeTruthy();
+  expect(screen.getAllByText(/XYZ/)).toHaveLength(1);
+});
+
+test('month navigation crosses the year boundary in both directions', async () => {
+  const calls = statsRoutes();
+  await renderWithProviders(<StatsScreen />, withMe());
+  await fireEvent.press(await screen.findByRole('radio', { name: 'Month' }));
+  await screen.findByText('November 2026');
+
+  for (let i = 0; i < 10; i++) await fireEvent.press(screen.getByRole('button', { name: 'Previous month' }));
+  expect(await screen.findByText('January 2026')).toBeTruthy();
+  await fireEvent.press(screen.getByRole('button', { name: 'Previous month' }));
+  expect(await screen.findByText('December 2025')).toBeTruthy();
+  expect(calls.some((c) => c.path === '/stats?year=2025&month=12')).toBe(true);
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Next month' }));
+  expect(await screen.findByText('January 2026')).toBeTruthy();
+  expect(calls.filter((c) => c.path === '/stats?year=2026&month=1').length).toBeGreaterThan(0);
+});
+
 test('pressing a bar jumps to that month', async () => {
   const calls = statsRoutes();
   await renderWithProviders(<StatsScreen />, withMe());

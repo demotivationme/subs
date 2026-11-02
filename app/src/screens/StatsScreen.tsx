@@ -28,6 +28,7 @@ const MINUS = '−';
 // Static class names so NativeWind can see them.
 const DOTS = ['bg-cat-1', 'bg-cat-2', 'bg-cat-3', 'bg-cat-4', 'bg-cat-5'] as const;
 const dot = (index: number) => DOTS[index] ?? 'bg-cat-rest';
+const SUMMARY = 'summary';
 const LONG = 'long';
 const NARROW = 'narrow';
 const MONTH: Mode = 'month';
@@ -85,6 +86,8 @@ function YearChart({ stats, currentMonth, locale, money, onSelect }: {
   const expectedTotal = stats.projected_year;
   return (
     <View
+      accessible
+      accessibilityRole={SUMMARY}
       accessibilityLabel={t('stats.chartLabel', { year: stats.year, paid: money(stats.spent_so_far), projected: money(expectedTotal) })}
       className="gap-3">
       <View className="flex-row items-end gap-1.5" style={{ height: CHART_HEIGHT + 28 }}>
@@ -156,7 +159,7 @@ function PaymentRow({ payment, currency, locale, services }: { payment: StatsPay
       </View>
       <View className="items-end">
         <AppText numeric className="font-semibold">{formatMoney(payment.amount, payment.currency, locale)}</AppText>
-        {differs ? <AppText numeric variant="muted" className="text-[13px]">{formatMoney(payment.converted, currency, locale)}</AppText> : null}
+        {differs && payment.converted !== null ? <AppText numeric variant="muted" className="text-[13px]">{formatMoney(payment.converted, currency, locale)}</AppText> : null}
       </View>
     </View>
   );
@@ -247,8 +250,11 @@ export default function StatsScreen() {
   const thisMonth = Number(today.slice(5, 7));
 
   const [mode, setMode] = useState<Mode>(YEAR);
-  const [year, setYear] = useState(thisYear);
-  const [month, setMonth] = useState(thisMonth);
+  // Until the user navigates, follow "today" in the account timezone (it may arrive after the first render).
+  const [pickedYear, setYear] = useState<number | null>(null);
+  const [pickedMonth, setMonth] = useState<number | null>(null);
+  const year = pickedYear ?? thisYear;
+  const month = pickedMonth ?? thisMonth;
 
   const query = useStats(year, mode === MONTH ? month : undefined);
 

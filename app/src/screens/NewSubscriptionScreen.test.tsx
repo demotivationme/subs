@@ -239,6 +239,7 @@ test('retrying after a failed reminders save updates the created subscription wi
     'PATCH /subscriptions/11': { body: { data: fixtures.subscription({ id: 11 }) } },
   });
   await prefs.set('push.asked', '1');
+  const invalidate = jest.spyOn(client, 'invalidateQueries');
   await renderWithProviders(<NewSubscriptionScreen />, client);
 
   await toReminders('12.99');
@@ -255,6 +256,7 @@ test('retrying after a failed reminders save updates the created subscription wi
   expect(calls.filter((c) => c.method === 'POST' && c.path === '/subscriptions')).toHaveLength(1);
   expect(calls.find((c) => c.method === 'PATCH')?.body).toMatchObject({ amount: 2000, reminders_enabled: true });
   expect(calls.filter((c) => c.method === 'PUT')).toHaveLength(2);
+  expect(invalidate).toHaveBeenCalledWith({ queryKey: ['stats'] });
 });
 
 test('an invalid custom rule blocks the save and shows its error', async () => {

@@ -135,6 +135,7 @@ export default function NewSubscriptionScreen() {
         await Promise.all([
           qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
           qc.invalidateQueries({ queryKey: keys.dashboard }),
+          qc.invalidateQueries({ queryKey: keys.statsAll }),
         ]);
       }
       if (reminders.enabled && reminders.custom) await remindersApi.replaceForSubscription(createdId.current, reminders.custom);

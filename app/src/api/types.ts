@@ -95,7 +95,7 @@ export type StatsPayment = {
   date: string;
   amount: number;
   currency: string;
-  converted: number;
+  converted: number | null;
   state: 'paid' | 'expected';
 };
 
