@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -7,6 +7,7 @@ import type { Category } from '@/api/types';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { ErrorMessage } from '@/components/ErrorMessage';
+import { Group } from '@/components/Group';
 import { ListRow } from '@/components/ListRow';
 import { Loading } from '@/components/Loading';
 import { Screen } from '@/components/Screen';
@@ -18,18 +19,6 @@ const PALETTE = ['#0B7A57', '#2F6FDB', '#E39B2B', '#7A5AE0', '#D2497A'];
 function Dot({ category }: { category: Category }) {
   const color = category.color ?? PALETTE[category.id % PALETTE.length];
   return <View className="h-3 w-3 rounded-full" style={{ backgroundColor: color }} />;
-}
-
-/** Uppercase caption over a white rounded card whose rows are divided by hairlines. */
-function Group({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <View className="gap-2">
-      <AppText variant="muted" className="px-1 font-semibold text-xs uppercase tracking-wider">
-        {title}
-      </AppText>
-      <View className="gap-1 rounded-card bg-surface px-4 py-1 dark:bg-surface-dark">{children}</View>
-    </View>
-  );
 }
 
 function CustomCategoryRow({ category }: { category: Category }) {

@@ -282,7 +282,15 @@
     "deleteWarning": "This permanently deletes your account and all your subscriptions.",
     "deletePassword": "Confirm with your password",
     "deleteConfirm": "Delete my account",
-    "saved": "Saved."
+    "saved": "Saved.",
+    "reminders": "Reminders",
+    "account": "Account",
+    "dangerZone": "Danger zone",
+    "defaultRemindersHelp": "Used for every subscription unless you set a custom reminder for it.",
+    "pushDevice": "Push notifications on this device",
+    "timezoneLabel": "Timezone",
+    "nameTitle": "Your name",
+    "verified": "Verified"
   },
   "push": {
     "introTitle": "Payment reminders",

@@ -56,6 +56,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" color={String(color)} size={size} />,
         }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: t('tabs.settings'),
+          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" color={String(color)} size={size} />,
+        }}
+      />
     </Tabs>
   );
 }

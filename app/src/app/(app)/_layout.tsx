@@ -34,6 +34,7 @@ export default function AppLayout() {
       <Stack.Screen name="subscriptions/[id]" options={{ title: t('subscription.title') }} />
       <Stack.Screen name="notifications" options={{ title: t('tabs.notifications') }} />
       <Stack.Screen name="categories" options={{ title: t('categories.title') }} />
+      <Stack.Screen name="settings/reminders" options={{ title: t('settings.defaultReminders') }} />
       <Stack.Screen name="push-intro" options={{ title: t('push.introTitle'), presentation: MODAL }} />
     </Stack>
   );
