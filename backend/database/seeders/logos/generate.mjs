@@ -35,6 +35,7 @@ const DESIGN = {
   'apple-music': ['#FA243C', '#FFFFFF'], max: ['#0A0A0A', '#FFFFFF'],
   'playstation-plus': ['#0070D1', '#FFFFFF'], dropbox: ['#FFFFFF', '#0061FF', true],
   audible: ['#F8991C', '#FFFFFF'],
+  skillshare: ['#0A0A0A', '#00FF84'], // neon green on white is ~1.3:1
   dazn: ['#000000', '#FFFFFF'], // brand hex is near-white; a light glyph on white would vanish
 };
 

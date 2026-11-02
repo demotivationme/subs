@@ -46,9 +46,9 @@ class ServiceCatalogSeeder extends Seeder
 
             // Logos are the committed Simple Icons tiles in database/seeders/logos; no file, no logo.
             $file = __DIR__.'/logos/'.$slug.'.svg';
-            if (is_file($file)) {
-                $attributes['logo_path'] = $logos->putCatalog($slug, (string) file_get_contents($file));
-            }
+            $attributes['logo_path'] = is_file($file)
+                ? $logos->putCatalog($slug, (string) file_get_contents($file))
+                : null;
 
             Service::query()->updateOrCreate(['user_id' => null, 'slug' => $slug], $attributes);
         }

@@ -2,7 +2,9 @@
 
 use App\Models\Service;
 use Database\Seeders\CatalogSeeder;
+use Database\Seeders\ServiceCatalogSeeder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 beforeEach(fn () => Storage::fake('public'));
 
@@ -49,4 +51,36 @@ it('commits well-formed SVGs with a viewBox', function () {
         expect($xml)->not->toBeFalse($file)
             ->and((string) $xml['viewBox'])->not->toBe('', $file);
     }
+});
+
+it('commits only inert SVGs (served same-origin)', function () {
+    foreach (glob(database_path('seeders/logos/*.svg')) as $file) {
+        $raw = file_get_contents($file);
+        expect(preg_match('/<!(ENTITY|DOCTYPE)|<script|foreignObject|href\s*=/i', $raw))->toBe(0, $file);
+
+        $dom = new DOMDocument;
+        $dom->loadXML($raw);
+        foreach ($dom->getElementsByTagName('*') as $el) {
+            expect($el->localName)->toBeIn(['svg', 'rect', 'path'], $file);
+            foreach ($el->attributes as $attr) {
+                expect(str_starts_with(strtolower($attr->name), 'on'))->toBeFalse($file);
+            }
+        }
+    }
+});
+
+it('has no orphan SVGs: every file maps to a catalog slug', function () {
+    $slugs = array_map(fn ($n) => Str::slug($n), array_keys(ServiceCatalogSeeder::SERVICES));
+
+    foreach (glob(database_path('seeders/logos/*.svg')) as $file) {
+        expect($slugs)->toContain(basename($file, '.svg'));
+    }
+});
+
+it('nulls logo_path for a catalog service without a bundled file', function () {
+    Service::where('slug', 'disney')->whereNull('user_id')->update(['logo_path' => 'service-logos/catalog/disney.svg']);
+
+    $this->seed(CatalogSeeder::class);
+
+    expect(Service::where('slug', 'disney')->whereNull('user_id')->first()->logo_path)->toBeNull();
 });
