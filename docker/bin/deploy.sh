@@ -9,9 +9,10 @@ git pull --ff-only
 # Web app: static export served by Caddy from ./app/dist. Built in a throwaway Node
 # container so the server needs no Node; dist is refilled in place because Caddy
 # bind-mounts that directory.
-env_value() { grep -E "^$1=" "$2" | tail -1 | cut -d= -f2-; }
+env_value() { { grep -E "^$1=" "$2" || true; } | tail -1 | cut -d= -f2-; }
 API_DOMAIN="$(env_value API_DOMAIN .env)"
 VAPID_PUBLIC_KEY="$(env_value VAPID_PUBLIC_KEY backend/.env)"
+[ -n "$VAPID_PUBLIC_KEY" ] || echo "deploy: VAPID_PUBLIC_KEY missing in backend/.env; web push will be disabled in the web app." >&2
 mkdir -p app/dist
 docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD/app:/app" -w /app \
     -e EXPO_PUBLIC_API_URL="https://${API_DOMAIN:?set API_DOMAIN in .env}/api/v1" \

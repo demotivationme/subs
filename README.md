@@ -15,6 +15,7 @@ docker compose exec php php artisan rates:fetch
 docker compose exec php php artisan storage:link   # once: serves uploaded service logos from /storage
 ```
 
+- After pulling changes that touch `docker/` or composer files, run `docker compose up -d --build` so php, horizon and scheduler all get the new image (stale horizon/scheduler images make queued reminders fail).
 - API: http://localhost:8080/api/v1 · Health: http://localhost:8080/up
 - Mail: http://localhost:8025 · Queues: http://localhost:8080/horizon
 - Catalog logos are Simple Icons (CC0), seeded by `CatalogSeeder`; source and licence in `backend/database/seeders/logos/README.md`.
