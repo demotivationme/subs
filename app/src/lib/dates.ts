@@ -34,3 +34,20 @@ export function isValidIsoDate(value: string): boolean {
 export function deviceTimeZone(): string {
   return getCalendars()[0]?.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC';
 }
+
+/** Whole calendar days from one billing date to another (negative when `to` is earlier). */
+export function daysBetween(from: string, to: string): number {
+  const [fy, fm, fd] = parts(from);
+  const [ty, tm, td] = parts(to);
+  return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86_400_000);
+}
+
+/** The month abbreviation and day number shown on a date tile. */
+export function dateTile(isoDate: string, locale: string): { month: string; day: string } {
+  const [y, m, d] = parts(isoDate);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return {
+    month: new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' }).format(date).toUpperCase(),
+    day: new Intl.DateTimeFormat(locale, { day: 'numeric', timeZone: 'UTC' }).format(date),
+  };
+}

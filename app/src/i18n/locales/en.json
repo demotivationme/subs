@@ -77,10 +77,7 @@
   "dashboard": {
     "monthly": "Per month",
     "yearly": "Per year",
-    "activeCount_one": "{{count}} active subscription",
-    "activeCount_other": "{{count}} active subscriptions",
     "byCategory": "By category",
-    "share": "{{amount}} · {{percent}}%",
     "chartItem": "{{label}}: {{amount}}, {{percent}}%",
     "upcoming": "Next 30 days",
     "noUpcoming": "No payments in the next 30 days.",
@@ -89,7 +86,17 @@
     "unconverted_one": "{{count}} subscription uses a currency without an exchange rate and isn't included in the totals.",
     "unconverted_other": "{{count}} subscriptions use currencies without exchange rates and aren't included in the totals.",
     "empty": "No subscriptions yet. Add the first one to see your spending.",
-    "addFirst": "Add a subscription"
+    "addFirst": "Add a subscription",
+    "heroLabel": "You spend per month",
+    "perYearPill": "{{amount}} / year",
+    "activePill": "{{count}} active",
+    "chartLabel": "Monthly spend by category",
+    "percent": "{{percent}}%",
+    "seeAll": "See all",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "inDays_one": "In {{count}} day",
+    "inDays_other": "In {{count}} days"
   },
   "verify": {
     "banner": "Verify your email to receive email reminders.",

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook } from '@testing-library/react-native';
 import type { ReactElement, ReactNode } from 'react';
 
+import '@/i18n';
 import { API_URL } from '@/api/config';
 
 export type MockResponse = { status?: number; body?: unknown };
