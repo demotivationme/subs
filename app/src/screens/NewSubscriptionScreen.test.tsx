@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { router } from 'expo-router';
 
 import { keys } from '@/api/keys';
+import { useSession } from '@/auth/session';
 import { todayIso } from '@/lib/dates';
 import { prefs } from '@/lib/prefs';
 import { fixtures } from '@/test/fixtures';
@@ -203,4 +204,101 @@ test('shows the free-plan limit message from the server', async () => {
 
   expect(await screen.findByText('You can track up to 10 subscriptions on the free plan.')).toBeTruthy();
   expect(router.back).not.toHaveBeenCalled();
+});
+
+test('a 422 on the service shows its message on the service step', async () => {
+  const { client } = setup({
+    'POST /subscriptions': { status: 422, body: { message: 'x', errors: { service_id: ['The selected service is invalid.'] } } },
+  });
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await toReminders('12.99');
+  await fireEvent.press(screen.getByRole('button', { name: SAVE }));
+
+  expect(await screen.findByText('The selected service is invalid.')).toBeTruthy();
+  expect(screen.getByText('What are you paying for?')).toBeTruthy();
+});
+
+test('a 422 on the category shows under the category row', async () => {
+  const { client } = setup({
+    'POST /subscriptions': { status: 422, body: { message: 'x', errors: { category_id: ['The selected category is invalid.'] } } },
+  });
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await toReminders('12.99');
+  await fireEvent.press(screen.getByRole('button', { name: SAVE }));
+
+  expect(await screen.findByText('The selected category is invalid.')).toBeTruthy();
+  expect(screen.getByText('How much is it?')).toBeTruthy();
+});
+
+test('retrying after a failed reminders save updates the created subscription with the new edits', async () => {
+  let puts = 0;
+  const { calls, client } = setup({
+    'PUT /subscriptions/11/reminders': () => (++puts === 1 ? { status: 500, body: { message: 'boom' } } : { body: { data: [fixtures.rule()], meta: { uses_defaults: false } } }),
+    'PATCH /subscriptions/11': { body: { data: fixtures.subscription({ id: 11 }) } },
+  });
+  await prefs.set('push.asked', '1');
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await toReminders('12.99');
+  await fireEvent.press(screen.getByRole('radio', { name: 'Custom' }));
+  await fireEvent.press(screen.getByRole('button', { name: SAVE }));
+  expect(await screen.findByRole('alert', { name: 'Something went wrong. Please try again.' })).toBeTruthy();
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+  await fireEvent.changeText(screen.getByLabelText('Amount'), '20');
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+  await fireEvent.press(await screen.findByRole('button', { name: SAVE }));
+
+  await waitFor(() => expect(router.back).toHaveBeenCalled());
+  expect(calls.filter((c) => c.method === 'POST' && c.path === '/subscriptions')).toHaveLength(1);
+  expect(calls.find((c) => c.method === 'PATCH')?.body).toMatchObject({ amount: 2000, reminders_enabled: true });
+  expect(calls.filter((c) => c.method === 'PUT')).toHaveLength(2);
+});
+
+test('an invalid custom rule blocks the save and shows its error', async () => {
+  const { calls, client } = setup();
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await toReminders('12.99');
+  await fireEvent.press(screen.getByRole('radio', { name: 'Custom' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'At' }));
+  await fireEvent.changeText(screen.getByLabelText('Time (HH:MM)'), '9');
+  await fireEvent.press(screen.getByRole('button', { name: 'Done' }));
+  await fireEvent.press(screen.getByRole('button', { name: SAVE }));
+
+  expect(await screen.findByText('Use the format HH:MM, like 09:00.')).toBeTruthy();
+  expect(calls.some((c) => c.method === 'POST')).toBe(false);
+});
+
+test('renaming after a failed logo upload updates the created service instead of creating another', async () => {
+  const { calls, client } = setup({
+    'POST /services': { status: 201, body: { data: fixtures.service({ id: 20, name: 'Gym Pro', is_custom: true }) } },
+    'POST /services/20/logo': { status: 422, body: { message: 'bad', errors: { logo: ['bad'] } } },
+    'PATCH /services/20': { body: { data: fixtures.service({ id: 20, name: 'Gym Max', is_custom: true }) } },
+  });
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await fireEvent.changeText(await screen.findByLabelText('Search services'), 'Gym Pro');
+  await fireEvent.press(await screen.findByRole('button', { name: 'Add “Gym Pro” as your own service' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Upload an image' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+  await screen.findByText(/Couldn't upload the image/);
+
+  await fireEvent.changeText(screen.getByLabelText('Name'), 'Gym Max');
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+
+  expect(await screen.findByText('How much is it?')).toBeTruthy();
+  expect(calls.filter((c) => c.method === 'POST' && c.path === '/services')).toHaveLength(1);
+  expect(calls.find((c) => c.method === 'PATCH')?.body).toMatchObject({ name: 'Gym Max' });
+});
+
+test('a failed profile load offers a retry instead of spinning forever', async () => {
+  useSession.setState({ token: 'tok', status: 'signedIn' });
+  mockApi({ 'GET /me': { status: 500, body: { message: 'x' } }, 'GET /categories': { body: { data: [] } } });
+  await renderWithProviders(<NewSubscriptionScreen />);
+
+  expect(await screen.findByRole('button', { name: 'Try again' })).toBeTruthy();
+  useSession.setState({ token: null, status: 'loading' });
 });

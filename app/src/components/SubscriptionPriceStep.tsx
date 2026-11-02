@@ -109,6 +109,7 @@ export function SubscriptionPriceStep({ value, onChange, errors, categories, tod
       <View className="gap-2">
         <AppText variant="muted" className="font-medium text-[13px]">{t('form.billed')}</AppText>
         <SegmentedControl options={periodOptions} value={value.period} onChange={(period) => onChange({ period })} />
+        {errors.period ? <AppText variant="error">{translateError(errors.period)}</AppText> : null}
         {showInterval ? (
           <TextField
             label={t('form.everyN')}
@@ -143,6 +144,7 @@ export function SubscriptionPriceStep({ value, onChange, errors, categories, tod
         </View>
         <Button label={t('form.changeCategory')} variant="ghost" onPress={() => setCategoryOpen(true)} />
       </View>
+      {errors.categoryId ? <AppText variant="error">{translateError(errors.categoryId)}</AppText> : null}
 
       {showNote ? (
         <TextField label={t('form.notes')} multiline value={value.notes} onChangeText={(notes) => onChange({ notes })} error={translateError(errors.notes)} />

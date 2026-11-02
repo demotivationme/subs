@@ -24,6 +24,11 @@ export type SubscriptionPayload = {
   reminders_enabled?: boolean;
 };
 
+export const subscriptionsApi = {
+  update: (id: number, body: Partial<SubscriptionPayload>) =>
+    api<Data<Subscription>>(`/subscriptions/${id}`, { method: 'PATCH', body }).then((r) => r.data),
+};
+
 function useInvalidateSpend() {
   const qc = useQueryClient();
   return (id?: number) =>

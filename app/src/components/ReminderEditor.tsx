@@ -137,8 +137,8 @@ export function RuleSummary({ rules }: { rules: ReminderRuleInput[] }) {
   if (rules.length === 0) return <AppText variant="muted">{t('reminders.none')}</AppText>;
   return (
     <View className="gap-1">
-      {rules.map((rule) => (
-        <AppText key={rule.days_before}>
+      {rules.map((rule, index) => (
+        <AppText key={index}>
           {t('reminders.summary', {
             count: rule.days_before,
             time: rule.time_of_day,

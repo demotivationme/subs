@@ -1,13 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { Pressable, useColorScheme, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { keys } from '@/api/keys';
 import { useCategories } from '@/api/categories';
 import { useMe } from '@/api/me';
 import { remindersApi, useReminderDefaults } from '@/api/reminders';
-import { useCreateSubscription } from '@/api/subscriptions';
+import { subscriptionsApi, useCreateSubscription } from '@/api/subscriptions';
 import type { Service } from '@/api/types';
 import { useOnline } from '@/api/useOnline';
 import { Button } from '@/components/Button';
@@ -47,6 +50,8 @@ export default function NewSubscriptionScreen() {
   const categories = useCategories();
   const defaults = useReminderDefaults();
   const create = useCreateSubscription();
+  const qc = useQueryClient();
+  const insets = useSafeAreaInsets();
 
   const [step, setStep] = useState<Step>('service');
   const [ownName, setOwnName] = useState('');
@@ -60,7 +65,17 @@ export default function NewSubscriptionScreen() {
   const categoryTouched = useRef(false);
   const createdId = useRef<number | null>(null);
 
-  if (!me.data || !categories.data) return <Loading />;
+  if (!me.data || !categories.data) {
+    if (me.isError || categories.isError) {
+      return (
+        <View className="flex-1 justify-center gap-4 bg-ground p-4 dark:bg-ground-dark">
+          <ErrorMessage error={me.error ?? categories.error} />
+          <Button label={t('common.retry')} onPress={() => { void me.refetch(); void categories.refetch(); }} />
+        </View>
+      );
+    }
+    return <Loading />;
+  }
   const user = me.data;
   const today = todayIso(user.timezone);
   const form = values ?? defaultFormValues(user.currency, today);
@@ -111,9 +126,16 @@ export default function NewSubscriptionScreen() {
     setFormError(null);
     setSaving(true);
     try {
-      // A retry after a failed reminders PUT must not create the subscription twice.
+      const payload = { ...toPayload(form), reminders_enabled: reminders.enabled };
       if (createdId.current === null) {
-        createdId.current = (await create.mutateAsync({ ...toPayload(form), reminders_enabled: reminders.enabled })).id;
+        createdId.current = (await create.mutateAsync(payload)).id;
+      } else {
+        // A retry after a failed reminders PUT updates the saved subscription with the current edits.
+        await subscriptionsApi.update(createdId.current, payload);
+        await Promise.all([
+          qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
+          qc.invalidateQueries({ queryKey: keys.dashboard }),
+        ]);
       }
       if (reminders.enabled && reminders.custom) await remindersApi.replaceForSubscription(createdId.current, reminders.custom);
 
@@ -145,7 +167,7 @@ export default function NewSubscriptionScreen() {
 
   const back = STEP_BEFORE[step];
   return (
-    <View className="flex-1 bg-ground pt-4 dark:bg-ground-dark">
+    <View style={{ paddingTop: Math.max(insets.top, 16) }} className="flex-1 bg-ground dark:bg-ground-dark">
       <View className="gap-3 px-4 pb-2">
         <View className="h-11 flex-row items-center justify-between">
           {back ? (
@@ -163,7 +185,7 @@ export default function NewSubscriptionScreen() {
         <OfflineBanner />
       </View>
 
-      {step === 'service' ? <ServiceStep onPick={pick} onAddOwn={addOwn} /> : null}
+      {step === 'service' ? <ServiceStep error={errors.serviceName} onPick={pick} onAddOwn={addOwn} /> : null}
       {step === 'own' ? <OwnServiceStep initialName={ownName} onDone={pick} /> : null}
       {step === 'price' ? (
         <StepFrame footer={<Button label={t('form.continue')} onPress={goNext} />}>
@@ -189,7 +211,7 @@ export default function NewSubscriptionScreen() {
           <SubscriptionReminderStep
             value={reminders}
             onChange={setReminders}
-            defaults={defaults.data ?? []}
+            defaults={defaults.isError ? [] : defaults.data}
             errors={ruleErrors}
             email={user.email}
             paymentDate={form.firstPaymentDate}

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useServiceSearch } from '@/api/services';
 import type { Service } from '@/api/types';
+import { translateError } from '@/lib/errors';
 import { useDebounced } from '@/lib/useDebounced';
 
 import { AppText } from './AppText';
@@ -15,13 +16,15 @@ import { TextField } from './TextField';
 const POPULAR_COUNT = 9;
 
 type Props = {
+  /** A validation message about the chosen service (e.g. from the server). */
+  error?: string;
   /** Picking a service goes straight on to the price step. */
   onPick: (service: Service) => void;
   onAddOwn: (name: string) => void;
 };
 
 /** Step 1: search the catalog or pick from the popular grid. */
-export function ServiceStep({ onPick, onAddOwn }: Props) {
+export function ServiceStep({ error, onPick, onAddOwn }: Props) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const term = useDebounced(query.trim(), 300);
@@ -36,7 +39,7 @@ export function ServiceStep({ onPick, onAddOwn }: Props) {
   return (
     <StepFrame>
       <AppText variant="title">{t('form.whatTitle')}</AppText>
-      <TextField label={t('form.searchServices')} value={query} onChangeText={setQuery} autoCorrect={false} />
+      <TextField label={t('form.searchServices')} value={query} onChangeText={setQuery} autoCorrect={false} error={translateError(error)} />
 
       {searching ? (
         <View>

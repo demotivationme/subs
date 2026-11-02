@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import type { ReminderRule, ReminderRuleInput } from '@/api/types';
@@ -22,8 +22,8 @@ type Mode = 'default' | 'custom';
 type Props = {
   value: ReminderValue;
   onChange: (value: ReminderValue) => void;
-  /** The account's default rules (read-only here). */
-  defaults: ReminderRule[];
+  /** The account's default rules (read-only here); undefined while they load. */
+  defaults: ReminderRule[] | undefined;
   errors?: RuleErrors[];
   email?: string;
   paymentDate: string;
@@ -62,7 +62,8 @@ export function SubscriptionReminderStep({ value, onChange, defaults, errors, em
   const { t } = useTranslation();
   const locale = useLocale();
   const mode: Mode = value.custom ? 'custom' : 'default';
-  const defaultRules = toRuleInputs(defaults);
+  const loading = defaults === undefined;
+  const defaultRules = toRuleInputs(defaults ?? []);
   const effective = value.custom ?? defaultRules;
   const first = value.enabled ? firstReminder(paymentDate, effective, today) : null;
 
@@ -71,6 +72,7 @@ export function SubscriptionReminderStep({ value, onChange, defaults, errors, em
     { value: 'custom', label: t('form.modeCustom') },
   ];
   const selectMode = (next: Mode) => {
+    if (loading) return;
     if (next === 'default') onChange({ ...value, custom: null });
     else if (!value.custom) onChange({ ...value, custom: defaultRules.length > 0 ? defaultRules : [defaultRule([])] });
   };
@@ -89,7 +91,7 @@ export function SubscriptionReminderStep({ value, onChange, defaults, errors, em
             <ReminderEditor rules={value.custom} onChange={(custom) => onChange({ ...value, custom })} errors={errors} email={email} />
           ) : (
             <View className="gap-3">
-              <DefaultSummary rules={defaultRules} />
+              {loading ? <ActivityIndicator accessibilityLabel={t('common.loading')} /> : <DefaultSummary rules={defaultRules} />}
               <AppText variant="muted" className="text-[13px]">{t('form.defaultHint')}</AppText>
             </View>
           )}

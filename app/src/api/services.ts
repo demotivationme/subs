@@ -23,6 +23,9 @@ export const servicesApi = {
   /** Returns the visible service with the same name, or creates the user's own. */
   create: (body: NewService) => api<Data<Service>>('/services', { method: 'POST', body }).then((r) => r.data),
 
+  update: (id: number, body: { name?: string; color?: string }) =>
+    api<Data<Service>>(`/services/${id}`, { method: 'PATCH', body }).then((r) => r.data),
+
   /** Uploads the picked image (a local uri) as the service's logo. */
   uploadLogo: async (id: number, uri: string) => {
     const form = new FormData();

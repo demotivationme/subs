@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { ApiError } from '@/api/errors';
 import { servicesApi } from '@/api/services';
 import type { Service } from '@/api/types';
 import { cn } from '@/lib/cn';
@@ -28,7 +29,7 @@ export function OwnServiceStep({ initialName, onDone }: Props) {
   const [nameError, setNameError] = useState<string>();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const [created, setCreated] = useState<Service | null>(null);
+  const [created, setCreated] = useState<{ service: Service; name: string; color: string } | null>(null);
   const [uploadFailed, setUploadFailed] = useState(false);
 
   const pickImage = async () => {
@@ -50,8 +51,13 @@ export function OwnServiceStep({ initialName, onDone }: Props) {
     setError(null);
     setBusy(true);
     try {
-      let service = created && created.name === trimmed ? created : await servicesApi.create({ name: trimmed, color });
-      setCreated(service);
+      // Once created in this step, edits PATCH that service instead of creating a second one.
+      let service = created
+        ? created.name === trimmed && created.color === color
+          ? created.service
+          : await servicesApi.update(created.service.id, { name: trimmed, color })
+        : await servicesApi.create({ name: trimmed, color });
+      setCreated({ service, name: trimmed, color });
       if (imageUri && !uploadFailed) {
         try {
           service = await servicesApi.uploadLogo(service.id, imageUri);
@@ -64,7 +70,9 @@ export function OwnServiceStep({ initialName, onDone }: Props) {
       }
       onDone(service);
     } catch (createError) {
-      setError(createError);
+      const nameMessage = createError instanceof ApiError && createError.status === 422 ? createError.errors.name?.[0] : undefined;
+      if (nameMessage) setNameError(nameMessage);
+      else setError(createError);
     } finally {
       setBusy(false);
     }

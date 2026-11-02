@@ -60,3 +60,6 @@ jest.mock('expo-constants', () => ({
 jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file:///logo.jpg' }] })),
 }));
+
+// useSafeAreaInsets needs a provider; the library's mock supplies zero insets.
+jest.mock('react-native-safe-area-context', () => require('react-native-safe-area-context/jest/mock').default);
