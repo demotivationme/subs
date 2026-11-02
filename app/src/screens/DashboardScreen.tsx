@@ -26,8 +26,8 @@ const SUBSCRIPTIONS = '/subscriptions';
 
 function Pill({ label }: { label: string }) {
   return (
-    <View className="rounded-full bg-white/15 px-3 py-1.5 dark:bg-black/10">
-      <AppText numeric className="text-sm text-white dark:text-ground-dark">{label}</AppText>
+    <View className="rounded-full bg-white/15 px-3 py-1.5 dark:bg-white/10">
+      <AppText numeric className="text-sm text-white dark:text-ink-dark">{label}</AppText>
     </View>
   );
 }
@@ -83,9 +83,9 @@ export default function DashboardScreen() {
         <EmptyState message={t('dashboard.empty')} action={{ label: t('dashboard.addFirst'), onPress: addFirst }} />
       ) : (
         <>
-          <View className="gap-1 rounded-[24px] bg-accent p-5 dark:bg-accent-dark">
-            <AppText className="font-medium text-sm text-white opacity-90 dark:text-ground-dark">{t('dashboard.heroLabel')}</AppText>
-            <AppText numeric className="font-display text-[44px] leading-[48px] text-white dark:text-ground-dark">{money(d.monthly_total)}</AppText>
+          <View className="gap-1 rounded-[24px] bg-accent p-5 dark:border dark:border-hero-border-dark dark:bg-hero-dark">
+            <AppText className="font-medium text-sm text-white opacity-90 dark:text-hero-label-dark dark:opacity-100">{t('dashboard.heroLabel')}</AppText>
+            <AppText numeric className="font-display text-[44px] leading-[48px] text-white dark:text-ink-dark">{money(d.monthly_total)}</AppText>
             <View className="mt-2.5 flex-row flex-wrap gap-2">
               <Pill label={t('dashboard.perYearPill', { amount: money(d.yearly_total) })} />
               <Pill label={t('dashboard.activePill', { count: d.count })} />
@@ -112,7 +112,7 @@ export default function DashboardScreen() {
                 <Pressable
                   key={`${u.subscription_id}-${u.date}`}
                   accessibilityRole="button"
-                  accessibilityLabel={u.name}
+                  accessibilityLabel={t('dashboard.upcomingItem', { name: u.name, when: relative(u.date), amount: money(u.amount, u.currency) })}
                   onPress={() => open(u.subscription_id)}
                   className="flex-row items-center gap-3 rounded-tile bg-surface px-3.5 py-3 dark:bg-surface-dark">
                   <DateTile date={u.date} soon={daysBetween(today, u.date) <= 1} locale={locale} />

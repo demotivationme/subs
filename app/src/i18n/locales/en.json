@@ -96,7 +96,8 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "inDays_one": "In {{count}} day",
-    "inDays_other": "In {{count}} days"
+    "inDays_other": "In {{count}} days",
+    "upcomingItem": "{{name}}, {{when}}, {{amount}}"
   },
   "verify": {
     "banner": "Verify your email to receive email reminders.",

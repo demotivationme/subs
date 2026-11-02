@@ -49,11 +49,13 @@ test('upcoming payments show a date tile and a relative subtitle, and open the s
   expect(screen.getByText('In 13 days')).toBeTruthy();
   expect(screen.getByText('€12.99')).toBeTruthy();
 
-  await fireEvent.press(screen.getByRole('button', { name: 'Netflix' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Netflix, In 13 days, €12.99' }));
   expect(router.push).toHaveBeenCalledWith('/subscriptions/5');
 });
 
-test('relative subtitles say Today and Tomorrow, using the account timezone', async () => {
+test('relative subtitles use the account timezone, not UTC', async () => {
+  // 23:30Z on Nov 1 is already Nov 2 in Berlin.
+  jest.setSystemTime(new Date('2026-11-01T23:30:00Z'));
   const upcoming = [
     { subscription_id: 1, name: 'Gym', date: '2026-11-02', amount: 1000, currency: 'EUR' },
     { subscription_id: 2, name: 'Cloud', date: '2026-11-03', amount: 500, currency: 'EUR' },
@@ -63,6 +65,7 @@ test('relative subtitles say Today and Tomorrow, using the account timezone', as
 
   expect(await screen.findByText('Today')).toBeTruthy();
   expect(screen.getByText('Tomorrow')).toBeTruthy();
+  expect(screen.getByRole('button', { name: 'Gym, Today, €10.00' })).toBeTruthy();
 });
 
 test('"See all" opens the subscriptions tab', async () => {
