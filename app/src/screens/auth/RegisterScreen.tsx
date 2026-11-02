@@ -58,11 +58,12 @@ export default function RegisterScreen() {
       });
       qc.setQueryData(keys.me, user);
       await useSession.getState().signIn(token);
-      // The first subscription is the next step.
-      router.replace('/subscriptions/new');
     } catch (error) {
       if (!applyServerErrors(error, setError, ['name', 'email', 'password', 'currency'])) setFormError(error);
+      return;
     }
+    // The first subscription is the next step.
+    router.replace('/subscriptions/new');
   });
 
   const toWelcome = () => router.replace('/welcome');

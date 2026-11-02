@@ -48,10 +48,10 @@ export default function RootLayout() {
     <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
       <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Protected guard={signedIn}>
+          <Stack.Protected guard={signedIn} redirectTo="/start">
             <Stack.Screen name="(app)" />
           </Stack.Protected>
-          <Stack.Protected guard={!signedIn}>
+          <Stack.Protected guard={!signedIn} redirectTo="/">
             <Stack.Screen name="(auth)" />
           </Stack.Protected>
         </Stack>
