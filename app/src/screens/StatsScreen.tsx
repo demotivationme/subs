@@ -85,11 +85,14 @@ function YearChart({ stats, currentMonth, locale, money, onSelect }: {
   const max = Math.max(1, ...stats.months.map((m) => m.paid + m.expected));
   const expectedTotal = stats.projected_year;
   return (
-    <View
-      accessible
-      accessibilityRole={SUMMARY}
-      accessibilityLabel={t('stats.chartLabel', { year: stats.year, paid: money(stats.spent_so_far), projected: money(expectedTotal) })}
-      className="gap-3">
+    <View className="gap-3">
+      {/* Separate from the bars so each bar stays individually focusable for screen readers. */}
+      <View
+        testID="chart-summary"
+        accessible
+        accessibilityRole={SUMMARY}
+        accessibilityLabel={t('stats.chartLabel', { year: stats.year, paid: money(stats.spent_so_far), projected: money(expectedTotal) })}
+      />
       <View className="flex-row items-end gap-1.5" style={{ height: CHART_HEIGHT + 28 }}>
         {stats.months.map((m) => {
           const total = m.paid + m.expected;
@@ -144,7 +147,7 @@ function PaymentRow({ payment, currency, locale, services }: { payment: StatsPay
   const { t } = useTranslation();
   const differs = payment.currency !== currency;
   return (
-    <View className="flex-row items-center gap-3 border-b border-line py-3 dark:border-line-dark">
+    <View testID={`payment-${payment.subscription_id}`} className="flex-row items-center gap-3 border-b border-line py-3 dark:border-line-dark">
       <ServiceIcon service={services.get(payment.subscription_id) ?? { name: payment.name, logo_url: null }} size={36} />
       <View className="flex-1 gap-0.5">
         <AppText className="font-medium">{payment.name}</AppText>

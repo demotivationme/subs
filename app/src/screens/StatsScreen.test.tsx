@@ -1,5 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 
+import { useSession } from '@/auth/session';
 import { keys } from '@/api/keys';
 import { fixtures } from '@/test/fixtures';
 import { createTestQueryClient, mockApi, renderWithProviders } from '@/test/utils';
@@ -90,6 +91,8 @@ test('a payment in an unconverted currency shows only its original amount', asyn
   await fireEvent.press(await screen.findByRole('radio', { name: 'Month' }));
   expect(await screen.findByText('Odd')).toBeTruthy();
   expect(screen.getAllByText(/XYZ/)).toHaveLength(1);
+  const row = within(screen.getByTestId('payment-8'));
+  expect(row.getAllByText(/\d/).filter((n) => /\d[.,]\d{2}/.test(String(n.props.children)))).toHaveLength(1);
 });
 
 test('month navigation crosses the year boundary in both directions', async () => {
@@ -104,9 +107,36 @@ test('month navigation crosses the year boundary in both directions', async () =
   expect(await screen.findByText('December 2025')).toBeTruthy();
   expect(calls.some((c) => c.path === '/stats?year=2025&month=12')).toBe(true);
 
+  const before = calls.length;
   await fireEvent.press(screen.getByRole('button', { name: 'Next month' }));
   expect(await screen.findByText('January 2026')).toBeTruthy();
-  expect(calls.filter((c) => c.path === '/stats?year=2026&month=1').length).toBeGreaterThan(0);
+  expect(calls.slice(before).map((c) => c.path)).toContain('/stats?year=2026&month=1');
+});
+
+test('the chart summary is its own element and every month bar stays a separate button', async () => {
+  statsRoutes();
+  await renderWithProviders(<StatsScreen />, withMe());
+  await screen.findByText('Spent in 2026 so far');
+
+  const summary = screen.getByLabelText(/^Spend per month in 2026/);
+  expect(summary).toBe(screen.getByTestId('chart-summary'));
+  expect(screen.getAllByRole('button', { name: /2026/ })).toHaveLength(12);
+  expect(summary.children).toHaveLength(0);
+});
+
+test('the initial month follows the account timezone once /me arrives', async () => {
+  // 2026-12-31 20:00Z is already 2027-01-01 in Auckland.
+  jest.setSystemTime(new Date('2026-12-31T20:00:00Z'));
+  useSession.setState({ status: 'signedIn', token: 'tok' });
+  const calls = mockApi({
+    'GET /me': { body: { data: fixtures.user({ timezone: 'Pacific/Auckland' }) } },
+    'GET /stats': ({ path }) => ({ body: fixtures.stats({ year: Number(new URLSearchParams(path.split('?')[1]).get('year')) }) }),
+  });
+  await renderWithProviders(<StatsScreen />);
+
+  expect(await screen.findByText('Spent in 2027 so far')).toBeTruthy();
+  expect(calls.some((c) => c.path === '/stats?year=2027')).toBe(true);
+  useSession.setState({ status: 'loading', token: null });
 });
 
 test('pressing a bar jumps to that month', async () => {
