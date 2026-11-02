@@ -25,6 +25,7 @@ import { VerifyEmailBanner } from '@/components/VerifyEmailBanner';
 import { SUPPORTED_LOCALES } from '@/i18n';
 import { currencyOptions } from '@/lib/currencies';
 import { deviceTimeZone } from '@/lib/dates';
+import { isValidTimeZone, knownTimeZones } from '@/lib/timezones';
 import { disablePush, enablePush, isPushEnabled, isPushSupported, type PushResult } from '@/push';
 
 const REMINDERS_ROUTE = '/settings/reminders';
@@ -75,8 +76,9 @@ function TimezoneEditor({ visible, current, onClose, onPick }: { visible: boolea
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const device = deviceTimeZone();
-  const supported = (Intl as { supportedValuesOf?: (key: string) => string[] }).supportedValuesOf?.('timeZone') ?? [];
-  const zones = [...new Set([current, device, ...supported])].filter((z) => z.toLowerCase().includes(query.toLowerCase()));
+  const zones = [...new Set([current, device, ...knownTimeZones()])].filter((z) => z.toLowerCase().includes(query.toLowerCase()));
+  const typed = query.trim();
+  const offerTyped = typed !== '' && isValidTimeZone(typed) && !zones.includes(typed);
   const close = () => {
     setQuery('');
     onClose();
@@ -97,6 +99,16 @@ function TimezoneEditor({ visible, current, onClose, onPick }: { visible: boolea
           />
         ) : null}
         <TextField label={t('common.search')} value={query} onChangeText={setQuery} autoCapitalize="none" autoCorrect={false} />
+        {offerTyped ? (
+          <Button
+            label={t('settings.useZone', { zone: typed })}
+            variant="secondary"
+            onPress={() => {
+              onPick(typed);
+              close();
+            }}
+          />
+        ) : null}
         <FlatList
           data={zones}
           keyExtractor={(z) => z}
@@ -187,15 +199,20 @@ function RemindersGroup() {
   const toggle = async (on: boolean) => {
     setBusy(true);
     setProblem(null);
-    if (on) {
-      const result = await enablePush();
-      setEnabled(result === 'enabled');
-      if (result !== 'enabled') setProblem(result);
-    } else {
-      await disablePush();
-      setEnabled(false);
+    try {
+      if (on) {
+        const result = await enablePush();
+        setEnabled(result === 'enabled');
+        if (result !== 'enabled') setProblem(result);
+      } else {
+        await disablePush();
+        setEnabled(false);
+      }
+    } catch {
+      setProblem('failed');
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   };
 
   return (

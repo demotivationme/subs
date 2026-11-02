@@ -290,7 +290,8 @@
     "pushDevice": "Push notifications on this device",
     "timezoneLabel": "Timezone",
     "nameTitle": "Your name",
-    "verified": "Verified"
+    "verified": "Verified",
+    "useZone": "Use {{zone}}"
   },
   "push": {
     "introTitle": "Payment reminders",

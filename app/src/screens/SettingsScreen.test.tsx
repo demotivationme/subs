@@ -133,3 +133,49 @@ test('opens category management', async () => {
   await fireEvent.press(await screen.findByRole('link', { name: 'Manage categories' }));
   expect(router.push).toHaveBeenCalledWith('/categories');
 });
+
+describe('timezone editor without Intl.supportedValuesOf', () => {
+  const intl = Intl as { supportedValuesOf?: unknown };
+  let original: unknown;
+  beforeEach(() => {
+    original = intl.supportedValuesOf;
+    intl.supportedValuesOf = undefined;
+  });
+  afterEach(() => {
+    intl.supportedValuesOf = original;
+  });
+
+  test('lists curated zones and selecting one saves it', async () => {
+    const { calls, client } = setup();
+    await renderWithProviders(<SettingsScreen />, client);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Timezone' }));
+    await fireEvent.changeText(screen.getByLabelText('Search'), 'Tokyo');
+    await fireEvent.press(screen.getByRole('button', { name: 'Asia/Tokyo' }));
+    await waitFor(() => expect(patched(calls, 'timezone', 'Asia/Tokyo')).toBe(true));
+  });
+
+  test('offers a typed valid zone, but not an invalid one', async () => {
+    const { calls, client } = setup();
+    await renderWithProviders(<SettingsScreen />, client);
+    await fireEvent.press(await screen.findByRole('button', { name: 'Timezone' }));
+
+    await fireEvent.changeText(screen.getByLabelText('Search'), 'Mars/Base');
+    expect(screen.queryByRole('button', { name: /^Use Mars/ })).toBeNull();
+
+    await fireEvent.changeText(screen.getByLabelText('Search'), 'America/Halifax');
+    await fireEvent.press(screen.getByRole('button', { name: 'Use America/Halifax' }));
+    await waitFor(() => expect(patched(calls, 'timezone', 'America/Halifax')).toBe(true));
+  });
+});
+
+test('the push switch recovers when enabling throws', async () => {
+  const { client } = setup();
+  await renderWithProviders(<SettingsScreen />, client);
+  const toggle = await screen.findByLabelText('Push notifications on this device');
+
+  jest.mocked(enablePush).mockRejectedValueOnce(new Error('boom'));
+  await fireEvent(toggle, 'valueChange', true);
+
+  expect(await screen.findByText("Couldn't turn on notifications. Please try again.")).toBeTruthy();
+  await waitFor(() => expect(screen.getByLabelText('Push notifications on this device').props.disabled).toBeFalsy());
+});
