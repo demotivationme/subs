@@ -22,7 +22,12 @@ export const useSession = create<SessionState>()((set, get) => ({
   token: null,
 
   async hydrate() {
-    const token = await tokenStorage.get();
+    let token: string | null = null;
+    try {
+      token = await tokenStorage.get();
+    } catch {
+      // A keychain/storage failure must not leave the app on the splash screen.
+    }
     set(token ? { token, status: 'signedIn' } : { token: null, status: 'signedOut' });
   },
 
@@ -40,6 +45,9 @@ export const useSession = create<SessionState>()((set, get) => ({
 
 configureApi({
   getToken: () => useSession.getState().token,
-  onUnauthorized: () => void useSession.getState().signOut(),
+  // Ignore a 401 for a token that is no longer current (signed out and back in meanwhile).
+  onUnauthorized: (sentToken) => {
+    if (sentToken === useSession.getState().token) void useSession.getState().signOut();
+  },
   getLocale: () => i18n.language,
 });

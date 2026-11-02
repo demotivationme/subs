@@ -6,7 +6,7 @@ type Query = Record<string, string | number | null | undefined>;
 
 type Hooks = {
   getToken: () => string | null;
-  onUnauthorized: () => void;
+  onUnauthorized: (sentToken: string) => void;
   getLocale: () => string;
 };
 
@@ -50,7 +50,7 @@ export async function api<T>(path: string, options: { method?: Method; body?: un
 
   if (!response.ok) {
     // Only a request that carried a token can mean "your session ended".
-    if (response.status === 401 && token) hooks.onUnauthorized();
+    if (response.status === 401 && token) hooks.onUnauthorized(token);
     throw new ApiError(response.status, data?.message ?? response.statusText, data?.errors ?? {});
   }
 

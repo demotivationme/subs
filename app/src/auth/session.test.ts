@@ -43,3 +43,24 @@ test('an API 401 signs the session out', async () => {
 
   await waitFor(() => expect(useSession.getState().status).toBe('signedOut'));
 });
+
+test('hydrate signs out when secure storage throws', async () => {
+  jest.mocked(SecureStore.getItemAsync).mockRejectedValueOnce(new Error('keychain'));
+
+  await useSession.getState().hydrate();
+
+  expect(useSession.getState()).toMatchObject({ status: 'signedOut', token: null });
+});
+
+test('a late 401 for a replaced token does not sign out the new session', async () => {
+  await useSession.getState().signIn('old');
+  let resolveFetch!: (r: Response) => void;
+  global.fetch = jest.fn(() => new Promise<Response>((resolve) => (resolveFetch = resolve)));
+
+  const pending = api('/me').catch(() => undefined);
+  await useSession.getState().signIn('new');
+  resolveFetch({ ok: false, status: 401, statusText: 'x', json: async () => ({ message: 'Unauthenticated.' }) } as Response);
+  await pending;
+
+  expect(useSession.getState()).toMatchObject({ status: 'signedIn', token: 'new' });
+});

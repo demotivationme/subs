@@ -51,6 +51,7 @@ test('a 401 on an authenticated request signs out', async () => {
   respond(401, { message: 'Unauthenticated.' });
   await expect(api('/me')).rejects.toBeInstanceOf(ApiError);
   expect(onUnauthorized).toHaveBeenCalledTimes(1);
+  expect(onUnauthorized).toHaveBeenCalledWith('tok');
 });
 
 test('a 401 without a token (e.g. a stale login form) does not', async () => {
