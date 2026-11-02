@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Service;
+use App\Services\ServiceLogoStorage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -36,13 +37,20 @@ class ServiceCatalogSeeder extends Seeder
 
     public function run(): void
     {
+        $logos = new ServiceLogoStorage;
         $categories = Category::query()->whereNull('user_id')->pluck('id', 'key');
 
         foreach (self::SERVICES as $name => $categoryKey) {
-            Service::query()->updateOrCreate(
-                ['user_id' => null, 'slug' => Str::slug($name)],
-                ['name' => $name, 'default_category_id' => $categories[$categoryKey]],
-            );
+            $slug = Str::slug($name);
+            $attributes = ['name' => $name, 'default_category_id' => $categories[$categoryKey]];
+
+            // Logos are the committed Simple Icons tiles in database/seeders/logos; no file, no logo.
+            $file = __DIR__.'/logos/'.$slug.'.svg';
+            if (is_file($file)) {
+                $attributes['logo_path'] = $logos->putCatalog($slug, (string) file_get_contents($file));
+            }
+
+            Service::query()->updateOrCreate(['user_id' => null, 'slug' => $slug], $attributes);
         }
     }
 }
