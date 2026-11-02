@@ -17,7 +17,10 @@ beforeEach(() => {
     ],
   });
 });
-afterEach(() => jest.useRealTimers());
+afterEach(() => {
+  jest.useRealTimers();
+  useSession.setState({ status: 'loading', token: null });
+});
 
 function withMe() {
   const client = createTestQueryClient();
@@ -121,7 +124,9 @@ test('the chart summary is its own element and every month bar stays a separate 
   const summary = screen.getByLabelText(/^Spend per month in 2026/);
   expect(summary).toBe(screen.getByTestId('chart-summary'));
   expect(screen.getAllByRole('button', { name: /2026/ })).toHaveLength(12);
-  expect(summary.children).toHaveLength(0);
+  expect(within(summary).getByText('€880.67')).toBeTruthy();
+  expect(within(summary).queryAllByRole('button')).toHaveLength(0);
+  for (const bar of screen.getAllByRole('button', { name: /2026/ })) expect(within(summary).queryByLabelText(bar.props.accessibilityLabel)).toBeNull();
 });
 
 test('the initial month follows the account timezone once /me arrives', async () => {
@@ -136,7 +141,6 @@ test('the initial month follows the account timezone once /me arrives', async ()
 
   expect(await screen.findByText('Spent in 2027 so far')).toBeTruthy();
   expect(calls.some((c) => c.path === '/stats?year=2027')).toBe(true);
-  useSession.setState({ status: 'loading', token: null });
 });
 
 test('pressing a bar jumps to that month', async () => {

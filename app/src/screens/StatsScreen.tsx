@@ -83,16 +83,8 @@ function YearChart({ stats, currentMonth, locale, money, onSelect }: {
   const { t } = useTranslation();
   const today = Number(stats.today.slice(0, 4));
   const max = Math.max(1, ...stats.months.map((m) => m.paid + m.expected));
-  const expectedTotal = stats.projected_year;
   return (
     <View className="gap-3">
-      {/* Separate from the bars so each bar stays individually focusable for screen readers. */}
-      <View
-        testID="chart-summary"
-        accessible
-        accessibilityRole={SUMMARY}
-        accessibilityLabel={t('stats.chartLabel', { year: stats.year, paid: money(stats.spent_so_far), projected: money(expectedTotal) })}
-      />
       <View className="flex-row items-end gap-1.5" style={{ height: CHART_HEIGHT + 28 }}>
         {stats.months.map((m) => {
           const total = m.paid + m.expected;
@@ -296,7 +288,13 @@ export default function StatsScreen() {
 
       {mode === YEAR ? (
         <Card>
-          <View className="gap-1">
+          {/* The chart summary sits on the visible totals; the bars stay separate, individually focusable siblings. */}
+          <View
+            testID="chart-summary"
+            accessible
+            accessibilityRole={SUMMARY}
+            accessibilityLabel={t('stats.chartLabel', { year, paid: money(stats.spent_so_far), projected: money(stats.projected_year) })}
+            className="gap-1">
             <AppText variant="muted">{t('stats.spentIn', { year })}</AppText>
             <AppText numeric className="font-display text-[36px] leading-10">{money(stats.spent_so_far)}</AppText>
             <AppText variant="muted">{t('stats.onTrack', { amount: money(stats.projected_year) })}</AppText>
