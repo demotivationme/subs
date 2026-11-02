@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, Text } from 'react-native';
+import { ActivityIndicator, Pressable, Text, useColorScheme } from 'react-native';
 
 import { cn } from '@/lib/cn';
 
@@ -29,6 +29,14 @@ type Props = {
 
 export function Button({ label: text, onPress, variant = 'primary', loading = false, disabled = false, className }: Props) {
   const inactive = disabled || loading;
+  const dark = useColorScheme() === 'dark';
+  // primary/danger sit on a solid fill (white spinner); secondary/ghost use the ink / accent token colors
+  const spinner =
+    variant === 'primary' || variant === 'danger'
+      ? '#FFFFFF'
+      : variant === 'ghost'
+        ? dark ? '#34C08E' : '#0B7A57'
+        : dark ? '#F1F3F5' : '#14171C';
   return (
     <Pressable
       accessibilityRole="button"
@@ -38,7 +46,7 @@ export function Button({ label: text, onPress, variant = 'primary', loading = fa
       onPress={onPress}
       className={cn('h-12 flex-row items-center justify-center rounded-xl px-4', box[variant], inactive && 'opacity-[0.45]', className)}>
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' || variant === 'danger' ? '#FFFFFF' : undefined} />
+        <ActivityIndicator color={spinner} />
       ) : (
         <Text className={cn('font-semibold text-base', label[variant])}>{text}</Text>
       )}

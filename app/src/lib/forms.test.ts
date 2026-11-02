@@ -1,20 +1,23 @@
 import { ApiError, NetworkError } from '@/api/errors';
 
-import { errorMessage, translateError } from './errors';
+import { applyServerErrors } from './forms';
 
-test('maps errors to messages people can act on', () => {
-  expect(errorMessage(new NetworkError())).toBe("You're offline or the server can't be reached.");
-  expect(errorMessage(new ApiError(429, 'Too Many Attempts.'))).toBe('Too many attempts. Please wait a minute and try again.');
-  expect(errorMessage(new ApiError(404, 'No query results'))).toBe('Not found.');
-  expect(errorMessage(new ApiError(403, 'You can track up to 10 subscriptions on the free plan.'))).toBe(
-    'You can track up to 10 subscriptions on the free plan.',
-  );
-  expect(errorMessage(new ApiError(500, 'Server Error'))).toBe('Something went wrong. Please try again.');
-  expect(errorMessage(new Error('boom'))).toBe('Something went wrong. Please try again.');
+type Values = { email: string; serviceName: string };
+
+test('puts 422 messages under matching or mapped fields', () => {
+  const setError = jest.fn();
+  const error = new ApiError(422, 'x', { email: ['Taken.'], service_name: ['Too long.'] });
+
+  const handled = applyServerErrors<Values>(error, setError, ['email'], { service_name: 'serviceName' });
+
+  expect(handled).toBe(true);
+  expect(setError).toHaveBeenCalledWith('email', { type: 'server', message: 'Taken.' });
+  expect(setError).toHaveBeenCalledWith('serviceName', { type: 'server', message: 'Too long.' });
 });
 
-test('translateError renders keys and passes server text through', () => {
-  expect(translateError('validation.required')).toBe('This field is required.');
-  expect(translateError('The email has already been taken.')).toBe('The email has already been taken.');
-  expect(translateError(undefined)).toBeUndefined();
+test('reports unhandled when nothing maps or it is not a 422', () => {
+  const setError = jest.fn();
+  expect(applyServerErrors<Values>(new ApiError(422, 'x', { timezone: ['Bad.'] }), setError, ['email'])).toBe(false);
+  expect(applyServerErrors<Values>(new NetworkError(), setError, ['email'])).toBe(false);
+  expect(setError).not.toHaveBeenCalled();
 });
