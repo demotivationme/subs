@@ -8,6 +8,8 @@ import { enablePush, isPushEnabled } from '@/push';
 import { useNotificationTaps } from '@/push/useNotificationTaps';
 
 const MODAL = 'modal';
+// The add flow draws its own header (progress, Back, Close).
+const NEW_SUBSCRIPTION_OPTIONS = { presentation: MODAL, headerShown: false } as const;
 
 export default function AppLayout() {
   const { t } = useTranslation();
@@ -28,6 +30,7 @@ export default function AppLayout() {
   return (
     <Stack screenOptions={{ headerBackTitle: t('common.back') }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="subscriptions/new" options={NEW_SUBSCRIPTION_OPTIONS} />
       <Stack.Screen name="push-intro" options={{ title: t('push.introTitle'), presentation: MODAL }} />
     </Stack>
   );
