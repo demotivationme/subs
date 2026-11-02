@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Onboarding 1 of 4</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; justify-content: flex-end; padding: 16px 12px 0">
+    <a href="Onboarding4.dc.html" style="min-height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 15px; font-weight: 600; color: #5B6370; text-decoration: none">Skip</a>
+  </header>
+
+  <div aria-hidden="true" style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center">
+    <div style="position: absolute; left: 34px; top: 46px; display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 999px; padding: 8px 14px 8px 8px; box-shadow: 0 6px 20px rgba(20,23,28,0.08); transform: rotate(-5deg)"><dc-import name="ServiceIcon" brand="netflix" size="28" hint-size="28px,28px"></dc-import><span style="font-weight: 600; font-size: 14px">Netflix</span><span class="num" style="font-size: 14px; color: #5B6370">€12.99</span></div>
+    <div style="position: absolute; right: 26px; top: 96px; display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 999px; padding: 8px 14px 8px 8px; box-shadow: 0 6px 20px rgba(20,23,28,0.08); transform: rotate(4deg)"><dc-import name="ServiceIcon" brand="spotify" size="28" hint-size="28px,28px"></dc-import><span style="font-weight: 600; font-size: 14px">Spotify</span><span class="num" style="font-size: 14px; color: #5B6370">€10.99</span></div>
+    <div style="position: absolute; left: 50px; bottom: 54px; display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 999px; padding: 8px 14px 8px 8px; box-shadow: 0 6px 20px rgba(20,23,28,0.08); transform: rotate(3deg)"><dc-import name="ServiceIcon" brand="icloud" size="28" hint-size="28px,28px"></dc-import><span style="font-weight: 600; font-size: 14px">iCloud+</span><span class="num" style="font-size: 14px; color: #5B6370">€2.99</span></div>
+    <div style="position: absolute; right: 38px; bottom: 30px; display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 999px; padding: 8px 14px 8px 8px; box-shadow: 0 6px 20px rgba(20,23,28,0.08); transform: rotate(-4deg)"><span style="width: 28px; height: 28px; border-radius: 9px; background: #EEF0F3; color: #14171C; display: flex; align-items: center; justify-content: center; font: 700 13px Manrope, sans-serif">A</span><span style="font-weight: 600; font-size: 14px">Adobe</span><span class="num" style="font-size: 14px; color: #5B6370">€19.99</span></div>
+    <div style="width: 250px; background: {{accent}}; color: #FFFFFF; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 18px 40px rgba(11,122,87,0.28)">
+      <span style="font-size: 13px; font-weight: 500; opacity: 0.9">You spend per month</span>
+      <span class="num" style="font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1">€46.96</span>
+      <span class="num" style="font-size: 13px; opacity: 0.9">€563.52 per year · 4 subscriptions</span>
+    </div>
+  </div>
+
+  <section style="padding: 0 28px; display: flex; flex-direction: column; gap: 12px">
+    <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 30px; line-height: 1.15">All your subscriptions, one number.</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5B6370">Add what you pay for and Subs adds it up — per month and per year, in your own currency.</p>
+  </section>
+
+  <footer style="display: flex; align-items: center; justify-content: space-between; padding: 28px 28px 36px">
+    <div aria-label="Step 1 of 4" role="img" style="display: flex; gap: 6px">
+      <span style="width: 22px; height: 8px; border-radius: 4px; background: {{accent}}"></span>
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #D5D9DF"></span>
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #D5D9DF"></span>
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #D5D9DF"></span>
+    </div>
+    <a href="Onboarding2.dc.html" style="height: 52px; padding: 0 28px; border-radius: 14px; background: #14171C; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px">Next<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

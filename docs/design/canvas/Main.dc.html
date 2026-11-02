@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs design system</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1180px; box-sizing: border-box; padding: 64px; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+
+  <header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5B6370">Subs · Design system</p>
+      <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 48px; line-height: 1.1">Clear Ledger</h1>
+      <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5B6370; max-width: 620px">Calm neutral ground, white cards, one deep emerald accent. Numbers are the hero: big, tabular, easy to compare. Token names below map 1:1 to the app's Tailwind theme.</p>
+    </div>
+    <div style="display: flex; gap: 12px">
+      <div style="width: 56px; height: 56px; border-radius: 16px; background: {{accent}}"></div>
+      <div style="width: 56px; height: 56px; border-radius: 16px; background: #14171C"></div>
+      <div style="width: 56px; height: 56px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E6EA"></div>
+    </div>
+  </header>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 20px">Colors — light</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #F5F6F8; border: 1px solid #E3E6EA"></div><span style="font-size: 13px; font-weight: 600">ground</span><span class="num" style="font-size: 12px; color: #5B6370">#F5F6F8</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E3E6EA"></div><span style="font-size: 13px; font-weight: 600">surface</span><span class="num" style="font-size: 12px; color: #5B6370">#FFFFFF</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #EEF0F3"></div><span style="font-size: 13px; font-weight: 600">surface-2</span><span class="num" style="font-size: 12px; color: #5B6370">#EEF0F3</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #E3E6EA"></div><span style="font-size: 13px; font-weight: 600">line</span><span class="num" style="font-size: 12px; color: #5B6370">#E3E6EA</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #14171C"></div><span style="font-size: 13px; font-weight: 600">ink</span><span class="num" style="font-size: 12px; color: #5B6370">#14171C</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #5B6370"></div><span style="font-size: 13px; font-weight: 600">muted</span><span class="num" style="font-size: 12px; color: #5B6370">#5B6370</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: {{accent}}"></div><span style="font-size: 13px; font-weight: 600">accent</span><span class="num" style="font-size: 12px; color: #5B6370">#0B7A57</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #E2F3EB"></div><span style="font-size: 13px; font-weight: 600">accent-soft</span><span class="num" style="font-size: 12px; color: #5B6370">#E2F3EB</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #FDF1DD"></div><span style="font-size: 13px; font-weight: 600">warn-soft</span><span class="num" style="font-size: 12px; color: #5B6370">#FDF1DD</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #9A4A06"></div><span style="font-size: 13px; font-weight: 600">warn</span><span class="num" style="font-size: 12px; color: #5B6370">#9A4A06</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #B42F25"></div><span style="font-size: 13px; font-weight: 600">danger</span><span class="num" style="font-size: 12px; color: #5B6370">#B42F25</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #D9342B"></div><span style="font-size: 13px; font-weight: 600">badge</span><span class="num" style="font-size: 12px; color: #5B6370">#D9342B</span></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 20px">Colors — dark</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #0E1013"></div><span style="font-size: 13px; font-weight: 600">ground</span><span class="num" style="font-size: 12px; color: #5B6370">#0E1013</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #171A1F"></div><span style="font-size: 13px; font-weight: 600">surface</span><span class="num" style="font-size: 12px; color: #5B6370">#171A1F</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #20242B"></div><span style="font-size: 13px; font-weight: 600">surface-2</span><span class="num" style="font-size: 12px; color: #5B6370">#20242B</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #2A2F37"></div><span style="font-size: 13px; font-weight: 600">line</span><span class="num" style="font-size: 12px; color: #5B6370">#2A2F37</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #F1F3F5; border: 1px solid #E3E6EA"></div><span style="font-size: 13px; font-weight: 600">ink</span><span class="num" style="font-size: 12px; color: #5B6370">#F1F3F5</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #9AA3AF"></div><span style="font-size: 13px; font-weight: 600">muted</span><span class="num" style="font-size: 12px; color: #5B6370">#9AA3AF</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #34C08E"></div><span style="font-size: 13px; font-weight: 600">accent</span><span class="num" style="font-size: 12px; color: #5B6370">#34C08E</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 12px; background: #12382A"></div><span style="font-size: 13px; font-weight: 600">accent-soft</span><span class="num" style="font-size: 12px; color: #5B6370">#12382A</span></div>
+      </div>
+      <h2 style="margin: 16px 0 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 20px">Category palette</h2>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #0B7A57"></span>cat-1</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #2F6FDB"></span>cat-2</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #E39B2B"></span>cat-3</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #7A5AE0"></span>cat-4</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D2497A"></span>cat-5</span>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #9AA3AF"></span>cat-rest</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px">
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 20px">Type</h2>
+      <div class="num" style="font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1">€87.34</div>
+      <span style="font-size: 12px; color: #5B6370">display · Manrope 800 · 40/44 · tabular</span>
+      <div style="font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 28px">Dashboard</div>
+      <span style="font-size: 12px; color: #5B6370">title · Manrope 700 · 28</span>
+      <div style="font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 18px">Next 30 days</div>
+      <span style="font-size: 12px; color: #5B6370">heading · Manrope 700 · 18</span>
+      <div style="font-size: 16px">Netflix renews tomorrow</div>
+      <span style="font-size: 12px; color: #5B6370">body · Inter 400 · 16/24</span>
+      <div style="font-size: 13px; font-weight: 500; color: #5B6370">Video Streaming</div>
+      <span style="font-size: 12px; color: #5B6370">label · Inter 500 · 13</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 20px">Buttons &amp; chips</h2>
+      <button type="button" style="height: 48px; border: 0; border-radius: 12px; background: {{accent}}; color: #FFFFFF; font: 600 16px Inter, sans-serif">Save subscription</button>
+      <button type="button" style="height: 48px; border: 1px solid #E3E6EA; border-radius: 12px; background: #FFFFFF; color: #14171C; font: 600 16px Inter, sans-serif">Customize</button>
+      <button type="button" style="height: 48px; border: 0; border-radius: 12px; background: #B42F25; color: #FFFFFF; font: 600 16px Inter, sans-serif">Delete subscription</button>
+      <button type="button" disabled style="height: 48px; border: 0; border-radius: 12px; background: {{accent}}; color: #FFFFFF; font: 600 16px Inter, sans-serif; opacity: 0.45">Disabled</button>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap">
+        <button type="button" aria-pressed="true" style="height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: #14171C; color: #FFFFFF; font: 500 14px Inter, sans-serif">Next payment</button>
+        <button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; border: 1px solid #E3E6EA; border-radius: 999px; background: #FFFFFF; color: #14171C; font: 500 14px Inter, sans-serif">Price</button>
+        <button type="button" aria-pressed="false" style="height: 36px; padding: 0 14px; border: 1px solid #E3E6EA; border-radius: 999px; background: #FFFFFF; color: #14171C; font: 500 14px Inter, sans-serif">Name</button>
+      </div>
+      <span style="font-size: 12px; color: #5B6370">radius: buttons &amp; fields 12 · cards 20 · chips pill · touch targets ≥ 44</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 20px">Fields, rows, banners</h2>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="ds-amount" style="font-size: 13px; font-weight: 500; color: #5B6370">Amount</label>
+        <input id="ds-amount" value="12,99" style="height: 48px; box-sizing: border-box; border: 1px solid #E3E6EA; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #14171C">
+        <span style="font-size: 13px; color: #5B6370">Saved as €12.99</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="ds-email" style="font-size: 13px; font-weight: 500; color: #5B6370">Email</label>
+        <input id="ds-email" value="ana@" style="height: 48px; box-sizing: border-box; border: 1.5px solid #B42F25; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #14171C">
+        <span style="font-size: 13px; color: #B42F25">Enter a valid email address.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border-radius: 16px; padding: 12px 14px">
+        <dc-import name="ServiceIcon" brand="netflix" size="40" hint-size="40px,40px"></dc-import>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Netflix</span><span style="font-size: 13px; color: #5B6370">Next: Nov 15</span></div>
+        <span class="num" style="font-weight: 600">€12.99</span>
+      </div>
+      <div role="alert" style="display: flex; gap: 10px; align-items: flex-start; background: #FDF1DD; border-radius: 14px; padding: 12px 14px; color: #5A2E04; font-size: 14px; line-height: 1.45">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9A4A06" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+        <span>Verify your email to receive email reminders.</span>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"$preview":{"width":1280,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

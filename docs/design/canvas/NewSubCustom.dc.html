@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Add your own service</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 0 8px">
+    <a href="NewSub1.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5B6370"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+    <div role="progressbar" aria-label="Step 1 of 3" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1" style="flex: 1; display: flex; gap: 6px">
+      <span style="flex: 1; height: 4px; border-radius: 2px; background: {{accent}}"></span>
+      <span style="flex: 1; height: 4px; border-radius: 2px; background: #D5D9DF"></span>
+      <span style="flex: 1; height: 4px; border-radius: 2px; background: #D5D9DF"></span>
+    </div>
+    <a href="Subscriptions.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5B6370"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></a>
+  </header>
+
+  <main style="flex: 1; padding: 8px 20px 16px; display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 28px; line-height: 1.15">Add your own service</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5B6370">We don't have “Gym Pro” yet. Add it for yourself — only you will see it.</p>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px">
+      <div style="position: relative">
+        <span aria-hidden="true" style="width: 80px; height: 80px; border-radius: 24px; background: {{tile}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font: 800 34px Manrope, sans-serif">G</span>
+        <button type="button" aria-label="Upload an icon" style="position: absolute; right: -8px; bottom: -8px; width: 36px; height: 36px; border-radius: 18px; border: 3px solid #FFFFFF; background: #14171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></button>
+      </div>
+      <span style="font-weight: 700; font-size: 17px">Gym Pro</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="own-name" style="font-size: 13px; font-weight: 600; color: #5B6370">Name</label>
+      <input id="own-name" value="Gym Pro" style="height: 48px; box-sizing: border-box; border: 1px solid #E3E6EA; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #14171C">
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 13px; font-weight: 600; color: #5B6370">Icon</span>
+      <button type="button" style="min-height: 52px; border: 1.5px dashed #D5D9DF; border-radius: 14px; background: #FFFFFF; font: 600 15px Inter, sans-serif; color: #14171C; display: flex; align-items: center; justify-content: center; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="m21 15-5-5L5 21"></path></svg>Upload an image</button>
+      <span style="font-size: 13px; color: #5B6370">or pick a color for a letter icon</span>
+      <div role="radiogroup" aria-label="Icon color" style="display: flex; gap: 10px">
+        <button type="button" role="radio" aria-checked="true" aria-label="Emerald" style="width: 40px; height: 40px; border-radius: 20px; border: 3px solid #FFFFFF; background: #0B7A57; box-shadow: 0 0 0 2px #14171C; padding: 0"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Blue" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #2F5BD3; padding: 0"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Violet" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #6D4ED8; padding: 0"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Pink" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #C23A6E; padding: 0"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Orange" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #C2410C; padding: 0"></button>
+        <button type="button" role="radio" aria-checked="false" aria-label="Graphite" style="width: 40px; height: 40px; border-radius: 20px; border: 0; background: #3A414B; padding: 0"></button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.45; color: #5B6370">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span>Private to your account. We may add popular services to the catalog for everyone.</span>
+    </div>
+  </main>
+
+  <footer style="padding: 12px 20px 30px">
+    <a href="NewSub2.dc.html" style="height: 54px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Continue</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"tile":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#6D4ED8","#C23A6E","#C2410C","#3A414B"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57', tile: this.props.tile ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

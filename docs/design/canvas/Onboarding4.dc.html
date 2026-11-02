@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Onboarding 4 of 4</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; justify-content: flex-start; padding: 16px 12px 0">
+    <a href="Onboarding3.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5B6370"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+  </header>
+
+  <div aria-hidden="true" style="flex: 1; display: flex; align-items: center; justify-content: center">
+    <div style="width: 300px; display: flex; flex-direction: column; gap: 10px">
+      <div style="background: {{accent}}; color: #FFFFFF; border-radius: 22px; padding: 16px 18px; display: flex; justify-content: space-between; align-items: flex-end">
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; opacity: 0.9">Now per month</span><span class="num" style="font: 800 32px Manrope, sans-serif">€37.97</span></div>
+        <span class="num" style="background: rgba(255,255,255,0.18); border-radius: 999px; padding: 5px 10px; font-size: 13px; font-weight: 600">−€8.99</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 10px">
+        <dc-import name="ServiceIcon" brand="netflix" size="32" hint-size="32px,32px"></dc-import>
+        <span style="flex: 1; font-weight: 600; font-size: 15px">Netflix</span><span class="num" style="font-weight: 600">€12.99</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 10px">
+        <dc-import name="ServiceIcon" brand="spotify" size="32" hint-size="32px,32px"></dc-import>
+        <span style="flex: 1; font-weight: 600; font-size: 15px">Spotify</span><span class="num" style="font-weight: 600">€10.99</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; border: 1.5px dashed #D5D9DF; opacity: 0.8">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: #EEF0F3; color: #5B6370; display: flex; align-items: center; justify-content: center; font: 700 14px Manrope, sans-serif">D</span>
+        <span style="flex: 1; font-weight: 600; font-size: 15px; text-decoration: line-through; color: #5B6370">Disney+</span>
+        <span style="font-size: 12px; font-weight: 600; color: #5A2E04; background: #FDF1DD; border-radius: 999px; padding: 3px 9px">Cancelled</span>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding: 0 28px; display: flex; flex-direction: column; gap: 12px">
+    <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 30px; line-height: 1.15">Keep only what you use.</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5B6370">See where the money goes, spot what you forgot about, and watch your monthly total drop.</p>
+  </section>
+
+  <footer style="display: flex; flex-direction: column; gap: 6px; padding: 28px 24px 30px">
+    <div aria-label="Step 4 of 4" role="img" style="display: flex; gap: 6px; justify-content: center; margin-bottom: 14px">
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #D5D9DF"></span>
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #D5D9DF"></span>
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #D5D9DF"></span>
+      <span style="width: 22px; height: 8px; border-radius: 4px; background: {{accent}}"></span>
+    </div>
+    <a href="Register.dc.html" style="height: 54px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Get started</a>
+    <a href="Login.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; text-decoration: none; color: #14171C">I already have an account</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

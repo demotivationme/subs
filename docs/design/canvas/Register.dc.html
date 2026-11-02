@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Create account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; padding: 16px 12px 0">
+    <a href="Onboarding4.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #5B6370"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+  </header>
+
+  <div style="padding: 8px 24px 0; display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 30px; line-height: 1.15">Create your account</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5B6370">Takes less than a minute. Your first subscription is next.</p>
+  </div>
+
+  <form style="flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="reg-name" style="font-size: 13px; font-weight: 500; color: #5B6370">Name</label>
+      <input id="reg-name" value="Ana" autocomplete="name" style="height: 48px; box-sizing: border-box; border: 1px solid #E3E6EA; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #14171C">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="reg-email" style="font-size: 13px; font-weight: 500; color: #5B6370">Email</label>
+      <input id="reg-email" type="email" value="ana@example.com" autocomplete="email" style="height: 48px; box-sizing: border-box; border: 1.5px solid {{accent}}; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font: 400 16px Inter, sans-serif; color: #14171C">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="reg-password" style="font-size: 13px; font-weight: 500; color: #5B6370">Password</label>
+      <div style="position: relative; display: flex">
+        <input id="reg-password" type="password" value="" autocomplete="new-password" style="flex: 1; height: 48px; box-sizing: border-box; border: 1px solid #E3E6EA; border-radius: 12px; background: #FFFFFF; padding: 0 52px 0 14px; font: 400 16px Inter, sans-serif; color: #14171C">
+        <button type="button" aria-label="Show password" style="position: absolute; right: 2px; top: 2px; width: 44px; height: 44px; border: 0; background: transparent; color: #5B6370; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+      </div>
+      <span style="font-size: 13px; color: #5B6370">At least 8 characters</span>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FFFFFF; border-radius: 14px; padding: 12px 14px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 13px; color: #5B6370">Totals shown in</span>
+        <span style="font-weight: 600">EUR · Europe/Berlin</span>
+      </div>
+      <button type="button" style="height: 36px; border: 0; background: transparent; color: {{accent}}; font: 600 14px Inter, sans-serif; padding: 0 4px">Change</button>
+    </div>
+
+    <button type="submit" style="height: 54px; border: 0; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font: 600 17px Inter, sans-serif; margin-top: 4px">Create account</button>
+  </form>
+
+  <div style="padding: 0 24px 34px; display: flex; justify-content: center; gap: 6px; font-size: 15px; color: #5B6370">
+    <span>Already have an account?</span><a href="Login.dc.html" style="font-weight: 600">Log in</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

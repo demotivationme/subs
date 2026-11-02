@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Default reminders</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; align-items: center; gap: 4px; padding: 16px 12px 0 8px">
+    <a href="Settings.dc.html" aria-label="Back to Settings" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #14171C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a>
+    <span style="font-size: 15px; font-weight: 500; color: #5B6370">Settings</span>
+  </header>
+
+  <main style="flex: 1; padding: 4px 20px 16px; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 28px; line-height: 1.15">Default reminders</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5B6370">Used for every subscription unless you set a custom reminder for it.</p>
+    </div>
+
+    <section aria-label="Reminder 1" style="background: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 13px; font-weight: 600; color: #5B6370">When</span>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap">
+          <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border: 1px solid #E3E6EA; border-radius: 999px; background: #FFFFFF; font: 500 14px Inter, sans-serif; color: #14171C">On the day</button>
+          <button type="button" aria-pressed="true" style="height: 36px; padding: 0 12px; border: 0; border-radius: 999px; background: #14171C; font: 500 14px Inter, sans-serif; color: #FFFFFF">1 day</button>
+          <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border: 1px solid #E3E6EA; border-radius: 999px; background: #FFFFFF; font: 500 14px Inter, sans-serif; color: #14171C">3 days</button>
+          <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border: 1px solid #E3E6EA; border-radius: 999px; background: #FFFFFF; font: 500 14px Inter, sans-serif; color: #14171C">7 days</button>
+          <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border: 1px solid #E3E6EA; border-radius: 999px; background: #FFFFFF; font: 500 14px Inter, sans-serif; color: #14171C">Other…</button>
+        </div>
+        <span style="font-size: 13px; color: #5B6370">before the payment</span>
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <span style="font-size: 13px; font-weight: 600; color: #5B6370">At</span>
+        <button type="button" style="height: 40px; border: 1px solid #E3E6EA; border-radius: 12px; background: #FFFFFF; padding: 0 12px; font: 600 16px Inter, sans-serif; color: #14171C; display: flex; align-items: center; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B6370" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span class="num">09:00</span></button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; font-weight: 600; color: #5B6370; margin-bottom: 4px">How</span>
+        <div style="min-height: 48px; display: flex; align-items: center; gap: 10px">
+          <span id="d-push" style="flex: 1; font-size: 15px">Push notification</span>
+          <button type="button" role="switch" aria-checked="true" aria-labelledby="d-push" style="width: 46px; height: 28px; border: 0; border-radius: 14px; background: {{accent}}; padding: 3px; display: flex; justify-content: flex-end; flex: none"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF"></span></button>
+        </div>
+        <div style="min-height: 48px; display: flex; align-items: center; gap: 10px">
+          <span id="d-inapp" style="flex: 1; font-size: 15px">In-app inbox</span>
+          <button type="button" role="switch" aria-checked="true" aria-labelledby="d-inapp" style="width: 46px; height: 28px; border: 0; border-radius: 14px; background: {{accent}}; padding: 3px; display: flex; justify-content: flex-end; flex: none"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF"></span></button>
+        </div>
+        <div style="min-height: 48px; display: flex; align-items: center; gap: 10px">
+          <span id="d-email" style="flex: 1; font-size: 15px; display: flex; flex-direction: column; gap: 2px">Email<span style="font-size: 12px; color: #5B6370">ana@example.com</span></span>
+          <button type="button" role="switch" aria-checked="false" aria-labelledby="d-email" style="width: 46px; height: 28px; border: 0; border-radius: 14px; background: #D5D9DF; padding: 3px; display: flex; flex: none"><span style="width: 22px; height: 22px; border-radius: 11px; background: #FFFFFF"></span></button>
+        </div>
+      </div>
+    </section>
+
+    <button type="button" style="min-height: 52px; border: 1.5px dashed #D5D9DF; border-radius: 16px; background: transparent; font: 600 15px Inter, sans-serif; color: {{accent}}">+ Add another reminder</button>
+  </main>
+
+  <footer style="padding: 12px 20px 30px">
+    <button type="button" style="width: 100%; height: 54px; border: 0; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font: 600 17px Inter, sans-serif">Save</button>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Dashboard (dark)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#34C08E}a:hover{color:#5ED6A9}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0E1013; color: #F1F3F5; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 8px">
+    <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 28px">Dashboard</h1>
+    <a href="Inbox.dc.html" aria-label="Notifications, 2 unread" style="position: relative; width: 44px; height: 44px; border-radius: 14px; background: #171A1F; display: flex; align-items: center; justify-content: center; color: #F1F3F5">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+      <span class="num" style="position: absolute; top: 6px; right: 6px; min-width: 18px; height: 18px; border-radius: 9px; background: #E5483F; color: #FFFFFF; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px; box-sizing: border-box">2</span>
+    </a>
+  </header>
+
+  <main style="flex: 1; overflow: hidden; padding: 8px 20px 16px; display: flex; flex-direction: column; gap: 16px">
+    <section style="background: {{hero}}; color: #F1F3F5; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 4px; border: 1px solid #1F5A43">
+      <span style="font-size: 14px; font-weight: 500; color: #B9E9D5">You spend per month</span>
+      <span class="num" style="font-family: Manrope, Inter, sans-serif; font-weight: 800; font-size: 44px; line-height: 1.1">€87.34</span>
+      <div style="display: flex; gap: 16px; margin-top: 10px; font-size: 14px">
+        <span class="num" style="background: rgba(255,255,255,0.08); border-radius: 999px; padding: 6px 12px">€1,048.08 / year</span>
+        <span class="num" style="background: rgba(255,255,255,0.08); border-radius: 999px; padding: 6px 12px">9 active</span>
+      </div>
+    </section>
+
+    <section style="background: #171A1F; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 17px">By category</h2>
+      <div role="img" aria-label="Monthly spend by category" style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px">
+        <div style="width: 41%; background: #34C08E"></div>
+        <div style="width: 26%; background: #5B8FEA"></div>
+        <div style="width: 18%; background: #E8A94A"></div>
+        <div style="width: 15%; background: #6B7480"></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #34C08E"></span><span style="flex: 1">Video Streaming</span><span class="num" style="font-weight: 600">€35.80</span><span class="num" style="width: 40px; text-align: right; color: #9AA3AF">41%</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #5B8FEA"></span><span style="flex: 1">Music</span><span class="num" style="font-weight: 600">€22.70</span><span class="num" style="width: 40px; text-align: right; color: #9AA3AF">26%</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #E8A94A"></span><span style="flex: 1">Software &amp; Cloud</span><span class="num" style="font-weight: 600">€15.72</span><span class="num" style="width: 40px; text-align: right; color: #9AA3AF">18%</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #6B7480"></span><span style="flex: 1">Other</span><span class="num" style="font-weight: 600">€13.12</span><span class="num" style="width: 40px; text-align: right; color: #9AA3AF">15%</span></div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 17px">Next 30 days</h2>
+        <a href="Subscriptions.dc.html" style="font-size: 14px; font-weight: 600; text-decoration: none">See all</a>
+      </div>
+      <a href="SubscriptionDetail.dc.html" style="display: flex; align-items: center; gap: 12px; background: #171A1F; border-radius: 16px; padding: 12px 14px; color: #F1F3F5; text-decoration: none">
+        <div style="width: 44px; height: 44px; border-radius: 12px; background: #12382A; color: #34C08E; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1"><span style="font-size: 10px; font-weight: 700">NOV</span><span class="num" style="font: 800 16px Manrope, sans-serif">5</span></div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Netflix</span><span style="font-size: 13px; color: #9AA3AF">Tomorrow</span></div>
+        <span class="num" style="font-weight: 600">€12.99</span>
+      </a>
+      <a href="SubscriptionDetail.dc.html" style="display: flex; align-items: center; gap: 12px; background: #171A1F; border-radius: 16px; padding: 12px 14px; color: #F1F3F5; text-decoration: none">
+        <div style="width: 44px; height: 44px; border-radius: 12px; background: #20242B; color: #F1F3F5; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1"><span style="font-size: 10px; font-weight: 700">NOV</span><span class="num" style="font: 800 16px Manrope, sans-serif">11</span></div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">Spotify</span><span style="font-size: 13px; color: #9AA3AF">In 7 days</span></div>
+        <span class="num" style="font-weight: 600">€10.99</span>
+      </a>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="display: flex; background: #171A1F; border-top: 1px solid #2A2F37; padding: 6px 8px 22px">
+    <a href="Dashboard.dc.html" aria-current="page" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #34C08E; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"></path><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"></path></svg>Dashboard</a>
+    <a href="Subscriptions.dc.html" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #9AA3AF; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>Subscriptions</a>
+    <a href="Inbox.dc.html" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #9AA3AF; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"></path></svg>Inbox</a>
+    <a href="Settings.dc.html" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #9AA3AF; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg>Settings</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"hero":{"editor":"color","default":"#13402F","options":["#13402F","#1B2C55","#4A2210","#20242B"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { hero: this.props.hero ?? '#13402F' };
+  }
+}
+</script>
+</body>
+</html>
