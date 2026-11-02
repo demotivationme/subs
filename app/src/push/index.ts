@@ -53,16 +53,29 @@ export async function enablePush(): Promise<PushResult> {
     await prefs.set('push.enabled', '1');
     return 'enabled';
   } catch {
-    await prefs.set('push.enabled', '0').catch(() => undefined);
+    // Transient failures (offline, server error) keep the flag so the next start retries.
     return 'failed';
   }
 }
 
+/** Never throws; always ends with push off and the stored token forgotten. */
 export async function disablePush(): Promise<void> {
-  const token = await prefs.get('push.token');
-  if (token) await devicesApi.unregister(token).catch(() => undefined);
-  await prefs.remove('push.token');
-  await prefs.set('push.enabled', '0');
+  try {
+    const token = await prefs.get('push.token');
+    if (token) await devicesApi.unregister(token);
+  } catch {
+    // The server drops dead tokens itself (DeviceNotRegistered) or on the next register.
+  }
+  try {
+    await prefs.remove('push.token');
+  } catch {
+    // Storage trouble must not stop the flag below from being cleared.
+  }
+  try {
+    await prefs.set('push.enabled', '0');
+  } catch {
+    // Nothing left to do.
+  }
 }
 
 export async function isPushEnabled(): Promise<boolean> {

@@ -30,7 +30,8 @@ export async function enablePush(): Promise<PushResult> {
   if (!isPushSupported()) return 'unsupported';
 
   try {
-    const permission = await Notification.requestPermission();
+    // Never prompt again once the user has answered; a re-register on start must be silent.
+    const permission = Notification.permission === 'default' ? await Notification.requestPermission() : Notification.permission;
     if (permission !== 'granted') {
       await prefs.set('push.enabled', '0');
       return 'denied';
@@ -51,11 +52,12 @@ export async function enablePush(): Promise<PushResult> {
     await prefs.set('push.enabled', '1');
     return 'enabled';
   } catch {
-    await prefs.set('push.enabled', '0').catch(() => undefined);
+    // Transient failures keep the flag so the next start retries.
     return 'failed';
   }
 }
 
+/** Never throws; always ends with push off. */
 export async function disablePush(): Promise<void> {
   try {
     const registration = await navigator.serviceWorker?.getRegistration('/sw.js');
@@ -64,8 +66,13 @@ export async function disablePush(): Promise<void> {
       await devicesApi.webPushUnsubscribe(subscription.endpoint).catch(() => undefined);
       await subscription.unsubscribe();
     }
-  } finally {
+  } catch {
+    // Best effort: the browser subscription may already be gone.
+  }
+  try {
     await prefs.set('push.enabled', '0');
+  } catch {
+    // Nothing left to do.
   }
 }
 

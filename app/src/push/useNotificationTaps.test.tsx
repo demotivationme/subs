@@ -25,3 +25,15 @@ test('ignores responses without a subscription', async () => {
 
   expect(router.push).not.toHaveBeenCalled();
 });
+
+test('a response already handled is not replayed on remount', async () => {
+  jest.mocked(Notifications.useLastNotificationResponse).mockReturnValue({
+    actionIdentifier: Notifications.DEFAULT_ACTION_IDENTIFIER,
+    notification: { request: { identifier: 'once', content: { data: { subscription_id: 9 } } } },
+  } as never);
+
+  await renderHook(() => useNotificationTaps());
+  await renderHook(() => useNotificationTaps());
+
+  expect(router.push).toHaveBeenCalledTimes(1);
+});

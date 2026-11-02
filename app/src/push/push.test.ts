@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 
@@ -37,6 +38,33 @@ test('without an EAS projectId push is unsupported', async () => {
   } finally {
     Constants.expoConfig!.extra = extra;
   }
+});
+
+test('a transient failure keeps an enabled device enabled so the next start retries', async () => {
+  await prefs.set('push.enabled', '1');
+  mockApi({ 'POST /devices': { status: 500, body: { message: 'Server Error' } } });
+  await expect(enablePush()).resolves.toBe('failed');
+  expect(await isPushEnabled()).toBe(true);
+
+  jest.mocked(Notifications.getExpoPushTokenAsync).mockRejectedValueOnce(new Error('offline'));
+  await expect(enablePush()).resolves.toBe('failed');
+  expect(await isPushEnabled()).toBe(true);
+});
+
+test('disabling never throws, even when the server and storage fail', async () => {
+  await prefs.set('push.enabled', '1');
+  await prefs.set('push.token', 'ExponentPushToken[test]');
+  mockApi({ 'DELETE /devices/ExponentPushToken%5Btest%5D': { status: 500 } });
+  await expect(disablePush()).resolves.toBeUndefined();
+  expect(await isPushEnabled()).toBe(false);
+
+  await prefs.set('push.enabled', '1');
+  await prefs.set('push.token', 'ExponentPushToken[test]');
+  mockApi({ 'DELETE /devices/ExponentPushToken%5Btest%5D': { status: 204 } });
+  const remove = jest.spyOn(AsyncStorage, 'removeItem').mockRejectedValueOnce(new Error('disk'));
+  await expect(disablePush()).resolves.toBeUndefined();
+  remove.mockRestore();
+  expect(await isPushEnabled()).toBe(false);
 });
 
 test('a failing registration is reported as failed', async () => {
