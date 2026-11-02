@@ -201,3 +201,68 @@ it('rejects guests', function () {
     $this->refreshApplication();
     $this->getJson('/api/v1/stats')->assertUnauthorized();
 });
+
+it('makes the savings total equal the sum of the rounded items', function () {
+    // 333 USD / 1.25 = 266.4 per payment; 3 payments (Aug 1, Sep 1, Oct 1, Nov 1 = 4): 1065.6 -> 1066 each row rounds individually.
+    foreach ([333, 334] as $amount) {
+        sub($this->me, ['amount' => $amount, 'currency' => 'USD', 'first_payment_date' => '2026-08-01', 'status' => 'cancelled'], [
+            ['active', '2026-07-01 00:00:00'], ['cancelled', '2026-08-01 08:00:00'],
+        ]);
+    }
+
+    $r = ($this->stats)();
+    $items = collect($r->json('savings.items'));
+    // 4 * 266.4 = 1065.6 -> 1066; 4 * 267.2 = 1068.8 -> 1069; floats sum 2134.4 -> 2134, rows sum 2135.
+    expect($items->pluck('saved')->sort()->values()->all())->toBe([1066, 1069])
+        ->and($r->json('savings.total'))->toBe(2135);
+});
+
+it('shows a positive category change for a subscription that started this month', function () {
+    $cat = statsCategory('music');
+    sub($this->me, ['amount' => 700, 'category_id' => $cat, 'first_payment_date' => '2026-11-01'], [['active', '2026-11-01 08:00:00']]);
+
+    $by = collect(($this->stats)()->json('by_category'))->keyBy('category_id');
+    expect($by[$cat])->toMatchArray(['monthly' => 700, 'change' => 700]);
+});
+
+it('reports since and until for resumed and still-inactive subscriptions', function () {
+    $resumed = sub($this->me, ['amount' => 1000, 'first_payment_date' => '2026-01-10'], [
+        ['active', '2026-01-01 00:00:00'], ['paused', '2026-03-15 10:00:00'], ['active', '2026-06-10 09:00:00'],
+    ]);
+    $paused = sub($this->me, ['amount' => 500, 'first_payment_date' => '2026-01-10', 'status' => 'paused'], [
+        ['active', '2026-01-01 00:00:00'], ['paused', '2026-10-10 00:00:00'],
+    ]);
+
+    $items = collect(($this->stats)()->json('savings.items'))->keyBy('subscription_id');
+    expect($items[$resumed->id])->toMatchArray(['status' => 'active', 'since' => '2026-03-15', 'until' => '2026-06-10'])
+        ->and($items[$paused->id])->toMatchArray(['status' => 'paused', 'since' => '2026-10-10', 'until' => null]);
+});
+
+it('counts an occurrence exactly on today as paid', function () {
+    sub($this->me, ['amount' => 1000, 'first_payment_date' => '2026-09-02']);
+
+    $months = collect(($this->stats)('?month=11')->json('months'));
+    expect($months[10])->toMatchArray(['paid' => 1000, 'expected' => 0]);
+    expect(($this->stats)('?month=11')->json('payments.0'))->toMatchArray(['date' => '2026-11-02', 'state' => 'paid']);
+});
+
+it('honours interval_count in the months', function () {
+    sub($this->me, ['amount' => 3000, 'interval_count' => 3, 'first_payment_date' => '2026-02-15']);
+
+    $months = collect(($this->stats)()->json('months'));
+    $paying = $months->filter(fn ($m) => $m['paid'] + $m['expected'] > 0)->pluck('month')->all();
+    expect($paying)->toBe([2, 5, 8, 11]);
+});
+
+it('takes the end of last month in the user timezone', function () {
+    // Auckland (UTC+13): now is Nov 3 01:00 local, so last month ended Oct 31.
+    $this->me->update(['timezone' => 'Pacific/Auckland']);
+    $cat = statsCategory('music');
+    // Cancelled at Oct 31 20:00 UTC = Nov 1 09:00 local: still active at the end of October locally.
+    sub($this->me, ['amount' => 700, 'category_id' => $cat, 'first_payment_date' => '2026-01-05', 'status' => 'cancelled'], [
+        ['active', '2026-01-01 00:00:00'], ['cancelled', '2026-10-31 20:00:00'],
+    ]);
+
+    $by = collect(($this->stats)()->json('by_category'))->keyBy('category_id');
+    expect($by[$cat])->toMatchArray(['monthly' => 0, 'change' => -700]);
+});

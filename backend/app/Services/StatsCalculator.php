@@ -44,7 +44,6 @@ final class StatsCalculator
 
         $payments = [];
         $unconverted = [];
-        $savedTotal = 0.0;
         $savingItems = [];
         $savingMonthly = 0.0;
         $categories = [];
@@ -95,10 +94,14 @@ final class StatsCalculator
             // Savings: every occurrence up to today that fell in a paused or cancelled period.
             $saved = 0.0;
             $since = null;
+            $until = null;
             foreach ($timeline as $i => $change) {
-                if ($change['status'] !== SubscriptionStatus::Active
-                    && ($i === 0 || $timeline[$i - 1]['status'] === SubscriptionStatus::Active)) {
+                $wasActive = $i === 0 || $timeline[$i - 1]['status'] === SubscriptionStatus::Active;
+                if ($change['status'] !== SubscriptionStatus::Active && $wasActive) {
                     $since = $change['date'];
+                    $until = null;
+                } elseif ($change['status'] === SubscriptionStatus::Active && $since !== null && $until === null && ! $wasActive) {
+                    $until = $change['date'];
                 }
             }
             if ($since !== null && $amount !== null) {
@@ -109,7 +112,6 @@ final class StatsCalculator
                 }
             }
 
-            $savedTotal += $saved;
             if ($saved > 0 || ! $isActive) {
                 $savingItems[] = [
                     'subscription_id' => $subscription->id,
@@ -121,6 +123,7 @@ final class StatsCalculator
                         'color' => $subscription->service->color,
                     ],
                     'status' => $subscription->status->value,
+                    'until' => $isActive ? $until?->toDateString() : null,
                     'since' => $since?->toDateString() ?? $subscription->updated_at?->setTimezone($timezone)->toDateString(),
                     'monthly' => (int) round($monthly ?? 0),
                     'saved' => (int) round($saved),
@@ -141,7 +144,7 @@ final class StatsCalculator
             if ($isActive) {
                 $categories[$subscription->category_id]['now'] += $monthly;
             }
-            if ($this->statusAt($timeline, $lastMonthEnd) === SubscriptionStatus::Active) {
+            if ($first->lte($lastMonthEnd) && $this->statusAt($timeline, $lastMonthEnd) === SubscriptionStatus::Active) {
                 $categories[$subscription->category_id]['before'] += $monthly;
             }
 
@@ -194,7 +197,7 @@ final class StatsCalculator
             'spent_so_far' => $spent,
             'projected_year' => $spent + $expected,
             'savings' => [
-                'total' => (int) round($savedTotal),
+                'total' => array_sum(array_column($savingItems, 'saved')),
                 'monthly' => $monthlySaving,
                 'yearly' => $monthlySaving * 12,
                 'items' => $savingItems,
