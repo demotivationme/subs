@@ -41,6 +41,7 @@ export function SubscriptionReminders({ subscription }: { subscription: Pick<Sub
       <SwitchRow
         label={t('form.remindMe')}
         value={subscription.reminders_enabled}
+        disabled={toggle.isPending}
         onChange={(reminders_enabled) => toggle.mutate({ reminders_enabled })}
       />
       <ErrorMessage error={toggle.error} />

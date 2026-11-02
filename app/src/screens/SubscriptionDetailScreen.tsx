@@ -118,14 +118,14 @@ export default function SubscriptionDetailScreen() {
               <Button label={t('subscription.resume')} variant="secondary" className="flex-1" loading={update.isPending} onPress={() => update.mutate(ACTIVE)} />
             )}
             {s.status !== 'cancelled' ? (
-              <Button label={t('subscription.cancelSub')} variant="secondary" className="flex-1" onPress={() => update.mutate(CANCELLED)} />
+              <Button label={t('subscription.cancelSub')} variant="secondary" className="flex-1" loading={update.isPending} onPress={() => update.mutate(CANCELLED)} />
             ) : null}
           </View>
           <Button
             label={confirmDelete ? t('common.confirmDelete') : t('subscription.delete')}
             variant="ghostDanger"
             loading={remove.isPending}
-            onPress={() => (confirmDelete ? remove.mutate(undefined, { onSuccess: () => router.back() }) : setConfirmDelete(true))}
+            onPress={() => (confirmDelete ? remove.mutate(undefined, { onSuccess: () => router.back(), onError: () => setConfirmDelete(false) }) : setConfirmDelete(true))}
           />
           <ErrorMessage error={update.error ?? remove.error} />
         </View>

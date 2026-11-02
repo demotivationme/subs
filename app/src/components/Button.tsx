@@ -19,7 +19,7 @@ const label: Record<Variant, string> = {
   danger: 'text-surface',
   ghost: 'text-accent dark:text-accent-dark',
   ink: 'text-surface dark:text-ground-dark',
-  ghostDanger: 'text-danger',
+  ghostDanger: 'text-danger dark:text-danger-dark',
 };
 
 type Props = {
@@ -43,7 +43,7 @@ export function Button({ label: text, onPress, variant = 'primary', loading = fa
       : variant === 'ghost'
         ? dark ? '#34C08E' : '#0B7A57'
         : variant === 'ghostDanger'
-          ? '#B42F25'
+          ? dark ? '#F07A70' : '#B42F25'
           : dark ? '#F1F3F5' : '#14171C';
   return (
     <Pressable

@@ -121,3 +121,12 @@ test('a warning banner shows its message and action', async () => {
   await fireEvent.press(screen.getByRole('button', { name: 'Fix' }));
   expect(onPress).toHaveBeenCalled();
 });
+
+test('a disabled SwitchRow does not fire onChange', async () => {
+  const onChange = jest.fn();
+  await render(<SwitchRow label="Remind me" value={false} onChange={onChange} disabled />);
+  const toggle = screen.getByRole('switch', { name: 'Remind me' });
+  expect(toggle.props.accessibilityState).toMatchObject({ disabled: true });
+  await fireEvent(toggle, 'valueChange', true);
+  expect(onChange).not.toHaveBeenCalled();
+});

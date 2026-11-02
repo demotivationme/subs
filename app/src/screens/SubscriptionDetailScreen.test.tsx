@@ -124,3 +124,37 @@ test('explains a subscription that no longer exists', async () => {
 
   expect(await screen.findByText("This subscription doesn't exist anymore.")).toBeTruthy();
 });
+
+test('a second toggle while the PATCH is in flight sends nothing', async () => {
+  let release: () => void = () => {};
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  const { client } = setup({ 'PATCH /subscriptions/5': { body: { data: fixtures.subscription({ reminders_enabled: false }) } } });
+  let patches = 0;
+  const base = global.fetch;
+  global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    if (init?.method === 'PATCH') {
+      patches += 1;
+      await gate;
+    }
+    return base(input, init);
+  }) as typeof fetch;
+  await renderWithProviders(<SubscriptionDetailScreen />, client);
+
+  await fireEvent(await screen.findByRole('switch', { name: 'Remind me' }), 'valueChange', false);
+  await waitFor(() => expect(screen.getByRole('switch', { name: 'Remind me' }).props.accessibilityState).toMatchObject({ disabled: true }));
+  await fireEvent(screen.getByRole('switch', { name: 'Remind me' }), 'valueChange', true);
+  expect(patches).toBe(1);
+  release();
+  await waitFor(() => expect(screen.queryByText('Using your default reminders.')).toBeNull());
+});
+
+test('a failed delete disarms the confirm and shows the error', async () => {
+  const { client } = setup({ 'DELETE /subscriptions/5': { status: 500, body: { message: 'Boom' } } });
+  await renderWithProviders(<SubscriptionDetailScreen />, client);
+
+  await fireEvent.press(await screen.findByRole('button', { name: 'Delete subscription' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Tap again to delete' }));
+
+  expect(await screen.findByRole('button', { name: 'Delete subscription' })).toBeTruthy();
+  expect(await screen.findByRole('alert')).toBeTruthy();
+});

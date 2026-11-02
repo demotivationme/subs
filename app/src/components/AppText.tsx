@@ -9,7 +9,7 @@ const variants: Record<Variant, string> = {
   heading: 'font-heading text-[17px] text-ink dark:text-ink-dark',
   body: 'font-sans text-base text-ink dark:text-ink-dark',
   muted: 'font-sans text-sm text-muted dark:text-muted-dark',
-  error: 'font-sans text-sm text-danger',
+  error: 'font-sans text-sm text-danger dark:text-danger-dark',
 };
 
 type Props = TextProps & { variant?: Variant; numeric?: boolean };
