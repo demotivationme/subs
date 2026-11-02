@@ -27,6 +27,7 @@ function queryString(query?: Query): string {
 export async function api<T>(path: string, options: { method?: Method; body?: unknown; query?: Query } = {}): Promise<T> {
   const { method = 'GET', body, query } = options;
   const token = hooks.getToken();
+  const multipart = typeof FormData !== 'undefined' && body instanceof FormData;
 
   let response: Response;
   try {
@@ -35,10 +36,11 @@ export async function api<T>(path: string, options: { method?: Method; body?: un
       headers: {
         Accept: 'application/json',
         'Accept-Language': hooks.getLocale(),
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(body !== undefined && !multipart ? { 'Content-Type': 'application/json' } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      // A FormData body goes as-is: fetch sets the multipart Content-Type with its boundary.
+      body: multipart ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch (error) {
     throw new NetworkError(error);

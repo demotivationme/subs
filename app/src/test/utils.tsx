@@ -18,7 +18,8 @@ export function mockApi(routes: Record<string, MockRoute>): RecordedCall[] {
   global.fetch = jest.fn(async (input: RequestInfo | URL, init: RequestInit = {}) => {
     const method = init.method ?? 'GET';
     const path = String(input).replace(API_URL, '');
-    const body = typeof init.body === 'string' ? JSON.parse(init.body) : undefined;
+    // JSON bodies are recorded parsed; a multipart FormData is recorded as the FormData itself.
+    const body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body instanceof FormData ? init.body : undefined;
     calls.push({ method, path, body });
     const route = routes[`${method} ${path}`] ?? routes[`${method} ${path.split('?')[0]}`];
     if (route === undefined) throw new Error(`Unmocked request: ${method} ${path}`);

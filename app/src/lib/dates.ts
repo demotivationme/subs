@@ -51,3 +51,9 @@ export function dateTile(isoDate: string, locale: string): { month: string; day:
     day: new Intl.DateTimeFormat(locale, { day: 'numeric', timeZone: 'UTC' }).format(date),
   };
 }
+
+/** A billing date shifted by whole days (negative goes back), computed in UTC. */
+export function addDays(isoDate: string, days: number): string {
+  const [y, m, d] = parts(isoDate);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}

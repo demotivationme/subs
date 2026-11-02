@@ -1,4 +1,4 @@
-import { dateTile, daysBetween, formatDate, isValidIsoDate, todayIso } from './dates';
+import { addDays, dateTile, daysBetween, formatDate, isValidIsoDate, todayIso } from './dates';
 
 afterEach(() => jest.useRealTimers());
 
@@ -35,4 +35,10 @@ describe('daysBetween and dateTile', () => {
   test('splits a date into an uppercase month and a day number', () => {
     expect(dateTile('2026-11-05', 'en')).toEqual({ month: 'NOV', day: '5' });
   });
+});
+
+test('addDays moves a billing date without a timezone shift', () => {
+  expect(addDays('2026-11-02', 1)).toBe('2026-11-03');
+  expect(addDays('2026-12-31', 1)).toBe('2027-01-01');
+  expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
 });

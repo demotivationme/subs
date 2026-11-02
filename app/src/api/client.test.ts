@@ -74,3 +74,15 @@ test('a non-JSON error body still yields an ApiError', async () => {
   expect(error).toBeInstanceOf(ApiError);
   expect(error.status).toBe(502);
 });
+
+test('passes a FormData body through untouched, without a JSON Content-Type', async () => {
+  respond(200, { data: {} });
+  const form = new FormData();
+  form.append('logo', 'x');
+
+  await api('/services/3/logo', { method: 'POST', body: form });
+
+  const [, init] = jest.mocked(global.fetch).mock.calls[0];
+  expect(init?.body).toBe(form);
+  expect(init?.headers).toEqual({ Accept: 'application/json', 'Accept-Language': 'en', Authorization: 'Bearer tok' });
+});
