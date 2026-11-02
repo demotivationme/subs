@@ -114,7 +114,11 @@
     "sortPrice": "Price",
     "sortName": "Name",
     "next": "Next: {{date}}",
-    "price": "{{amount}} {{period}}"
+    "price": "{{amount}} {{period}}",
+    "allStatuses": "All statuses",
+    "allCategories": "All categories",
+    "rowMeta": "{{category}} · Next {{date}}",
+    "rowLabel": "{{name}}, {{price}}, {{status}}"
   },
   "status": {
     "active": "Active",

@@ -2,8 +2,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 
+import { HeaderAddButton } from '@/components/HeaderAddButton';
 import { HeaderBell } from '@/components/HeaderBell';
 
 // Navigation chrome takes raw values; they mirror the tokens in tailwind.config.js.
@@ -40,6 +41,19 @@ export default function TabsLayout() {
         options={{
           title: t('tabs.dashboard'),
           tabBarIcon: ({ color, size }) => <Ionicons name={ICON} color={String(color)} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="subscriptions"
+        options={{
+          title: t('tabs.subscriptions'),
+          headerRight: () => (
+            <View className="flex-row items-center gap-2">
+              <HeaderAddButton />
+              <HeaderBell />
+            </View>
+          ),
+          tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" color={String(color)} size={size} />,
         }}
       />
     </Tabs>
