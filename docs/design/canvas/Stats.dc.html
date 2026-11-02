@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Subs — Stats</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.num{font-variant-numeric:tabular-nums}
+a{color:#0B7A57}a:hover{color:#075A40}
+</style>
+</helmet>
+<div style="width: 390px; height: 1240px; box-sizing: border-box; background: #F5F6F8; color: #14171C; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 8px">
+    <h1 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 28px">Stats</h1>
+    <a href="Inbox.dc.html" aria-label="Notifications, 2 unread" style="position: relative; width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #14171C">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+      <span class="num" style="position: absolute; top: 6px; right: 6px; min-width: 18px; height: 18px; border-radius: 9px; background: #D9342B; color: #FFFFFF; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px; box-sizing: border-box">2</span>
+    </a>
+  </header>
+
+  <main style="flex: 1; overflow: hidden; padding: 8px 20px 16px; display: flex; flex-direction: column; gap: 16px">
+    <div role="radiogroup" aria-label="Period" style="display: flex; background: #EEF0F3; border-radius: 14px; padding: 4px; gap: 4px">
+      <button type="button" role="radio" aria-checked="false" style="flex: 1; height: 38px; border: 0; border-radius: 10px; background: transparent; font: 500 15px Inter, sans-serif; color: #14171C">Month</button>
+      <button type="button" role="radio" aria-checked="true" style="flex: 1; height: 38px; border: 0; border-radius: 10px; background: #FFFFFF; font: 600 15px Inter, sans-serif; color: #14171C; box-shadow: 0 1px 2px rgba(20,23,28,0.08)">Year</button>
+    </div>
+
+    <section style="background: #FFFFFF; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 13px; font-weight: 500; color: #5B6370">Spent in 2026 so far</span>
+          <span class="num" style="font: 800 34px Manrope, sans-serif">€880.67</span>
+          <span class="num" style="font-size: 13px; color: #5B6370">On track for <strong style="color: #14171C">€968.01</strong> this year</span>
+        </div>
+        <div style="display: flex; gap: 2px">
+          <button type="button" aria-label="Previous year" style="width: 36px; height: 36px; border: 0; border-radius: 10px; background: #EEF0F3; color: #14171C; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="Next year" disabled style="width: 36px; height: 36px; border: 0; border-radius: 10px; background: #EEF0F3; color: #14171C; display: flex; align-items: center; justify-content: center; opacity: 0.4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+      </div>
+
+      <div role="img" aria-label="Monthly spend in 2026: January €61.97 to November €87.34, December projected €87.34" style="display: flex; flex-direction: column; gap: 6px">
+        <div style="height: 140px; display: flex; align-items: flex-end; gap: 6px">
+          <div style="flex: 1; height: 67%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 67%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 81%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 81%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 90%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 90%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 100%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 90%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 94%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 94%; background: #CFE9DD; border-radius: 6px 6px 3px 3px"></div>
+          <div style="flex: 1; height: 94%; background: {{accent}}; border-radius: 6px 6px 3px 3px; position: relative">
+            <span class="num" style="position: absolute; top: -26px; left: 50%; transform: translateX(-50%); background: #14171C; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 6px; white-space: nowrap">€87.34</span>
+          </div>
+          <div style="flex: 1; height: 94%; border: 1.5px dashed #9AA3AF; border-bottom: 0; border-radius: 6px 6px 0 0; box-sizing: border-box"></div>
+        </div>
+        <div style="display: flex; gap: 6px; font-size: 10px; font-weight: 600; color: #5B6370; text-align: center">
+          <span style="flex: 1">J</span><span style="flex: 1">F</span><span style="flex: 1">M</span><span style="flex: 1">A</span><span style="flex: 1">M</span><span style="flex: 1">J</span><span style="flex: 1">J</span><span style="flex: 1">A</span><span style="flex: 1">S</span><span style="flex: 1">O</span><span style="flex: 1; color: #14171C">N</span><span style="flex: 1">D</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 14px; font-size: 12px; color: #5B6370">
+        <span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #CFE9DD"></span>Paid</span>
+        <span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{accent}}"></span>This month</span>
+        <span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; border: 1.5px dashed #9AA3AF; box-sizing: border-box"></span>Expected</span>
+      </div>
+    </section>
+
+    <section style="background: {{accent}}; color: #FFFFFF; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <span style="width: 36px; height: 36px; border-radius: 11px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"></path><path d="M2 9v1c0 1.1.9 2 2 2h1"></path><path d="M16 11h.01"></path></svg></span>
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.95">Saved by cancelling</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span class="num" style="font: 800 36px Manrope, sans-serif; line-height: 1.1">€61.94</span>
+        <span class="num" style="font-size: 14px; opacity: 0.92">You now keep €21.98 a month — €263.76 a year</span>
+      </div>
+      <div style="background: rgba(255,255,255,0.12); border-radius: 14px; overflow: hidden">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.14)">
+          <span style="width: 30px; height: 30px; border-radius: 9px; background: #FFFFFF; color: #1E4FA8; display: flex; align-items: center; justify-content: center; font: 800 13px Manrope, sans-serif">D</span>
+          <div style="flex: 1; display: flex; flex-direction: column"><span style="font-weight: 600; font-size: 14px">Disney+</span><span style="font-size: 12px; opacity: 0.85">Cancelled Aug 1 · €8.99/mo</span></div>
+          <span class="num" style="font-weight: 700; font-size: 14px">+€35.96</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px">
+          <span style="width: 30px; height: 30px; border-radius: 9px; background: #FFFFFF; color: #C2410C; display: flex; align-items: center; justify-content: center; font: 800 13px Manrope, sans-serif">H</span>
+          <div style="flex: 1; display: flex; flex-direction: column"><span style="font-weight: 600; font-size: 14px">Headspace</span><span style="font-size: 12px; opacity: 0.85">Cancelled Oct 1 · €12.99/mo</span></div>
+          <span class="num" style="font-weight: 700; font-size: 14px">+€25.98</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="background: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <h2 style="margin: 0; font-family: Manrope, Inter, sans-serif; font-weight: 700; font-size: 17px">By category</h2>
+        <span style="font-size: 12px; color: #5B6370">vs last month</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px">
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #0B7A57"></span><span style="flex: 1">Video Streaming</span><span class="num" style="font-weight: 600">€35.80</span><span class="num" style="width: 64px; text-align: right; font-size: 13px; font-weight: 600; color: #075A40">−€8.99</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #2F6FDB"></span><span style="flex: 1">Music</span><span class="num" style="font-weight: 600">€22.70</span><span class="num" style="width: 64px; text-align: right; font-size: 13px; color: #5B6370">±0</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #E39B2B"></span><span style="flex: 1">Software &amp; Cloud</span><span class="num" style="font-weight: 600">€15.72</span><span class="num" style="width: 64px; text-align: right; font-size: 13px; font-weight: 600; color: #9A4A06">+€2.99</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #9AA3AF"></span><span style="flex: 1">Other</span><span class="num" style="font-weight: 600">€13.12</span><span class="num" style="width: 64px; text-align: right; font-size: 13px; color: #5B6370">±0</span></div>
+      </div>
+    </section>
+
+    <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 12px; color: #5B6370">Biggest expense</span>
+        <span style="font-weight: 700">Adobe CC</span>
+        <span class="num" style="font-size: 13px; color: #5B6370">€19.99 / month</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 12px; color: #5B6370">Next 12 months</span>
+        <span class="num" style="font-weight: 700">€1,048.08</span>
+        <span style="font-size: 13px; color: #5B6370">if nothing changes</span>
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="display: flex; background: #FFFFFF; border-top: 1px solid #E3E6EA; padding: 6px 8px 22px">
+    <a href="Dashboard.dc.html" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6370; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"></path></svg>Home</a>
+    <a href="Subscriptions.dc.html" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6370; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>Subscriptions</a>
+    <a href="Stats.dc.html" aria-current="page" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: {{accent}}; font-size: 11px; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M7 16v-4M12 16V8M17 16v-7"></path></svg>Stats</a>
+    <a href="Settings.dc.html" style="flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6370; font-size: 11px; font-weight: 500">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg>Settings</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0B7A57","options":["#0B7A57","#2F5BD3","#C2410C","#14171C"]},"$preview":{"width":390,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#0B7A57' };
+  }
+}
+</script>
+</body>
+</html>

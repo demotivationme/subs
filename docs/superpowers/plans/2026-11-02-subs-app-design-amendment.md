@@ -178,3 +178,41 @@ Update `src/test/fixtures.ts` for the new fields. Every new component and flow a
 - the detail screen's reminder switch PATCHes the flag;
 - `settings/reminders` saves the defaults;
 - `ServiceIcon` covers both the logo and the letter branch.
+
+## 6. Stats tab (new Task 16, after Task 14; user-approved 2026-11-02)
+
+Canvas: `docs/design/canvas/Stats.dc.html`.
+
+**User decisions:**
+- The tab bar becomes **Home, Subscriptions, Stats, Settings**. Rename the dashboard tab label to "Home" (house icon) and add a `stats` tab (bar-chart icon). The inbox stays a Stack route behind the bell.
+- Paused subscriptions count as savings while paused.
+
+**Data:** `GET /api/v1/stats?year=Y[&month=M]` (backend change "status history + stats"). Add a `useStats(year, month?)` hook with key `['stats', year, month ?? null]`. Every mutation that already invalidates `keys.dashboard` must invalidate `['stats']` too: subscriptions, categories, the me currency change and reminders-unrelated status changes.
+
+**Screen (`StatsScreen`):**
+- **Period switch:** a `SegmentedControl` with Month | Year.
+- **Year view:**
+  - A card with "Spent in {{year}} so far", the total in `font-display`, "On track for {{amount}} this year", and previous/next year buttons. Next is disabled at the current year.
+  - A 12-bar chart. Bar height = (paid + expected) / max. Past months use `accent-soft`. The current month is `accent`, with an amount bubble above it. Future months are dashed outlines in `muted`. Add a legend (Paid, This month, Expected) and month initials.
+  - The chart has one `accessibilityLabel` that summarises it. Each bar can be a pressable that selects that month for the Month view.
+- **Month view:**
+  - Month name with previous/next buttons.
+  - Total paid + expected.
+  - The month's `payments` list: `ServiceIcon`, name, date, original amount, and the converted amount when it differs. Expected rows are marked "Expected".
+- **"Saved by cancelling" card**, shown in both views when `savings.items` is non-empty:
+  - `bg-accent` (dark: the hero tokens), with the total in `font-display`.
+  - "You now keep {{monthly}} a month — {{yearly}} a year".
+  - Item rows: `ServiceIcon`, name, "Cancelled|Paused {{since}} · {{monthly}}/mo", and `+{{saved}}`.
+  - Empty state: a short muted line, "Cancel or pause something you don't use and your savings show up here."
+- **By category vs last month:** a color dot, label, monthly amount, and the change. A negative change is shown in `accent-strong` with "−", a positive one in `warn` with "+", and no change as "±0".
+- **Two small cards:** Biggest expense (name, monthly) and Next 12 months, "if nothing changes".
+- **Unconverted warning banner:** shown the same way as on the dashboard.
+
+**Tests:**
+- Year totals and the current-month bubble render.
+- Prev/next year refetches with `year=`.
+- The Month view requests `month=` and lists payments.
+- The savings card shows its items and the empty state.
+- The category change signs are correct.
+- Switching tabs shows Stats.
+- Mutations invalidate `['stats']`.
