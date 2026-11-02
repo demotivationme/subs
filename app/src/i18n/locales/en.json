@@ -71,10 +71,11 @@
     "createLink": "Create one"
   },
   "tabs": {
-    "dashboard": "Dashboard",
+    "dashboard": "Home",
     "subscriptions": "Subscriptions",
     "notifications": "Inbox",
-    "settings": "Settings"
+    "settings": "Settings",
+    "stats": "Stats"
   },
   "dashboard": {
     "monthly": "Per month",
@@ -343,5 +344,40 @@
       "nowPerMonth": "Now per month",
       "cancelled": "Cancelled"
     }
+  },
+  "stats": {
+    "title": "Stats",
+    "month": "Month",
+    "year": "Year",
+    "spentIn": "Spent in {{year}} so far",
+    "onTrack": "On track for {{amount}} this year",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "legendPaid": "Paid",
+    "legendThisMonth": "This month",
+    "legendExpected": "Expected",
+    "chartLabel": "Spend per month in {{year}}: {{paid}} paid so far, {{projected}} expected for the whole year",
+    "barLabel": "{{month}}, {{amount}}",
+    "barLabelExpected": "{{month}}, {{amount}} expected",
+    "monthTitle": "{{month}} {{year}}",
+    "monthTotal": "Paid and expected",
+    "noPayments": "No payments this month.",
+    "expected": "Expected",
+    "savedTitle": "Saved by cancelling",
+    "keep": "You now keep {{monthly}} a month — {{yearly}} a year",
+    "cancelledSince": "Cancelled {{since}} · {{monthly}}/mo",
+    "pausedSince": "Paused {{since}} · {{monthly}}/mo",
+    "cancelledRange": "Cancelled {{since}} – {{until}}",
+    "pausedRange": "Paused {{since}} – {{until}}",
+    "savedAmount": "+{{amount}}",
+    "savedEmpty": "Cancel or pause something you don't use and your savings show up here.",
+    "byCategory": "By category vs last month",
+    "categoryRow": "{{label}}, {{monthly}} a month, {{change}}",
+    "noChange": "±0",
+    "biggest": "Biggest expense",
+    "next12": "Next 12 months",
+    "ifNothingChanges": "if nothing changes"
   }
 }

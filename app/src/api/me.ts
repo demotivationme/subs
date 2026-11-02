@@ -26,6 +26,7 @@ export function useUpdateMe() {
       // Totals and monthly equivalents are in the main currency.
       return Promise.all([
         qc.invalidateQueries({ queryKey: keys.dashboard }),
+        qc.invalidateQueries({ queryKey: keys.statsAll }),
         qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
       ]);
     },

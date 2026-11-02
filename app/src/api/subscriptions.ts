@@ -35,6 +35,7 @@ function useInvalidateSpend() {
     Promise.all([
       qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
       qc.invalidateQueries({ queryKey: keys.dashboard }),
+      qc.invalidateQueries({ queryKey: keys.statsAll }),
       ...(id !== undefined ? [qc.invalidateQueries({ queryKey: keys.subscription(id) })] : []),
     ]);
 }

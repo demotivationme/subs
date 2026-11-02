@@ -32,6 +32,7 @@ export function useUpdateCategory() {
         qc.invalidateQueries({ queryKey: keys.categories }),
         qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
         qc.invalidateQueries({ queryKey: keys.dashboard }),
+        qc.invalidateQueries({ queryKey: keys.statsAll }),
       ]),
   });
 }
@@ -47,6 +48,7 @@ export function useDeleteCategory() {
         qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
         qc.invalidateQueries({ queryKey: ['subscription'] }),
         qc.invalidateQueries({ queryKey: keys.dashboard }),
+        qc.invalidateQueries({ queryKey: keys.statsAll }),
       ]),
   });
 }

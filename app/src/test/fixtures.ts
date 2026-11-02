@@ -1,4 +1,4 @@
-import type { AppNotification, Category, Dashboard, ReminderRule, Service, Subscription, User } from '@/api/types';
+import type { AppNotification, Category, Dashboard, Stats, ReminderRule, Service, Subscription, User } from '@/api/types';
 
 export const fixtures = {
   user: (overrides: Partial<User> = {}): User => ({
@@ -74,6 +74,34 @@ export const fixtures = {
     ],
     upcoming: [{ subscription_id: 5, name: 'Netflix', date: '2026-11-15', amount: 1299, currency: 'EUR' }],
     most_expensive: [{ subscription_id: 7, name: 'Disney+', monthly: 4436 }],
+    unconverted: [],
+    ...overrides,
+  }),
+  stats: (overrides: Partial<Stats> = {}): Stats => ({
+    currency: 'EUR',
+    year: 2026,
+    today: '2026-11-02',
+    months: Array.from({ length: 12 }, (_, i) => {
+      const month = i + 1;
+      return { month, paid: month <= 11 ? 6000 + month * 100 : 0, expected: month >= 11 ? 8734 - (month === 11 ? 3000 : 0) : 0 };
+    }),
+    spent_so_far: 88067,
+    projected_year: 96801,
+    savings: {
+      total: 6194,
+      monthly: 2198,
+      yearly: 26376,
+      items: [
+        { subscription_id: 9, name: 'Disney+', service: { id: 4, name: 'Disney+', logo_url: null, color: null }, status: 'cancelled', since: '2026-08-01', until: null, monthly: 899, saved: 3596 },
+      ],
+    },
+    by_category: [
+      { category_id: 2, label: 'Video Streaming', monthly: 3580, change: -899 },
+      { category_id: 3, label: 'Music', monthly: 2999, change: 500 },
+      { category_id: 4, label: 'Cloud', monthly: 1000, change: 0 },
+    ],
+    biggest: { subscription_id: 12, name: 'Adobe CC', monthly: 1999 },
+    next_12_months: 104808,
     unconverted: [],
     ...overrides,
   }),

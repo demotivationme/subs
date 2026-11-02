@@ -15,7 +15,8 @@ const THEME = {
 
 type ScreenOptions = NonNullable<ComponentProps<typeof Tabs>['screenOptions']>;
 
-const ICON = 'pie-chart-outline';
+const HOME_ICON = 'home-outline';
+const STATS_ICON = 'bar-chart-outline';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: t('tabs.dashboard'),
-          tabBarIcon: ({ color, size }) => <Ionicons name={ICON} color={String(color)} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name={HOME_ICON} color={String(color)} size={size} />,
         }}
       />
       <Tabs.Screen
@@ -54,6 +55,13 @@ export default function TabsLayout() {
             </View>
           ),
           tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" color={String(color)} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="stats"
+        options={{
+          title: t('tabs.stats'),
+          tabBarIcon: ({ color, size }) => <Ionicons name={STATS_ICON} color={String(color)} size={size} />,
         }}
       />
       <Tabs.Screen

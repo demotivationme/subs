@@ -3,6 +3,8 @@ import type { SubscriptionFilter } from './subscriptions';
 export const keys = {
   me: ['me'] as const,
   dashboard: ['dashboard'] as const,
+  statsAll: ['stats'] as const,
+  stats: (year: number, month?: number) => ['stats', year, month ?? null] as const,
   categories: ['categories'] as const,
   services: (q: string) => ['services', q] as const,
   subscriptionsAll: ['subscriptions'] as const,

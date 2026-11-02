@@ -88,3 +88,39 @@ export type Dashboard = {
   most_expensive: { subscription_id: number; name: string; monthly: number }[];
   unconverted: { subscription_id: number; currency: string }[];
 };
+
+export type StatsPayment = {
+  subscription_id: number;
+  name: string;
+  date: string;
+  amount: number;
+  currency: string;
+  converted: number;
+  state: 'paid' | 'expected';
+};
+
+export type StatsSavingsItem = {
+  subscription_id: number;
+  name: string;
+  service: { id: number; name: string; logo_url: string | null; color: string | null } | null;
+  status: 'cancelled' | 'paused';
+  since: string;
+  until: string | null;
+  monthly: number;
+  saved: number;
+};
+
+export type Stats = {
+  currency: string;
+  year: number;
+  today: string;
+  months: { month: number; paid: number; expected: number }[];
+  spent_so_far: number;
+  projected_year: number;
+  savings: { total: number; monthly: number; yearly: number; items: StatsSavingsItem[] };
+  by_category: { category_id: number; label: string; monthly: number; change: number }[];
+  biggest: { subscription_id: number; name: string; monthly: number } | null;
+  next_12_months: number;
+  unconverted: { subscription_id: number; currency: string }[];
+  payments?: StatsPayment[];
+};
