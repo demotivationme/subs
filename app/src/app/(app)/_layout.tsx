@@ -31,6 +31,7 @@ export default function AppLayout() {
     <Stack screenOptions={{ headerBackTitle: t('common.back') }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="subscriptions/new" options={NEW_SUBSCRIPTION_OPTIONS} />
+      <Stack.Screen name="subscriptions/[id]" options={{ title: t('subscription.title') }} />
       <Stack.Screen name="push-intro" options={{ title: t('push.introTitle'), presentation: MODAL }} />
     </Stack>
   );

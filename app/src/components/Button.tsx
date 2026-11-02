@@ -2,13 +2,15 @@ import { ActivityIndicator, Pressable, Text, useColorScheme } from 'react-native
 
 import { cn } from '@/lib/cn';
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'ink' | 'ghostDanger';
 
 const box: Record<Variant, string> = {
   primary: 'bg-accent dark:bg-accent-dark',
   secondary: 'border border-line bg-surface dark:border-line-dark dark:bg-surface-dark',
   danger: 'bg-danger',
   ghost: 'bg-transparent',
+  ink: 'bg-ink dark:bg-ink-dark',
+  ghostDanger: 'bg-transparent',
 };
 
 const label: Record<Variant, string> = {
@@ -16,6 +18,8 @@ const label: Record<Variant, string> = {
   secondary: 'text-ink dark:text-ink-dark',
   danger: 'text-surface',
   ghost: 'text-accent dark:text-accent-dark',
+  ink: 'text-surface dark:text-ground-dark',
+  ghostDanger: 'text-danger',
 };
 
 type Props = {
@@ -34,9 +38,13 @@ export function Button({ label: text, onPress, variant = 'primary', loading = fa
   const spinner =
     variant === 'primary' || variant === 'danger'
       ? '#FFFFFF'
+      : variant === 'ink'
+        ? dark ? '#14171C' : '#FFFFFF'
       : variant === 'ghost'
         ? dark ? '#34C08E' : '#0B7A57'
-        : dark ? '#F1F3F5' : '#14171C';
+        : variant === 'ghostDanger'
+          ? '#B42F25'
+          : dark ? '#F1F3F5' : '#14171C';
   return (
     <Pressable
       accessibilityRole="button"

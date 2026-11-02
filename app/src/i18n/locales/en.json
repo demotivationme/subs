@@ -211,7 +211,10 @@
     "usingDefaults": "Using your default reminders.",
     "customize": "Customize",
     "useDefaults": "Use default reminders",
-    "notFound": "This subscription doesn't exist anymore."
+    "notFound": "This subscription doesn't exist anymore.",
+    "headerMeta": "{{category}} · {{status}}",
+    "perYear": "{{amount}} per year",
+    "monthlyLine": "{{amount}} per month in your currency"
   },
   "reminders": {
     "daysBefore": "Days before",
