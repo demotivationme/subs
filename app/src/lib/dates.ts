@@ -57,6 +57,18 @@ export function dateTile(isoDate: string, locale: string): { month: string; day:
   };
 }
 
+/** A billing date as a local-midnight Date, which is what native date pickers show. */
+export function isoToLocalDate(isoDate: string): Date {
+  const [y, m, d] = parts(isoDate);
+  return new Date(y, m - 1, d);
+}
+
+/** The calendar day a native date picker returned (local time), as YYYY-MM-DD. */
+export function localDateToIso(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 /** A billing date shifted by whole days (negative goes back), computed in UTC. */
 export function addDays(isoDate: string, days: number): string {
   const [y, m, d] = parts(isoDate);

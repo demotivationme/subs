@@ -152,7 +152,6 @@
     "currency": "Currency",
     "period": "Billing period",
     "every": "Every",
-    "firstPayment": "First payment date (YYYY-MM-DD)",
     "category": "Category",
     "categoryAuto": "Automatic (service default)",
     "notes": "Notes",

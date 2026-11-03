@@ -12,11 +12,11 @@ import { currencySymbol, minorToInput, parseMoney } from '@/lib/money';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
+import { DatePickerModal } from './DatePickerModal';
 import { SegmentedChoice } from './SegmentedChoice';
 import { SegmentedControl } from './SegmentedControl';
 import { SelectField } from './SelectField';
 import { ServiceIcon } from './ServiceIcon';
-import { TextEntryModal } from './TextEntryModal';
 import { TextField } from './TextField';
 
 type DateChoice = 'today' | 'tomorrow' | 'date';
@@ -87,6 +87,8 @@ export function SubscriptionPriceStep({ value, onChange, errors, categories, tod
             keyboardType="decimal-pad"
             placeholder="0"
             placeholderTextColor="#9AA3AF"
+            // An explicit height and no vertical padding: iOS otherwise clips Manrope's tall glyphs at 44px.
+            style={{ height: 60, paddingVertical: 0 }}
             className="min-w-0 flex-1 font-display text-[44px] text-ink dark:text-ink-dark"
           />
           <Pressable
@@ -166,11 +168,11 @@ export function SubscriptionPriceStep({ value, onChange, errors, categories, tod
         onOpenChange={setCategoryOpen}
         hideTrigger
       />
-      <TextEntryModal
+      <DatePickerModal
         visible={dateOpen}
         title={t('form.nextPayment')}
-        label={t('form.firstPayment')}
         value={value.firstPaymentDate}
+        fallback={addDays(today, 7)}
         onClose={() => setDateOpen(false)}
         onSave={(firstPaymentDate) => {
           onChange({ firstPaymentDate });

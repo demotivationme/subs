@@ -1,4 +1,11 @@
-import { addDays, dateTile, daysBetween, formatDate, isValidIsoDate, todayIso } from './dates';
+import { addDays, dateTile, daysBetween, formatDate, isoToLocalDate, isValidIsoDate, localDateToIso, todayIso } from './dates';
+
+test('billing dates round-trip through the local Date a picker uses', () => {
+  const date = isoToLocalDate('2026-03-29');
+  expect([date.getFullYear(), date.getMonth(), date.getDate(), date.getHours()]).toEqual([2026, 2, 29, 0]);
+  expect(localDateToIso(date)).toBe('2026-03-29');
+  expect(localDateToIso(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05');
+});
 
 afterEach(() => jest.useRealTimers());
 

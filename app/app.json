@@ -44,7 +44,8 @@
         {
           "photosPermission": "Subs uses your photos to set an icon for a service you add."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": false,
