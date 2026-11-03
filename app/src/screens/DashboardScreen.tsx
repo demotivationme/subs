@@ -37,8 +37,9 @@ function DateTile({ date, soon, locale }: { date: string; soon: boolean; locale:
   return (
     <View
       className={cn('h-11 w-11 items-center justify-center rounded-xl', soon ? 'bg-accent-soft dark:bg-accent-soft-dark' : 'bg-surface2 dark:bg-surface2-dark')}>
-      <AppText className={cn('font-bold text-[10px] leading-3', soon ? 'text-accent dark:text-accent-dark' : '')}>{month}</AppText>
-      <AppText numeric className={cn('font-display text-base leading-5', soon ? 'text-accent dark:text-accent-dark' : '')}>{day}</AppText>
+      {/* No fixed line heights: below the font's own height, iOS clips the glyph tops. */}
+      <AppText className={cn('font-bold text-[10px]', soon ? 'text-accent dark:text-accent-dark' : '')}>{month}</AppText>
+      <AppText numeric className={cn('-mt-0.5 font-display text-base', soon ? 'text-accent dark:text-accent-dark' : '')}>{day}</AppText>
     </View>
   );
 }
