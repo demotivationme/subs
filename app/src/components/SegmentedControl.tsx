@@ -2,6 +2,14 @@ import { Pressable, Text, View } from 'react-native';
 
 import { cn } from '@/lib/cn';
 
+const SELECTED_SHADOW = {
+  shadowColor: '#14171C',
+  shadowOpacity: 0.08,
+  shadowRadius: 2,
+  shadowOffset: { width: 0, height: 1 },
+  elevation: 1,
+} as const;
+
 type Props<T extends string> = {
   options: readonly { value: T; label: string }[];
   value: T;
@@ -21,10 +29,10 @@ export function SegmentedControl<T extends string>({ options, value, onChange }:
             accessibilityLabel={option.label}
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
-            className={cn(
-              'h-10 flex-1 items-center justify-center rounded-[10px]',
-              selected && 'bg-surface shadow-sm dark:bg-surface-dark',
-            )}>
+            // A plain style, not `shadow-sm`: that class uses CSS variables, and adding it after the
+            // first render makes NativeWind remount the button on native (and it broke Stats' switch).
+            style={selected ? SELECTED_SHADOW : undefined}
+            className={cn('h-10 flex-1 items-center justify-center rounded-[10px]', selected && 'bg-surface dark:bg-surface-dark')}>
             <Text
               className={cn(
                 'text-sm',
