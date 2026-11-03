@@ -182,7 +182,7 @@ function SavingsCard({ stats, locale, money }: { stats: Stats; locale: string; m
   return (
     <View className="gap-3 rounded-[24px] bg-accent p-5 dark:border dark:border-hero-border-dark dark:bg-hero-dark">
       <AppText className="font-medium text-sm text-white opacity-90 dark:text-hero-label-dark dark:opacity-100">{t('stats.savedTitle')}</AppText>
-      <AppText numeric className="font-display text-[40px] leading-[44px] text-white dark:text-ink-dark">{money(savings.total)}</AppText>
+      <AppText numeric className="font-display text-[40px] text-white dark:text-ink-dark">{money(savings.total)}</AppText>
       <AppText className="text-white opacity-90 dark:text-hero-label-dark dark:opacity-100">
         {t('stats.keep', { monthly: money(savings.monthly), yearly: money(savings.yearly) })}
       </AppText>
@@ -296,7 +296,7 @@ export default function StatsScreen() {
             accessibilityLabel={t('stats.chartLabel', { year, paid: money(stats.spent_so_far), projected: money(stats.projected_year) })}
             className="gap-1">
             <AppText variant="muted">{t('stats.spentIn', { year })}</AppText>
-            <AppText numeric className="font-display text-[36px] leading-10">{money(stats.spent_so_far)}</AppText>
+            <AppText numeric className="font-display text-[36px]">{money(stats.spent_so_far)}</AppText>
             <AppText variant="muted">{t('stats.onTrack', { amount: money(stats.projected_year) })}</AppText>
           </View>
           <YearChart stats={stats} currentMonth={year === thisYear ? thisMonth : null} locale={locale} money={money} onSelect={jumpTo} />
@@ -321,7 +321,7 @@ export default function StatsScreen() {
           />
           <View className="gap-1">
             <AppText variant="muted">{t('stats.monthTotal')}</AppText>
-            <AppText numeric className="font-display text-[36px] leading-10">{money(selected.paid + selected.expected)}</AppText>
+            <AppText numeric className="font-display text-[36px]">{money(selected.paid + selected.expected)}</AppText>
           </View>
           {stats.payments === undefined ? null : stats.payments.length === 0 ? (
             <AppText variant="muted">{t('stats.noPayments')}</AppText>

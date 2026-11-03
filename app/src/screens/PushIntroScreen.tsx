@@ -65,7 +65,7 @@ export default function PushIntroScreen() {
         <SampleNotification />
       </View>
       <View className="gap-3 px-7">
-        <AppText accessibilityRole="header" className="font-display text-[30px] leading-[35px]">{t('push.introTitle')}</AppText>
+        <AppText accessibilityRole="header" className="font-display text-[30px]">{t('push.introTitle')}</AppText>
         <AppText variant="muted" className="text-base leading-6">{t('push.introBody')}</AppText>
         {result ? <Banner tone="warning" message={t(MESSAGES[result])} /> : null}
       </View>

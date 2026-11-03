@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 type Variant = 'title' | 'heading' | 'body' | 'muted' | 'error';
 
 const variants: Record<Variant, string> = {
-  title: 'font-display text-2xl text-ink dark:text-ink-dark',
+  title: 'font-display text-[24px] text-ink dark:text-ink-dark',
   heading: 'font-heading text-[17px] text-ink dark:text-ink-dark',
   body: 'font-sans text-base text-ink dark:text-ink-dark',
   muted: 'font-sans text-sm text-muted dark:text-muted-dark',

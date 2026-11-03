@@ -87,7 +87,7 @@ export default function SubscriptionDetailScreen() {
 
         <Card className="gap-1 rounded-[20px] p-[18px]">
           <View className="flex-row items-baseline gap-2">
-            <AppText numeric className="font-display text-4xl">{money(s.amount)}</AppText>
+            <AppText numeric className="font-display text-[36px]">{money(s.amount)}</AppText>
             <AppText variant="muted" className="text-[15px]">{periodLabel(t, s.period, s.interval_count)}</AppText>
           </View>
           <AppText variant="muted" numeric>{t('subscription.perYear', { amount: money(yearlyAmount(s.amount, s.period, s.interval_count)) })}</AppText>

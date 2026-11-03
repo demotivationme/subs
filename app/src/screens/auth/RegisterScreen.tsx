@@ -81,7 +81,7 @@ export default function RegisterScreen() {
         </Pressable>
       </View>
       <View className="gap-2 px-2">
-        <AppText accessibilityRole="header" className="font-display text-[30px] leading-[35px]">{t('auth.createTitle')}</AppText>
+        <AppText accessibilityRole="header" className="font-display text-[30px]">{t('auth.createTitle')}</AppText>
         <AppText variant="muted" className="text-base leading-6">{t('auth.createSubtitle')}</AppText>
       </View>
       <View className="gap-4 px-2 pt-2">

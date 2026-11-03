@@ -86,7 +86,7 @@ export default function DashboardScreen() {
         <>
           <View className="gap-1 rounded-[24px] bg-accent p-5 dark:border dark:border-hero-border-dark dark:bg-hero-dark">
             <AppText className="font-medium text-sm text-white opacity-90 dark:text-hero-label-dark dark:opacity-100">{t('dashboard.heroLabel')}</AppText>
-            <AppText numeric className="font-display text-[44px] leading-[48px] text-white dark:text-ink-dark">{money(d.monthly_total)}</AppText>
+            <AppText numeric className="font-display text-[44px] text-white dark:text-ink-dark">{money(d.monthly_total)}</AppText>
             <View className="mt-2.5 flex-row flex-wrap gap-2">
               <Pill label={t('dashboard.perYearPill', { amount: money(d.yearly_total) })} />
               <Pill label={t('dashboard.activePill', { count: d.count })} />

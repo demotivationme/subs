@@ -58,7 +58,7 @@ function SlideOneArt() {
       <Pill {...DEMO.adobe} rotate={TILT.d} className="bottom-8 right-9" />
       <View className="w-[250px] gap-1 rounded-[24px] bg-accent p-5 shadow-xl shadow-accent/30 dark:bg-accent-dark">
         <AppText className="text-[13px] font-medium text-surface dark:text-ground-dark">{t('onboarding.demo.perMonthLabel')}</AppText>
-        <AppText numeric className="font-display text-[40px] leading-[44px] text-surface dark:text-ground-dark">{DEMO.total}</AppText>
+        <AppText numeric className="font-display text-[40px] text-surface dark:text-ground-dark">{DEMO.total}</AppText>
         <AppText numeric className="text-[13px] text-surface dark:text-ground-dark">{t('onboarding.demo.perYearLine')}</AppText>
       </View>
     </View>
@@ -165,7 +165,7 @@ function SlideFourArt() {
       <View className="flex-row items-end justify-between rounded-[22px] bg-accent px-[18px] py-4 dark:bg-accent-dark">
         <View className="gap-0.5">
           <AppText className="text-xs text-surface dark:text-ground-dark">{t('onboarding.demo.nowPerMonth')}</AppText>
-          <AppText numeric className="font-display text-[32px] leading-[38px] text-surface dark:text-ground-dark">{DEMO.nowTotal}</AppText>
+          <AppText numeric className="font-display text-[32px] text-surface dark:text-ground-dark">{DEMO.nowTotal}</AppText>
         </View>
         <View className="rounded-full bg-surface/20 px-2.5 py-[5px]">
           <AppText numeric className="text-[13px] font-semibold text-surface dark:text-ground-dark">{DEMO.saved}</AppText>
@@ -259,7 +259,7 @@ export default function OnboardingScreen() {
       </View>
 
       <View className="gap-3 px-7">
-        <AppText accessibilityRole="header" className="font-display text-[30px] leading-[35px]">{t(`onboarding.slide${index + 1}Title`)}</AppText>
+        <AppText accessibilityRole="header" className="font-display text-[30px]">{t(`onboarding.slide${index + 1}Title`)}</AppText>
         <AppText variant="muted" className="text-base leading-6">{t(`onboarding.slide${index + 1}Body`)}</AppText>
       </View>
 

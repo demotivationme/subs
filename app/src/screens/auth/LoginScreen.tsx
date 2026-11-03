@@ -56,7 +56,7 @@ export default function LoginScreen() {
         <View className="h-14 w-14 items-center justify-center rounded-[18px] bg-accent dark:bg-accent-dark">
           <Ionicons name="refresh" size={28} color="#FFFFFF" />
         </View>
-        <AppText accessibilityRole="header" className="font-display text-[32px] leading-[37px]">{t('auth.loginHeadline')}</AppText>
+        <AppText accessibilityRole="header" className="font-display text-[32px]">{t('auth.loginHeadline')}</AppText>
         <AppText variant="muted" className="text-base leading-6">{t('auth.loginSubtitle')}</AppText>
       </View>
       <View className="gap-4 px-2 pt-4">
