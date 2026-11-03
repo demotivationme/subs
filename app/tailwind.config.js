@@ -12,7 +12,7 @@ module.exports = {
         ink: { DEFAULT: '#14171C', dark: '#F1F3F5' },
         muted: { DEFAULT: '#5B6370', dark: '#9AA3AF' },
         accent: { DEFAULT: '#0B7A57', dark: '#34C08E', soft: '#E2F3EB', 'soft-dark': '#12382A', strong: '#075A40' },
-        warn: { DEFAULT: '#9A4A06', soft: '#FDF1DD', ink: '#5A2E04' },
+        warn: { DEFAULT: '#9A4A06', dark: '#F0A44B', soft: '#FDF1DD', 'soft-dark': '#3A2810', ink: '#5A2E04', 'ink-dark': '#F7D29C' },
         danger: { DEFAULT: '#B42F25', dark: '#F07A70' },
         hero: { dark: '#13402F', 'border-dark': '#1F5A43', 'label-dark': '#B9E9D5' },
         badge: { DEFAULT: '#D9342B' },

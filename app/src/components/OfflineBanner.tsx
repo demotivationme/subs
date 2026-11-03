@@ -7,8 +7,8 @@ export function OfflineBanner() {
   const { t } = useTranslation();
   if (useOnline()) return null;
   return (
-    <View accessibilityRole="alert" className="rounded-xl bg-warn-soft px-4 py-2">
-      <Text className="text-center font-medium text-warn-ink">{t('offline')}</Text>
+    <View accessibilityRole="alert" className="rounded-xl bg-warn-soft px-4 py-2 dark:bg-warn-soft-dark">
+      <Text className="text-center font-medium text-warn-ink dark:text-warn-ink-dark">{t('offline')}</Text>
     </View>
   );
 }

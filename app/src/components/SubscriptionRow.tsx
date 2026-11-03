@@ -40,8 +40,8 @@ export function SubscriptionRow({ subscription: s, onPress }: { subscription: Su
           <AppText numeric className="font-semibold">{price}</AppText>
           <AppText variant="muted" className="text-xs">{period}</AppText>
           {inactive ? (
-            <View className="mt-0.5 rounded-full bg-warn-soft px-2 py-0.5">
-              <AppText className="font-semibold text-[11px] text-warn-ink dark:text-warn-ink">{status}</AppText>
+            <View className="mt-0.5 rounded-full bg-warn-soft px-2 py-0.5 dark:bg-warn-soft-dark">
+              <AppText className="font-semibold text-[11px] text-warn-ink dark:text-warn-ink-dark">{status}</AppText>
             </View>
           ) : null}
         </View>

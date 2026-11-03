@@ -186,8 +186,8 @@ function SlideFourArt() {
           <AppText variant="muted" className="font-heading">{DEMO.disney.initial}</AppText>
         </View>
         <AppText variant="muted" className="flex-1 text-[15px] font-semibold line-through">{DEMO.disney.name}</AppText>
-        <View className="rounded-full bg-warn-soft px-[9px] py-[3px]">
-          <AppText className="text-xs font-semibold text-warn-ink">{t('onboarding.demo.cancelled')}</AppText>
+        <View className="rounded-full bg-warn-soft px-[9px] py-[3px] dark:bg-warn-soft-dark">
+          <AppText className="text-xs font-semibold text-warn-ink dark:text-warn-ink-dark">{t('onboarding.demo.cancelled')}</AppText>
         </View>
       </View>
     </View>

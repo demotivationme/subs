@@ -222,8 +222,8 @@ function CategoryCard({ stats, money }: { stats: Stats; money: (minor: number) =
                 numeric
                 className={cn(
                   'w-20 text-right text-sm',
-                  c.change < 0 && 'text-accent-strong',
-                  c.change > 0 && 'text-warn',
+                  c.change < 0 && 'text-accent-strong dark:text-accent-dark',
+                  c.change > 0 && 'text-warn dark:text-warn-dark',
                   c.change === 0 && 'text-muted dark:text-muted-dark',
                 )}>
                 {change}
