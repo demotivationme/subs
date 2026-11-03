@@ -8,7 +8,6 @@ use App\Models\Subscription;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Pure statistics over subscriptions that already carry service, category and status changes.
@@ -24,6 +23,7 @@ final class StatsCalculator
     public function __construct(
         private readonly CurrencyConverter $converter,
         private readonly SpendCalculator $spend,
+        private readonly ServiceLogoStorage $logos,
     ) {}
 
     /** @param Collection<int, Subscription> $subscriptions */
@@ -119,7 +119,7 @@ final class StatsCalculator
                     'service' => [
                         'id' => $subscription->service->id,
                         'name' => $subscription->service->name,
-                        'logo_url' => $subscription->service->logo_path ? Storage::disk('public')->url($subscription->service->logo_path) : null,
+                        'logo_url' => $this->logos->url($subscription->service->logo_path),
                         'color' => $subscription->service->color,
                     ],
                     'status' => $subscription->status->value,

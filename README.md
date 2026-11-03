@@ -68,6 +68,13 @@ On the server, one time:
 4. Run `./docker/bin/deploy.sh`. Besides migrating, it seeds the preset categories and service catalog (`db:seed --class=CatalogSeeder`, safe to rerun) and fetches today's exchange rates (`rates:fetch`; if the ECB is unreachable it only warns, and the daily schedule retries).
 5. Cron: `0 3 * * * /path/to/subs/docker/bin/backup.sh` (reads `BACKUP_*` from the root `.env`).
 
+Service logos (catalog and custom) go to Cloudflare R2 when `LOGO_DISK=r2`:
+1. In Cloudflare, create an R2 bucket and turn on public access, either through the bucket's r2.dev URL or a custom domain such as `logos.<domain>`.
+2. Create an R2 API token with **Object Read & Write** on that bucket.
+3. Set `LOGO_DISK=r2` and the `R2_*` values in `backend/.env` (see `.env.example`), then run `php artisan config:clear` and `php artisan db:seed --class=CatalogSeeder` to upload the catalog logos.
+
+The database stores only each logo's path inside the bucket, never a full URL. Moving to another storage provider means copying the files and changing the `.env` settings.
+
 To deploy updates, run `./docker/bin/deploy.sh` again. The web app is exported into `app/dist` by the script (in a throwaway Node container) and served by Caddy. Uploaded service logos live in the persistent `subs_storage_public` volume.
 
 Note: the Horizon dashboard gate (`app/Providers/HorizonServiceProvider.php`) has an empty email list, so `/horizon` is denied outside local. Add the allowed admin emails there before using `/horizon` in production.

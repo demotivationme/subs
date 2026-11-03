@@ -75,6 +75,24 @@ it('uploads a logo, replaces it and removes it', function () {
     expect($service->fresh()->logo_path)->toBeNull();
 });
 
+it('stores logos on the configured logo disk and keeps only the relative path', function () {
+    config(['subs.logo_disk' => 'r2', 'filesystems.disks.r2.url' => 'https://logos.example.com']);
+    Storage::fake('r2');
+    $me = actingAsUser();
+    $service = Service::factory()->create(['user_id' => $me->id]);
+
+    $response = $this->postJson("/api/v1/services/{$service->id}/logo", ['logo' => logo()])->assertOk();
+
+    $path = $service->fresh()->logo_path;
+    expect($path)->toStartWith('service-logos/')->not->toContain('://');
+    Storage::disk('r2')->assertExists($path);
+    Storage::disk('public')->assertMissing($path);
+    expect($response->json('data.logo_url'))->toBe(Storage::disk('r2')->url($path));
+
+    $this->deleteJson("/api/v1/services/{$service->id}/logo")->assertNoContent();
+    Storage::disk('r2')->assertMissing($path);
+});
+
 it('refuses logo uploads to catalog and other users services', function () {
     actingAsUser();
     $catalog = Service::whereNull('user_id')->first();
