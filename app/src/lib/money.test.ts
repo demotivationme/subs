@@ -1,4 +1,26 @@
-import { currencyDecimals, formatMoney, minorToInput, parseMoney } from './money';
+import { currencyDecimals, currencySymbol, formatMoney, minorToInput, parseMoney } from './money';
+
+test.each([
+  ['EUR', 'en', '€'],
+  ['USD', 'en', '$'],
+  ['JPY', 'en', '¥'],
+  ['EUR', 'de', '€'],
+])('currency symbol for %s in %s', (currency, locale, symbol) => {
+  expect(currencySymbol(currency, locale)).toBe(symbol);
+});
+
+test('currency symbol works without NumberFormat#formatToParts (Hermes)', () => {
+  const proto = Intl.NumberFormat.prototype as Partial<Intl.NumberFormat>;
+  const original = proto.formatToParts;
+  delete proto.formatToParts;
+  try {
+    expect(currencySymbol('EUR', 'en')).toBe('€');
+    expect(currencySymbol('EUR', 'de')).toBe('€');
+    expect(currencySymbol('USD', 'en')).toBe('$');
+  } finally {
+    proto.formatToParts = original;
+  }
+});
 
 test('decimals come from CLDR like the backend', () => {
   expect(currencyDecimals('EUR')).toBe(2);

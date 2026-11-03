@@ -8,7 +8,7 @@ import { useLocale } from '@/i18n/useLocale';
 import { currencyOptions } from '@/lib/currencies';
 import { addDays, formatDate } from '@/lib/dates';
 import { translateError } from '@/lib/errors';
-import { minorToInput, parseMoney } from '@/lib/money';
+import { currencySymbol, minorToInput, parseMoney } from '@/lib/money';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -32,10 +32,6 @@ type Props = {
   service?: { name: string; logo_url: string | null; color: string | null };
   onChangeService?: () => void;
 };
-
-function currencySymbol(currency: string, locale: string): string {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).formatToParts(0).find((p) => p.type === 'currency')?.value ?? currency;
-}
 
 /** Step 2: amount, billing cycle, next payment and category. Reused, prefilled, for editing. */
 export function SubscriptionPriceStep({ value, onChange, errors, categories, today, service, onChangeService }: Props) {

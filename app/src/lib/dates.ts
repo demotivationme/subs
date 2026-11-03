@@ -18,8 +18,13 @@ export function formatDateTime(iso: string, locale: string): string {
 
 /** Today's date (YYYY-MM-DD) in the given IANA timezone (the device's when omitted). */
 export function todayIso(timeZone?: string): string {
-  const fields = new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' })
-    .formatToParts(new Date());
+  const formatter = new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
+  if (typeof formatter.formatToParts !== 'function') {
+    // Hermes may lack formatToParts; en-US numeric output is "MM/DD/YYYY".
+    const [month, day, year] = formatter.format(new Date()).split('/');
+    return `${year}-${month}-${day}`;
+  }
+  const fields = formatter.formatToParts(new Date());
   const get = (type: string) => fields.find((p) => p.type === type)?.value ?? '';
   return `${get('year')}-${get('month')}-${get('day')}`;
 }

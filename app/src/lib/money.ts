@@ -4,7 +4,7 @@ const decimalsCache = new Map<string, number>();
 export function currencyDecimals(currency: string): number {
   let decimals = decimalsCache.get(currency);
   if (decimals === undefined) {
-    decimals = new Intl.NumberFormat('en', { style: 'currency', currency }).resolvedOptions().maximumFractionDigits ?? 2;
+    decimals = new Intl.NumberFormat('en', { style: 'currency', currency }).resolvedOptions?.().maximumFractionDigits ?? 2;
     decimalsCache.set(currency, decimals);
   }
   return decimals;
@@ -18,6 +18,16 @@ export function formatMoney(minor: number, currency: string, locale: string): st
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(minor / 10 ** decimals);
+}
+
+/** The currency's symbol in this locale ("€", "US$"). Hermes on iOS has no NumberFormat#formatToParts, so fall back to stripping a formatted zero. */
+export function currencySymbol(currency: string, locale: string): string {
+  const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const symbol =
+    typeof formatter.formatToParts === 'function'
+      ? formatter.formatToParts(0).find((p) => p.type === 'currency')?.value
+      : formatter.format(0).replace(/[\d\s.,  -]/g, '');
+  return symbol || currency;
 }
 
 /**

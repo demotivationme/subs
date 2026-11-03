@@ -12,6 +12,19 @@ test('today follows the given timezone', () => {
   expect(todayIso('America/New_York')).toBe('2026-11-01');
 });
 
+test('today works without DateTimeFormat#formatToParts (Hermes)', () => {
+  jest.useFakeTimers({ now: new Date('2026-11-01T23:30:00Z') });
+  const proto = Intl.DateTimeFormat.prototype as Partial<Intl.DateTimeFormat>;
+  const original = proto.formatToParts;
+  delete proto.formatToParts;
+  try {
+    expect(todayIso('Europe/Berlin')).toBe('2026-11-02');
+    expect(todayIso('America/New_York')).toBe('2026-11-01');
+  } finally {
+    proto.formatToParts = original;
+  }
+});
+
 test.each([
   ['2026-02-28', true],
   ['2028-02-29', true],
