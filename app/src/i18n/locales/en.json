@@ -220,7 +220,6 @@
   },
   "reminders": {
     "daysBefore": "Days before",
-    "time": "Time (HH:MM)",
     "add": "Add reminder",
     "remove": "Remove",
     "saved": "Reminders saved.",

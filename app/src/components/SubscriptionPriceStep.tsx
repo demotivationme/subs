@@ -12,7 +12,7 @@ import { currencySymbol, minorToInput, parseMoney } from '@/lib/money';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
-import { DatePickerModal } from './DatePickerModal';
+import { DateTimeModal } from './DateTimeModal';
 import { SegmentedChoice } from './SegmentedChoice';
 import { SegmentedControl } from './SegmentedControl';
 import { SelectField } from './SelectField';
@@ -32,6 +32,8 @@ type Props = {
   service?: { name: string; logo_url: string | null; color: string | null };
   onChangeService?: () => void;
 };
+
+const DATE = 'date';
 
 /** Step 2: amount, billing cycle, next payment and category. Reused, prefilled, for editing. */
 export function SubscriptionPriceStep({ value, onChange, errors, categories, today, service, onChangeService }: Props) {
@@ -168,7 +170,8 @@ export function SubscriptionPriceStep({ value, onChange, errors, categories, tod
         onOpenChange={setCategoryOpen}
         hideTrigger
       />
-      <DatePickerModal
+      <DateTimeModal
+        mode={DATE}
         visible={dateOpen}
         title={t('form.nextPayment')}
         value={value.firstPaymentDate}

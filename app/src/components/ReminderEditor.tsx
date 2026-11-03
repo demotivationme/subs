@@ -10,11 +10,12 @@ import { AppText } from './AppText';
 import { Button } from './Button';
 import { SegmentedChoice } from './SegmentedChoice';
 import { SwitchRow } from './SwitchRow';
-import { TextEntryModal } from './TextEntryModal';
+import { DateTimeModal } from './DateTimeModal';
 import { TextField } from './TextField';
 
 const PRESETS = [0, 1, 3, 7] as const;
 const OTHER = 'other';
+const TIME = 'time';
 const ROW_LABEL: Record<(typeof CHANNELS)[number], string> = { push: 'reminders.pushRow', in_app: 'reminders.inAppRow', email: 'reminders.emailRow' };
 
 type Props = {
@@ -116,11 +117,12 @@ export function ReminderEditor({ rules, onChange, errors = [], email }: Props) {
         <Button label={t('reminders.addAnother')} variant="ghost" onPress={() => onChange([...rules, defaultRule(rules)])} />
       ) : null}
 
-      <TextEntryModal
+      <DateTimeModal
+        mode={TIME}
         visible={timeIndex !== null}
         title={t('reminders.timeTitle')}
-        label={t('reminders.time')}
         value={timeIndex !== null ? (rules[timeIndex]?.time_of_day ?? '') : ''}
+        fallback="09:00"
         onClose={() => setTimeIndex(null)}
         onSave={(time) => {
           if (timeIndex !== null) update(timeIndex, { time_of_day: time });

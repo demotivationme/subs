@@ -27,7 +27,9 @@ test('edits when, time and channels, shows the account email, and adds and remov
   expect(onRules).toHaveBeenLastCalledWith([{ ...START[0], days_before: 14 }]);
 
   await fireEvent.press(screen.getByRole('button', { name: 'At' }));
-  await fireEvent.changeText(screen.getByLabelText('Time (HH:MM)'), '18:30');
+  await fireEvent(screen.getByTestId('date-time-picker'), 'onChange', {
+    nativeEvent: { timestamp: new Date(2000, 0, 1, 18, 30).getTime(), utcOffset: 0 },
+  });
   await fireEvent.press(screen.getByRole('button', { name: 'Done' }));
   expect(onRules).toHaveBeenLastCalledWith([{ ...START[0], days_before: 14, time_of_day: '18:30' }]);
 

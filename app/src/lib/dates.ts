@@ -69,6 +69,17 @@ export function localDateToIso(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
+/** A reminder time ("HH:MM") as a local Date on an arbitrary day, for a native time picker. */
+export function timeToLocalDate(time: string): Date {
+  const [h, m] = time.split(':').map(Number);
+  return new Date(2000, 0, 1, Number.isFinite(h) ? h : 9, Number.isFinite(m) ? m : 0);
+}
+
+/** The time a native picker returned (local), as "HH:MM". */
+export function localDateToTime(date: Date): string {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
 /** A billing date shifted by whole days (negative goes back), computed in UTC. */
 export function addDays(isoDate: string, days: number): string {
   const [y, m, d] = parts(isoDate);

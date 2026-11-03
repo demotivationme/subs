@@ -1,4 +1,22 @@
-import { addDays, dateTile, daysBetween, formatDate, isoToLocalDate, isValidIsoDate, localDateToIso, todayIso } from './dates';
+import {
+  addDays,
+  dateTile,
+  daysBetween,
+  formatDate,
+  isoToLocalDate,
+  isValidIsoDate,
+  localDateToIso,
+  localDateToTime,
+  timeToLocalDate,
+  todayIso,
+} from './dates';
+
+test('reminder times round-trip through the local Date a picker uses', () => {
+  const date = timeToLocalDate('07:45');
+  expect([date.getHours(), date.getMinutes()]).toEqual([7, 45]);
+  expect(localDateToTime(date)).toBe('07:45');
+  expect(localDateToTime(new Date(2026, 5, 1, 23, 0))).toBe('23:00');
+});
 
 test('billing dates round-trip through the local Date a picker uses', () => {
   const date = isoToLocalDate('2026-03-29');

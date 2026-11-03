@@ -46,12 +46,11 @@ test('blocks invalid rules before saving', async () => {
   await renderWithProviders(<SubscriptionReminders subscription={subscription} />);
 
   await fireEvent.press(await screen.findByRole('button', { name: 'Customize' }));
-  await fireEvent.press(screen.getByRole('button', { name: 'At' }));
-  await fireEvent.changeText(screen.getByLabelText('Time (HH:MM)'), '9');
-  await fireEvent.press(screen.getByRole('button', { name: 'Done' }));
+  await fireEvent.press(screen.getByRole('radio', { name: 'Other…' }));
+  await fireEvent.changeText(screen.getByLabelText('Days before (0 to 60)'), '99');
   await fireEvent.press(screen.getByRole('button', { name: 'Save' }));
 
-  expect(await screen.findByText('Use the format HH:MM, like 09:00.')).toBeTruthy();
+  expect(await screen.findByText('Use 0 to 60 days.')).toBeTruthy();
   expect(calls.some((c) => c.method === 'PUT')).toBe(false);
 });
 
