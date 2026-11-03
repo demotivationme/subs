@@ -8,9 +8,11 @@
     "scheme": "subs",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.alterwave.subs",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "com.alterwave.subs",
       "adaptiveIcon": {
         "backgroundColor": "#0B7A57",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -50,6 +52,12 @@
     "experiments": {
       "typedRoutes": false,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3b7d1b3a-fe2d-477a-93f2-1ca91f20edad"
+      }
+    },
+    "owner": "alter-wave"
   }
 }
