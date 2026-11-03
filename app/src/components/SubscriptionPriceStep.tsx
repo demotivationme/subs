@@ -34,6 +34,7 @@ type Props = {
 };
 
 const DATE = 'date';
+const AMOUNT_PLACEHOLDER = '0';
 
 /** Step 2: amount, billing cycle, next payment and category. Reused, prefilled, for editing. */
 export function SubscriptionPriceStep({ value, onChange, errors, categories, today, service, onChangeService }: Props) {
@@ -81,18 +82,27 @@ export function SubscriptionPriceStep({ value, onChange, errors, categories, tod
         <AppText variant="muted" className="font-medium text-[13px]">{t('form.amount')}</AppText>
         <View className="flex-row items-center gap-3">
           <AppText className="font-display text-[44px] text-muted dark:text-muted-dark">{currencySymbol(value.currency, locale)}</AppText>
-          <TextInput
-            accessibilityLabel={t('form.amount')}
-            value={value.amount}
-            onChangeText={(amount) => onChange({ amount })}
-            onBlur={normalizeAmount}
-            keyboardType="decimal-pad"
-            placeholder="0"
-            placeholderTextColor="#9AA3AF"
-            // An explicit height and no vertical padding: iOS otherwise clips Manrope's tall glyphs at 44px.
-            style={{ height: 60, paddingVertical: 0 }}
-            className="min-w-0 flex-1 font-display text-[44px] text-ink dark:text-ink-dark"
-          />
+          <View className="min-w-0 flex-1 justify-center">
+            {/* Our own "0": iOS draws a large custom-font placeholder above the field, cut off. */}
+            {value.amount === '' ? (
+              <AppText
+                testID="amount-placeholder"
+                accessible={false}
+                className="pointer-events-none absolute left-0 font-display text-[44px] text-muted dark:text-muted-dark">
+                {AMOUNT_PLACEHOLDER}
+              </AppText>
+            ) : null}
+            <TextInput
+              accessibilityLabel={t('form.amount')}
+              value={value.amount}
+              onChangeText={(amount) => onChange({ amount })}
+              onBlur={normalizeAmount}
+              keyboardType="decimal-pad"
+              // An explicit height and no vertical padding: iOS otherwise clips Manrope's tall glyphs at 44px.
+              style={{ height: 60, paddingVertical: 0 }}
+              className="font-display text-[44px] text-ink dark:text-ink-dark"
+            />
+          </View>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('form.currency')}
