@@ -238,6 +238,23 @@ it('reports since and until for resumed and still-inactive subscriptions', funct
         ->and($items[$paused->id])->toMatchArray(['status' => 'paused', 'since' => '2026-10-10', 'until' => null]);
 });
 
+it('reports how the latest inactive period began, also once resumed', function () {
+    $pausedThenResumed = sub($this->me, ['amount' => 1000, 'first_payment_date' => '2026-01-10'], [
+        ['active', '2026-01-01 00:00:00'], ['paused', '2026-03-15 10:00:00'], ['active', '2026-06-10 09:00:00'],
+    ]);
+    $cancelledThenResumed = sub($this->me, ['amount' => 1000, 'first_payment_date' => '2026-01-10'], [
+        ['active', '2026-01-01 00:00:00'], ['cancelled', '2026-03-15 10:00:00'], ['active', '2026-06-10 09:00:00'],
+    ]);
+    $laterCancelled = sub($this->me, ['amount' => 1000, 'first_payment_date' => '2026-01-10', 'status' => 'cancelled'], [
+        ['active', '2026-01-01 00:00:00'], ['paused', '2026-03-15 10:00:00'], ['active', '2026-04-10 09:00:00'], ['cancelled', '2026-10-10 00:00:00'],
+    ]);
+
+    $items = collect(($this->stats)()->json('savings.items'))->keyBy('subscription_id');
+    expect($items[$pausedThenResumed->id])->toMatchArray(['status' => 'active', 'inactive_status' => 'paused', 'until' => '2026-06-10'])
+        ->and($items[$cancelledThenResumed->id])->toMatchArray(['status' => 'active', 'inactive_status' => 'cancelled', 'until' => '2026-06-10'])
+        ->and($items[$laterCancelled->id])->toMatchArray(['status' => 'cancelled', 'inactive_status' => 'cancelled']);
+});
+
 it('counts an occurrence exactly on today as paid', function () {
     sub($this->me, ['amount' => 1000, 'first_payment_date' => '2026-09-02']);
 

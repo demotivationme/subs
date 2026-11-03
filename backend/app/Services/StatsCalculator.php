@@ -123,6 +123,8 @@ final class StatsCalculator
                         'color' => $subscription->service->color,
                     ],
                     'status' => $subscription->status->value,
+                    // How the latest inactive period began; a resumed subscription is active again by now.
+                    'inactive_status' => ($isActive && $since !== null ? $this->statusAt($timeline, $since) : $subscription->status)->value,
                     'until' => $isActive ? $until?->toDateString() : null,
                     'since' => $since?->toDateString() ?? $subscription->updated_at?->setTimezone($timezone)->toDateString(),
                     'monthly' => (int) round($monthly ?? 0),
