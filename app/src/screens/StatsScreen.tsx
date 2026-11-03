@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, useColorScheme, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useMe } from '@/api/me';
@@ -19,6 +19,7 @@ import { useLocale } from '@/i18n/useLocale';
 import { cn } from '@/lib/cn';
 import { formatDate, todayIso } from '@/lib/dates';
 import { formatMoney } from '@/lib/money';
+import { useScheme } from '@/theme';
 
 type Mode = 'month' | 'year';
 
@@ -51,7 +52,7 @@ function Stepper({ label, previousLabel, nextLabel, onPrevious, onNext, nextDisa
   onNext: () => void;
   nextDisabled: boolean;
 }) {
-  const ink = useColorScheme() === 'dark' ? '#F1F3F5' : '#14171C';
+  const ink = useScheme() === 'dark' ? '#F1F3F5' : '#14171C';
   const muted = '#9AA3AF';
   return (
     <View className="flex-row items-center justify-between">

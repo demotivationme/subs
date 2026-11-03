@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View, useColorScheme } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
@@ -10,6 +10,7 @@ import { Button } from '@/components/Button';
 import { ServiceIcon } from '@/components/ServiceIcon';
 import { cn } from '@/lib/cn';
 import { prefs } from '@/lib/prefs';
+import { useScheme } from '@/theme';
 
 const LAST = 3;
 
@@ -211,7 +212,7 @@ function StepDots({ current }: { current: number }) {
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
-  const dark = useColorScheme() === 'dark';
+  const dark = useScheme() === 'dark';
   const last = index === LAST;
 
   // Reaching the final slide counts as having seen the intro, even if the app is closed there.

@@ -2,10 +2,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 
 import { HeaderAddButton } from '@/components/HeaderAddButton';
 import { HeaderBell } from '@/components/HeaderBell';
+import { useScheme } from '@/theme';
 
 // Navigation chrome takes raw values; they mirror the tokens in tailwind.config.js.
 const THEME = {
@@ -20,7 +21,7 @@ const STATS_ICON = 'bar-chart-outline';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
-  const c = THEME[useColorScheme() === 'dark' ? 'dark' : 'light'];
+  const c = THEME[useScheme() === 'dark' ? 'dark' : 'light'];
 
   const screenOptions: ScreenOptions = {
         headerRight: () => <HeaderBell />,

@@ -17,6 +17,7 @@ import { Group } from '@/components/Group';
 import { Loading } from '@/components/Loading';
 import { ModalBody } from '@/components/ModalBody';
 import { Screen } from '@/components/Screen';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import { SelectField } from '@/components/SelectField';
 import { SwitchRow } from '@/components/SwitchRow';
 import { TextEntryModal } from '@/components/TextEntryModal';
@@ -28,6 +29,7 @@ import { currencyOptions } from '@/lib/currencies';
 import { deviceTimeZone } from '@/lib/dates';
 import { isValidTimeZone, knownTimeZones } from '@/lib/timezones';
 import { disablePush, enablePush, isPushEnabled, isPushSupported, type PushResult } from '@/push';
+import { THEME_PREFERENCES, useTheme } from '@/theme';
 
 const REMINDERS_ROUTE = '/settings/reminders';
 const CATEGORIES_ROUTE = '/categories';
@@ -238,6 +240,21 @@ function RemindersGroup() {
   );
 }
 
+function AppearanceGroup() {
+  const { t } = useTranslation();
+  const preference = useTheme((s) => s.preference);
+  const choose = useTheme((s) => s.choose);
+  const options = THEME_PREFERENCES.map((value) => ({ value, label: t(`settings.theme.${value}`) }));
+
+  return (
+    <Group title={t('settings.appearance')}>
+      <View className="py-3">
+        <SegmentedControl options={options} value={preference} onChange={(value) => void choose(value)} />
+      </View>
+    </Group>
+  );
+}
+
 function AccountGroup({ user }: { user: User }) {
   const { t } = useTranslation();
   const [leaving, setLeaving] = useState(false);
@@ -307,6 +324,7 @@ export default function SettingsScreen() {
     <Screen>
       <RemindersGroup />
       <ProfileGroup user={me.data} />
+      <AppearanceGroup />
       <AccountGroup user={me.data} />
       <DangerGroup />
     </Screen>

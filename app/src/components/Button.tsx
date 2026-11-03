@@ -1,6 +1,7 @@
-import { ActivityIndicator, Pressable, Text, useColorScheme } from 'react-native';
+import { ActivityIndicator, Pressable, Text } from 'react-native';
 
 import { cn } from '@/lib/cn';
+import { useScheme } from '@/theme';
 
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'ink' | 'ghostDanger';
 
@@ -33,7 +34,7 @@ type Props = {
 
 export function Button({ label: text, onPress, variant = 'primary', loading = false, disabled = false, className }: Props) {
   const inactive = disabled || loading;
-  const dark = useColorScheme() === 'dark';
+  const dark = useScheme() === 'dark';
   // primary/danger sit on a solid fill (white spinner); secondary/ghost use the ink / accent token colors
   const spinner =
     variant === 'primary' || variant === 'danger'

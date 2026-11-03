@@ -2,6 +2,8 @@
 module.exports = {
   content: ['./src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
+  // Class-based so the in-app theme choice can override the system on web too (src/theme).
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

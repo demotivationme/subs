@@ -1,9 +1,10 @@
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useEffect, useEffectEvent, useState } from 'react';
-import { Modal, Platform, useColorScheme } from 'react-native';
+import { Modal, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { isoToLocalDate, localDateToIso, localDateToTime, timeToLocalDate } from '@/lib/dates';
+import { useScheme } from '@/theme';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -57,7 +58,7 @@ type BodyProps = { mode: DateTimeModalProps['mode']; title: string; initial: str
 
 function IosBody({ mode, title, initial, onSave, onClose }: BodyProps) {
   const { t } = useTranslation();
-  const theme = THEME[useColorScheme() === 'dark' ? 'dark' : 'light'];
+  const theme = THEME[useScheme() === 'dark' ? 'dark' : 'light'];
   const { toDate, fromDate, display } = CONVERT[mode];
   const [draft, setDraft] = useState(initial);
   return (

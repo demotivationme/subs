@@ -1,9 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, useColorScheme, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { useUnreadCount } from '@/api/notifications';
+import { useScheme } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -13,7 +14,7 @@ export function HeaderBell() {
   const { t } = useTranslation();
   const { data: count = 0 } = useUnreadCount();
   // Icon color mirrors the ink token.
-  const color = useColorScheme() === 'dark' ? '#F1F3F5' : '#14171C';
+  const color = useScheme() === 'dark' ? '#F1F3F5' : '#14171C';
 
   const openInbox = () => router.push(INBOX);
 

@@ -1,6 +1,8 @@
 import { createElement, useState } from 'react';
-import { Modal, useColorScheme } from 'react-native';
+import { Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
+
+import { useScheme } from '@/theme';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -27,7 +29,7 @@ type BodyProps = { mode: DateTimeModalProps['mode']; title: string; initial: str
 
 function Body({ mode, title, initial, onSave, onClose }: BodyProps) {
   const { t } = useTranslation();
-  const inputStyle = useColorScheme() === 'dark' ? INPUT_STYLE.dark : INPUT_STYLE.light;
+  const inputStyle = useScheme() === 'dark' ? INPUT_STYLE.dark : INPUT_STYLE.light;
   const [draft, setDraft] = useState(initial);
   return (
     <ModalBody className="gap-4">

@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, Pressable, RefreshControl, useColorScheme, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useCategories } from '@/api/categories';
@@ -15,6 +15,7 @@ import { Screen } from '@/components/Screen';
 import { SegmentedChoice } from '@/components/SegmentedChoice';
 import { SelectField } from '@/components/SelectField';
 import { SubscriptionRow } from '@/components/SubscriptionRow';
+import { useScheme } from '@/theme';
 
 type Sort = NonNullable<SubscriptionFilter['sort']>;
 type StatusFilter = 'all' | SubscriptionStatus;
@@ -23,7 +24,7 @@ const ANY_CATEGORY = 0;
 
 function FilterButton({ label, value, onPress }: { label: string; value: string; onPress: () => void }) {
   // Chevron color mirrors the muted token.
-  const color = useColorScheme() === 'dark' ? '#9AA3AF' : '#5B6370';
+  const color = useScheme() === 'dark' ? '#9AA3AF' : '#5B6370';
   return (
     <Pressable
       accessibilityRole="button"

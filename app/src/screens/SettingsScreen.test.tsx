@@ -3,8 +3,10 @@ import { router } from 'expo-router';
 
 import { keys } from '@/api/keys';
 import { useSession } from '@/auth/session';
+import { prefs } from '@/lib/prefs';
 import { disablePush, enablePush } from '@/push';
 import { fixtures } from '@/test/fixtures';
+import { useTheme } from '@/theme';
 import { createTestQueryClient, mockApi, renderWithProviders, type MockRoute } from '@/test/utils';
 
 import SettingsScreen from './SettingsScreen';
@@ -31,6 +33,18 @@ function setup(extra: Record<string, MockRoute> = {}, user = fixtures.user({ tim
 
 const patched = (calls: { method: string; body: unknown }[], field: string, value: string) =>
   calls.some((c) => c.method === 'PATCH' && (c.body as Record<string, string>)[field] === value);
+
+test('switches and remembers the theme', async () => {
+  const { client } = setup();
+  await renderWithProviders(<SettingsScreen />, client);
+
+  expect((await screen.findByRole('radio', { name: 'System' })).props.accessibilityState).toMatchObject({ selected: true });
+  await fireEvent.press(screen.getByRole('radio', { name: 'Dark' }));
+
+  expect(useTheme.getState().preference).toBe('dark');
+  await waitFor(async () => expect(await prefs.get('theme')).toBe('dark'));
+  expect(screen.getByRole('radio', { name: 'Dark' }).props.accessibilityState).toMatchObject({ selected: true });
+});
 
 test('shows the profile values on their rows', async () => {
   const { client } = setup();

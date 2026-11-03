@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 
 import { cn } from '@/lib/cn';
+import { useScheme } from '@/theme';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -10,7 +11,7 @@ type Props = { tone?: 'info' | 'warning'; message: string; action?: { label: str
 
 export function Banner({ tone = 'info', message, action }: Props) {
   const warning = tone === 'warning';
-  const iconColor = useColorScheme() === 'dark' ? '#F0A44B' : '#9A4A06';
+  const iconColor = useScheme() === 'dark' ? '#F0A44B' : '#9A4A06';
   return (
     <View
       accessibilityRole="alert"

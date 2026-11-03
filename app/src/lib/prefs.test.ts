@@ -17,3 +17,9 @@ test('clear keeps onboarding.seen', async () => {
   expect(await prefs.get('onboarding.seen')).toBe('1');
   expect(await prefs.get('push.token')).toBeNull();
 });
+
+test('clear keeps the theme choice', async () => {
+  await prefs.set('theme', 'dark');
+  await prefs.clear();
+  expect(await prefs.get('theme')).toBe('dark');
+});

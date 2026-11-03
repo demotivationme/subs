@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import { Pressable, useColorScheme, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -37,6 +37,7 @@ import { useLocale } from '@/i18n/useLocale';
 import { formatDate, todayIso } from '@/lib/dates';
 import { formatMoney, parseMoney } from '@/lib/money';
 import { shouldOfferPush } from '@/push/offer';
+import { useScheme } from '@/theme';
 
 type Step = 'service' | 'own' | 'price' | 'reminders';
 const PROGRESS: Record<Step, number> = { service: 1, own: 1, price: 2, reminders: 3 };
@@ -46,7 +47,7 @@ export default function NewSubscriptionScreen() {
   const { t } = useTranslation();
   const locale = useLocale();
   const online = useOnline();
-  const iconColor = useColorScheme() === 'dark' ? '#F1F3F5' : '#14171C';
+  const iconColor = useScheme() === 'dark' ? '#F1F3F5' : '#14171C';
   const me = useMe();
   const categories = useCategories();
   const defaults = useReminderDefaults();

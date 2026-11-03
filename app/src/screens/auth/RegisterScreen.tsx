@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View, useColorScheme } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { z } from 'zod';
 
 import { authApi } from '@/api/auth';
@@ -24,6 +24,7 @@ import { deviceTimeZone } from '@/lib/dates';
 import { deviceName } from '@/lib/device';
 import { translateError } from '@/lib/errors';
 import { applyServerErrors } from '@/lib/forms';
+import { useScheme } from '@/theme';
 
 const schema = z.object({
   name: z.string().trim().min(1, 'validation.required').max(255),
@@ -37,7 +38,7 @@ type Values = z.infer<typeof schema>;
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const qc = useQueryClient();
-  const dark = useColorScheme() === 'dark';
+  const dark = useScheme() === 'dark';
   const [formError, setFormError] = useState<unknown>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [pickingCurrency, setPickingCurrency] = useState(false);

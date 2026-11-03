@@ -265,6 +265,12 @@
     "bell_other": "Notifications, {{count}} unread"
   },
   "settings": {
+    "appearance": "Appearance",
+    "theme": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
     "profile": "Profile",
     "name": "Name",
     "currency": "Main currency",
