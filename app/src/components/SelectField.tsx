@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
+import { ModalBody } from './ModalBody';
 import { TextField } from './TextField';
 
 type Props<T extends string | number | null> = {
@@ -54,7 +55,7 @@ export function SelectField<T extends string | number | null>({ label, value, op
       )}
       {error ? <AppText variant="error">{error}</AppText> : null}
       <Modal visible={open} animationType="slide" onRequestClose={close}>
-        <View className="flex-1 gap-3 bg-ground p-4 pt-12 dark:bg-ground-dark">
+        <ModalBody>
           <AppText variant="heading">{label}</AppText>
           {showSearch ? <TextField label={t('common.search')} value={query} onChangeText={setQuery} autoFocus /> : null}
           <FlatList
@@ -75,7 +76,7 @@ export function SelectField<T extends string | number | null>({ label, value, op
             )}
           />
           <Button label={t('common.cancel')} variant="secondary" onPress={close} />
-        </View>
+        </ModalBody>
       </Modal>
     </View>
   );

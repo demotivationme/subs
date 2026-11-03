@@ -15,6 +15,7 @@ import { Button } from '@/components/Button';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { Group } from '@/components/Group';
 import { Loading } from '@/components/Loading';
+import { ModalBody } from '@/components/ModalBody';
 import { Screen } from '@/components/Screen';
 import { SelectField } from '@/components/SelectField';
 import { SwitchRow } from '@/components/SwitchRow';
@@ -86,7 +87,7 @@ function TimezoneEditor({ visible, current, onClose, onPick }: { visible: boolea
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={close}>
-      <View className="flex-1 gap-3 bg-ground p-4 pt-12 dark:bg-ground-dark">
+      <ModalBody>
         <AppText variant="heading">{t('settings.timezoneLabel')}</AppText>
         {device !== current ? (
           <Button
@@ -127,7 +128,7 @@ function TimezoneEditor({ visible, current, onClose, onPick }: { visible: boolea
           )}
         />
         <Button label={t('common.cancel')} variant="secondary" onPress={close} />
-      </View>
+      </ModalBody>
     </Modal>
   );
 }

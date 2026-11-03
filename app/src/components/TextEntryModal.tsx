@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Modal, View, type KeyboardTypeOptions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Modal, type KeyboardTypeOptions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
+import { ModalBody } from './ModalBody';
 import { TextField } from './TextField';
 
 type Props = {
@@ -20,14 +20,13 @@ type Props = {
 function Body({ title, label, value, onSave, onClose, keyboardType }: Omit<Props, 'visible'>) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState(value);
-  const insets = useSafeAreaInsets();
   return (
-    <View style={{ paddingTop: Math.max(insets.top, 48) }} className="flex-1 gap-4 bg-ground p-4 dark:bg-ground-dark">
+    <ModalBody className="gap-4">
       <AppText variant="heading">{title}</AppText>
       <TextField label={label} value={draft} onChangeText={setDraft} keyboardType={keyboardType} autoCorrect={false} autoCapitalize="none" autoFocus />
       <Button label={t('common.done')} onPress={() => onSave(draft.trim())} />
       <Button label={t('common.cancel')} variant="secondary" onPress={onClose} />
-    </View>
+    </ModalBody>
   );
 }
 
