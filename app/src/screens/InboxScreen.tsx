@@ -12,7 +12,7 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { Loading } from '@/components/Loading';
-import { Screen } from '@/components/Screen';
+import { BELOW_HEADER, Screen } from '@/components/Screen';
 import { useLocale } from '@/i18n/useLocale';
 import { formatDateTime } from '@/lib/dates';
 
@@ -72,6 +72,7 @@ export default function InboxScreen() {
         data={items}
         keyExtractor={(n) => n.id}
         contentContainerClassName="gap-2 pb-8"
+        contentInsetAdjustmentBehavior={BELOW_HEADER}
         renderItem={({ item }) => <InboxRow item={item} onPress={() => open(item)} />}
         ListHeaderComponent={
           <View className="items-end">

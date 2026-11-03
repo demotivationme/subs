@@ -12,7 +12,7 @@ import { Card } from '@/components/Card';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { Loading } from '@/components/Loading';
 import { OfflineBanner } from '@/components/OfflineBanner';
-import { Screen } from '@/components/Screen';
+import { BELOW_HEADER, Screen } from '@/components/Screen';
 import { ServiceIcon } from '@/components/ServiceIcon';
 import { useLocale } from '@/i18n/useLocale';
 import { formatDate } from '@/lib/dates';
@@ -74,7 +74,7 @@ export default function SubscriptionDetailScreen() {
 
   return (
     <View className="flex-1 bg-ground dark:bg-ground-dark">
-      <ScrollView contentContainerClassName="gap-4 p-4 pb-12" keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerClassName="gap-4 p-4 pb-12" contentInsetAdjustmentBehavior={BELOW_HEADER} keyboardShouldPersistTaps="handled">
         <OfflineBanner />
 
         <View className="flex-row items-center gap-3.5">
