@@ -75,6 +75,6 @@ Service logos (catalog and custom) go to Cloudflare R2 when `LOGO_DISK=r2`:
 
 The database stores only each logo's path inside the bucket, never a full URL. Moving to another storage provider means copying the files and changing the `.env` settings.
 
-To deploy updates, run `./docker/bin/deploy.sh` again. The web app is exported into `app/dist` by the script (in a throwaway Node container) and served by Caddy. Uploaded service logos live in the persistent `subs_storage_public` volume.
+To deploy updates, run `./docker/bin/deploy.sh` again. The web app is exported into `app/dist` by the script (in a throwaway Node container) and served by Caddy. With the default `LOGO_DISK=public`, uploaded service logos live in the persistent `subs_storage_public` volume; with `r2` they live in the bucket.
 
 Note: the Horizon dashboard gate (`app/Providers/HorizonServiceProvider.php`) has an empty email list, so `/horizon` is denied outside local. Add the allowed admin emails there before using `/horizon` in production.
