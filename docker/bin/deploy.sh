@@ -17,7 +17,7 @@ mkdir -p app/dist
 docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD/app:/app" -w /app \
     -e EXPO_PUBLIC_API_URL="https://${API_DOMAIN:?set API_DOMAIN in .env}/api/v1" \
     -e EXPO_PUBLIC_VAPID_PUBLIC_KEY="$VAPID_PUBLIC_KEY" \
-    node:24-alpine sh -c 'npm ci --no-audit --no-fund && npx expo export -p web --output-dir dist.new \
+    node:24-alpine sh -c 'rm -rf dist.new && npm ci --no-audit --no-fund && npx expo export -p web --output-dir dist.new \
         && find dist -mindepth 1 -delete && cp -a dist.new/. dist/ && rm -rf dist.new'
 
 $COMPOSE build php
