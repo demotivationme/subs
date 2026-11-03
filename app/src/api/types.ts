@@ -103,7 +103,10 @@ export type StatsSavingsItem = {
   subscription_id: number;
   name: string;
   service: { id: number; name: string; logo_url: string | null; color: string | null } | null;
-  status: 'cancelled' | 'paused';
+  /** Current status: 'active' for a resumed subscription, which then has `until`. */
+  status: SubscriptionStatus;
+  /** How the latest inactive period began. */
+  inactive_status: 'cancelled' | 'paused';
   since: string;
   until: string | null;
   monthly: number;

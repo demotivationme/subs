@@ -24,8 +24,8 @@ function queryString(query?: Query): string {
   return pairs.length ? `?${pairs.join('&')}` : '';
 }
 
-export async function api<T>(path: string, options: { method?: Method; body?: unknown; query?: Query } = {}): Promise<T> {
-  const { method = 'GET', body, query } = options;
+export async function api<T>(path: string, options: { method?: Method; body?: unknown; query?: Query; onStatus?: (status: number) => void } = {}): Promise<T> {
+  const { method = 'GET', body, query, onStatus } = options;
   const token = hooks.getToken();
   const multipart = typeof FormData !== 'undefined' && body instanceof FormData;
 
@@ -46,6 +46,7 @@ export async function api<T>(path: string, options: { method?: Method; body?: un
     throw new NetworkError(error);
   }
 
+  onStatus?.(response.status);
   if (response.status === 204) return undefined as T;
 
   const data = (await response.json().catch(() => null)) as { message?: string; errors?: Record<string, string[]> } | null;

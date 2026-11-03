@@ -88,7 +88,10 @@ export function EditSubscription({ subscription, onDone }: Props) {
     setFormError(null);
     setSaving(true);
     try {
-      await update.mutateAsync({ ...toPayload(values), reminders_enabled: reminderValue.enabled });
+      // The form holds the next payment date; re-anchoring the schedule only when the user changed it.
+      const { first_payment_date: _anchor, ...payload } = toPayload(values);
+      const dateChanged = values.firstPaymentDate !== subscription.next_payment_date;
+      await update.mutateAsync({ ...payload, ...(dateChanged ? { first_payment_date: values.firstPaymentDate } : {}), reminders_enabled: reminderValue.enabled });
       if (reminderValue.enabled) {
         // Custom rules replace the saved ones; "my default" on a subscription with its own rules clears them.
         if (reminderValue.custom) await replaceRules.mutateAsync(reminderValue.custom);

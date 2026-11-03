@@ -97,6 +97,52 @@ test('edits through the add flow’s price and reminder steps', async () => {
   expect(await screen.findByText('€15.99')).toBeTruthy();
 });
 
+const ANCHORED = { first_payment_date: '2025-01-15', next_payment_date: '2099-06-15' };
+
+test('editing shows the next payment date and previews the reminder from it', async () => {
+  const { client } = setup({ 'GET /subscriptions/5': { body: { data: fixtures.subscription(ANCHORED) } } });
+  await renderWithProviders(<SubscriptionDetailScreen />, client);
+
+  await fireEvent.press(await screen.findByRole('button', { name: 'Edit' }));
+  expect(await screen.findByRole('radio', { name: 'Jun 15, 2099' })).toBeTruthy();
+  expect(screen.queryByText('Jan 15, 2025')).toBeNull();
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+
+  expect(await screen.findByText(/You'll first be reminded on/)).toBeTruthy();
+});
+
+test('saving an edit without touching the date does not send first_payment_date', async () => {
+  const { calls, client } = setup({
+    'GET /subscriptions/5': { body: { data: fixtures.subscription(ANCHORED) } },
+    'PATCH /subscriptions/5': { body: { data: fixtures.subscription(ANCHORED) } },
+  });
+  await renderWithProviders(<SubscriptionDetailScreen />, client);
+
+  await fireEvent.press(await screen.findByRole('button', { name: 'Edit' }));
+  await fireEvent.changeText(await screen.findByLabelText('Amount'), '15.99');
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Save' }));
+
+  await waitFor(() => expect(patch(calls)).toMatchObject({ amount: 1599 }));
+  expect(patch(calls)).not.toHaveProperty('first_payment_date');
+});
+
+test('changing the date in edit mode sends the new first_payment_date', async () => {
+  const { calls, client } = setup({
+    'GET /subscriptions/5': { body: { data: fixtures.subscription(ANCHORED) } },
+    'PATCH /subscriptions/5': { body: { data: fixtures.subscription(ANCHORED) } },
+  });
+  await renderWithProviders(<SubscriptionDetailScreen />, client);
+
+  await fireEvent.press(await screen.findByRole('button', { name: 'Edit' }));
+  await fireEvent.press(await screen.findByRole('radio', { name: 'Tomorrow' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Save' }));
+
+  await waitFor(() => expect(patch(calls)).toHaveProperty('first_payment_date'));
+  expect(patch(calls)).not.toMatchObject({ first_payment_date: '2025-01-15' });
+});
+
 test('blocks an invalid amount in edit mode', async () => {
   const { calls, client } = setup();
   await renderWithProviders(<SubscriptionDetailScreen />, client);

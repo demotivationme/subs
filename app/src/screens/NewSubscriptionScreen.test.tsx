@@ -125,6 +125,68 @@ test('the own-service path creates the service, then uploads the logo, then move
   expect(own[1].body).toBeInstanceOf(FormData);
 });
 
+async function addOwnGymPro(image: boolean) {
+  await fireEvent.changeText(await screen.findByLabelText('Search services'), 'Gym Pro');
+  await fireEvent.press(await screen.findByRole('button', { name: 'Add “Gym Pro” as your own service' }));
+  if (image) await fireEvent.press(await screen.findByRole('button', { name: 'Upload an image' }));
+  await fireEvent.press(await screen.findByRole('button', { name: 'Continue' }));
+}
+
+test('a name that is already in the catalog continues with it, without a PATCH or logo upload', async () => {
+  const { calls, client } = setup({
+    'POST /services': { status: 200, body: { data: fixtures.service({ id: 4, name: 'Gym Pro', is_custom: false }) } },
+  });
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await addOwnGymPro(true);
+
+  expect(await screen.findByText('How much is it?')).toBeTruthy();
+  expect(screen.getByText('“Gym Pro” is already in the catalog — we\'ll use it.')).toBeTruthy();
+  expect(calls.filter((c) => c.path.startsWith('/services') && c.method !== 'GET').map((c) => `${c.method} ${c.path}`)).toEqual(['POST /services']);
+});
+
+test('one of the user\'s own existing services is used as it is, without a logo upload', async () => {
+  const { calls, client } = setup({
+    'POST /services': { status: 200, body: { data: fixtures.service({ id: 21, name: 'Gym Pro', is_custom: true }) } },
+  });
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await addOwnGymPro(true);
+
+  expect(await screen.findByText('How much is it?')).toBeTruthy();
+  expect(screen.getByText('You already have “Gym Pro” — we\'ll use it as it is.')).toBeTruthy();
+  expect(calls.filter((c) => c.path.startsWith('/services') && c.method !== 'GET').map((c) => `${c.method} ${c.path}`)).toEqual(['POST /services']);
+});
+
+test('creating an own service invalidates the service search cache', async () => {
+  const { client } = setup({
+    'POST /services': { status: 201, body: { data: fixtures.service({ id: 20, name: 'Gym Pro', is_custom: true }) } },
+  });
+  const spy = jest.spyOn(client, 'invalidateQueries');
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+
+  await addOwnGymPro(false);
+  await screen.findByText('How much is it?');
+  expect(spy).toHaveBeenCalledWith({ queryKey: ['services'] });
+});
+
+test('restyling and uploading in the own-service step invalidate the service search cache', async () => {
+  const { client } = setup({
+    'POST /services': { status: 201, body: { data: fixtures.service({ id: 20, name: 'Gym Pro', is_custom: true }) } },
+    'POST /services/20/logo': { status: 422, body: { message: 'bad', errors: { logo: ['bad'] } } },
+    'PATCH /services/20': { body: { data: fixtures.service({ id: 20, name: 'Gym Max', is_custom: true }) } },
+  });
+  await renderWithProviders(<NewSubscriptionScreen />, client);
+  await addOwnGymPro(true);
+  await screen.findByText(/Couldn't upload the image/);
+  const spy = jest.spyOn(client, 'invalidateQueries');
+
+  await fireEvent.changeText(screen.getByLabelText('Name'), 'Gym Max');
+  await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+
+  await waitFor(() => expect(spy).toHaveBeenCalledWith({ queryKey: ['services'] }));
+});
+
 test('a failed logo upload keeps the service and lets the user continue', async () => {
   const { client } = setup({
     'POST /services': { status: 201, body: { data: fixtures.service({ id: 20, name: 'Gym Pro', is_custom: true }) } },

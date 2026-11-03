@@ -20,8 +20,12 @@ export type NewService = { name: string; color?: string; default_category_id?: n
 const LOGO_FILE = { name: 'logo.jpg', type: 'image/jpeg' };
 
 export const servicesApi = {
-  /** Returns the visible service with the same name, or creates the user's own. */
-  create: (body: NewService) => api<Data<Service>>('/services', { method: 'POST', body }).then((r) => r.data),
+  /** Returns the visible service with the same name (existing: true), or creates the user's own. */
+  create: async (body: NewService): Promise<{ service: Service; existing: boolean }> => {
+    let status = 201;
+    const response = await api<Data<Service>>('/services', { method: 'POST', body, onStatus: (s) => (status = s) });
+    return { service: response.data, existing: status !== 201 };
+  },
 
   update: (id: number, body: { name?: string; color?: string }) =>
     api<Data<Service>>(`/services/${id}`, { method: 'PATCH', body }).then((r) => r.data),
@@ -39,10 +43,28 @@ export const servicesApi = {
   },
 };
 
-export function useCreateService() {
+function useInvalidateServices() {
   const qc = useQueryClient();
+  return () => qc.invalidateQueries({ queryKey: ['services'] });
+}
+
+export function useCreateService() {
+  const invalidate = useInvalidateServices();
+  return useMutation({ mutationFn: servicesApi.create, onSuccess: invalidate });
+}
+
+export function useUpdateService() {
+  const invalidate = useInvalidateServices();
   return useMutation({
-    mutationFn: servicesApi.create,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['services'] }),
+    mutationFn: ({ id, ...body }: { id: number; name?: string; color?: string }) => servicesApi.update(id, body),
+    onSuccess: invalidate,
+  });
+}
+
+export function useUploadServiceLogo() {
+  const invalidate = useInvalidateServices();
+  return useMutation({
+    mutationFn: ({ id, uri }: { id: number; uri: string }) => servicesApi.uploadLogo(id, uri),
+    onSuccess: invalidate,
   });
 }

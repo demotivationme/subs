@@ -173,6 +173,8 @@
     "swatch": "Color {{n}}",
     "ownPrivate": "Private to your account. We may add popular services to the catalog for everyone.",
     "continue": "Continue",
+    "alreadyInCatalog": "“{{name}}” is already in the catalog — we'll use it.",
+    "alreadyOwn": "You already have “{{name}}” — we'll use it as it is.",
     "uploadFailed": "Couldn't upload the image. Continue with the letter icon, or pick another image.",
     "priceTitle": "How much is it?",
     "billed": "Billed",

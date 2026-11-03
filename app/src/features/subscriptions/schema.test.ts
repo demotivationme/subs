@@ -47,6 +47,11 @@ test('toFormValues prefills an edit form that round-trips', () => {
   expect(toPayload(values)).toMatchObject({ amount: 5000, interval_count: 3, category_id: 2 });
 });
 
+test('toFormValues puts the next payment date, not the anchor, in the date field', () => {
+  const values = toFormValues(fixtures.subscription({ first_payment_date: '2025-01-15', next_payment_date: '2026-12-15' }));
+  expect(values.firstPaymentDate).toBe('2026-12-15');
+});
+
 test('server 422s map onto form fields; other errors do not', () => {
   const error = new ApiError(422, 'x', { service_id: ['Pick one.'], first_payment_date: ['Bad date.'], unknown: ['?'] });
   expect(serverFieldErrors(error)).toEqual({ serviceName: 'Pick one.', firstPaymentDate: 'Bad date.' });

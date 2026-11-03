@@ -62,7 +62,8 @@ export function toFormValues(s: Subscription): SubscriptionFormValues {
     currency: s.currency,
     period: s.period,
     intervalCount: String(s.interval_count),
-    firstPaymentDate: s.first_payment_date,
+    // The edit form shows (and previews reminders from) the next payment; the anchor is sent only if changed.
+    firstPaymentDate: s.next_payment_date,
     notes: s.notes ?? '',
   };
 }

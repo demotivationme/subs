@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react-native';
 
 import { renderWithProviders } from '@/test/utils';
 
-import TabsLayout from './(app)/(tabs)/_layout';
+import TabsLayout from '@/app/(app)/(tabs)/_layout';
 
 jest.mock('expo-router', () => {
   const { Text } = jest.requireActual('react-native');

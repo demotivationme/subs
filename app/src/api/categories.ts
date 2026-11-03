@@ -31,6 +31,7 @@ export function useUpdateCategory() {
       Promise.all([
         qc.invalidateQueries({ queryKey: keys.categories }),
         qc.invalidateQueries({ queryKey: keys.subscriptionsAll }),
+        qc.invalidateQueries({ queryKey: ['subscription'] }),
         qc.invalidateQueries({ queryKey: keys.dashboard }),
         qc.invalidateQueries({ queryKey: keys.statsAll }),
       ]),

@@ -13,6 +13,7 @@ import { remindersApi, useReminderDefaults } from '@/api/reminders';
 import { subscriptionsApi, useCreateSubscription } from '@/api/subscriptions';
 import type { Service } from '@/api/types';
 import { useOnline } from '@/api/useOnline';
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { Loading } from '@/components/Loading';
@@ -54,6 +55,7 @@ export default function NewSubscriptionScreen() {
   const insets = useSafeAreaInsets();
 
   const [step, setStep] = useState<Step>('service');
+  const [notice, setNotice] = useState<string | null>(null);
   const [ownName, setOwnName] = useState('');
   const [service, setService] = useState<Service | null>(null);
   const [values, setValues] = useState<SubscriptionFormValues | null>(null);
@@ -86,7 +88,8 @@ export default function NewSubscriptionScreen() {
     setErrors((current) => Object.fromEntries(Object.entries(current).filter(([key]) => !(key in next))));
   };
 
-  const pick = (picked: Service) => {
+  const pick = (picked: Service, pickedNotice?: string) => {
+    setNotice(pickedNotice ?? null);
     setService(picked);
     setValues({
       ...form,
@@ -186,10 +189,11 @@ export default function NewSubscriptionScreen() {
         <OfflineBanner />
       </View>
 
-      {step === 'service' ? <ServiceStep error={errors.serviceName} onPick={pick} onAddOwn={addOwn} /> : null}
+      {step === 'service' ? <ServiceStep error={errors.serviceName} onPick={(picked) => pick(picked)} onAddOwn={addOwn} /> : null}
       {step === 'own' ? <OwnServiceStep initialName={ownName} onDone={pick} /> : null}
       {step === 'price' ? (
         <StepFrame footer={<Button label={t('form.continue')} onPress={goNext} />}>
+          {notice ? <Banner message={notice} /> : null}
           <SubscriptionPriceStep
             value={form}
             onChange={patch}

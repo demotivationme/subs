@@ -162,7 +162,7 @@ test('the savings card lists items, labels resumed ones and shows the keep line'
           ...base.savings,
           items: [
             ...base.savings.items,
-            { subscription_id: 10, name: 'Spotify', service: null, status: 'paused', since: '2026-03-01', until: '2026-05-01', monthly: 999, saved: 1998 },
+            { subscription_id: 10, name: 'Spotify', service: null, status: 'active', inactive_status: 'paused', since: '2026-03-01', until: '2026-05-01', monthly: 999, saved: 1998 },
           ],
         },
       }),
@@ -176,6 +176,7 @@ test('the savings card lists items, labels resumed ones and shows the keep line'
   expect(screen.getByText('Cancelled Aug 1, 2026 · €8.99/mo')).toBeTruthy();
   expect(screen.getByText('+€35.96')).toBeTruthy();
   expect(screen.getByText('Paused Mar 1, 2026 – May 1, 2026')).toBeTruthy();
+  expect(screen.queryByText(/^Cancelled Mar 1/)).toBeNull();
 });
 
 test('the savings card shows an empty hint without items', async () => {

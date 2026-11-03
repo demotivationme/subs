@@ -92,7 +92,7 @@ export const fixtures = {
       monthly: 2198,
       yearly: 26376,
       items: [
-        { subscription_id: 9, name: 'Disney+', service: { id: 4, name: 'Disney+', logo_url: null, color: null }, status: 'cancelled', since: '2026-08-01', until: null, monthly: 899, saved: 3596 },
+        { subscription_id: 9, name: 'Disney+', service: { id: 4, name: 'Disney+', logo_url: null, color: null }, status: 'cancelled', inactive_status: 'cancelled', since: '2026-08-01', until: null, monthly: 899, saved: 3596 },
       ],
     },
     by_category: [

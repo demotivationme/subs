@@ -174,10 +174,10 @@ function SavingsCard({ stats, locale, money }: { stats: Stats; locale: string; m
     const since = formatDate(item.since, locale);
     if (item.until) {
       const until = formatDate(item.until, locale);
-      return item.status === 'paused' ? t('stats.pausedRange', { since, until }) : t('stats.cancelledRange', { since, until });
+      return item.inactive_status === 'paused' ? t('stats.pausedRange', { since, until }) : t('stats.cancelledRange', { since, until });
     }
     const monthly = money(item.monthly);
-    return item.status === 'paused' ? t('stats.pausedSince', { since, monthly }) : t('stats.cancelledSince', { since, monthly });
+    return item.inactive_status === 'paused' ? t('stats.pausedSince', { since, monthly }) : t('stats.cancelledSince', { since, monthly });
   };
   return (
     <View className="gap-3 rounded-[24px] bg-accent p-5 dark:border dark:border-hero-border-dark dark:bg-hero-dark">

@@ -127,6 +127,11 @@ describe('stats invalidation', () => {
     expect(await run(() => useDeleteCategory(), 2)).toHaveBeenCalledWith({ queryKey: statsKey });
   });
 
+  test('renaming or recoloring a category refreshes cached subscription details', async () => {
+    mockApi({ 'PATCH /categories/2': { body: { data: fixtures.category() } } });
+    expect(await run(() => useUpdateCategory(), { id: 2, name: 'X' })).toHaveBeenCalledWith({ queryKey: ['subscription'] });
+  });
+
   test('changing the profile (currency)', async () => {
     mockApi({ 'PATCH /me': { body: { data: fixtures.user() } } });
     expect(await run(() => useUpdateMe(), { currency: 'USD' })).toHaveBeenCalledWith({ queryKey: statsKey });

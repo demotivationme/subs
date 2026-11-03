@@ -4,7 +4,7 @@ import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { ApiError } from '@/api/errors';
-import { servicesApi } from '@/api/services';
+import { useCreateService, useUpdateService, useUploadServiceLogo } from '@/api/services';
 import type { Service } from '@/api/types';
 import { cn } from '@/lib/cn';
 import { errorMessage } from '@/lib/errors';
@@ -18,11 +18,14 @@ import { TextField } from './TextField';
 // Letter-tile colors from the design (cat.1 first); applied through style, so values not classes.
 const SWATCHES = ['#0B7A57', '#2F5BD3', '#6D4ED8', '#C23A6E', '#C2410C', '#3A414B'] as const;
 
-type Props = { initialName: string; onDone: (service: Service) => void };
+type Props = { initialName: string; onDone: (service: Service, notice?: string) => void };
 
 /** Step 1b: create the user's own service with a color or an uploaded image. */
 export function OwnServiceStep({ initialName, onDone }: Props) {
   const { t } = useTranslation();
+  const createService = useCreateService();
+  const updateService = useUpdateService();
+  const uploadLogo = useUploadServiceLogo();
   const [name, setName] = useState(initialName);
   const [color, setColor] = useState<string>(SWATCHES[0]);
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -52,15 +55,25 @@ export function OwnServiceStep({ initialName, onDone }: Props) {
     setBusy(true);
     try {
       // Once created in this step, edits PATCH that service instead of creating a second one.
-      let service = created
-        ? created.name === trimmed && created.color === color
-          ? created.service
-          : await servicesApi.update(created.service.id, { name: trimmed, color })
-        : await servicesApi.create({ name: trimmed, color });
+      let service: Service;
+      if (created) {
+        service =
+          created.name === trimmed && created.color === color
+            ? created.service
+            : await updateService.mutateAsync({ id: created.service.id, name: trimmed, color });
+      } else {
+        const result = await createService.mutateAsync({ name: trimmed, color });
+        service = result.service;
+        if (result.existing) {
+          // A catalog or already-owned service with this name: use it as is, never restyle it.
+          onDone(service, t(service.is_custom ? 'form.alreadyOwn' : 'form.alreadyInCatalog', { name: service.name }));
+          return;
+        }
+      }
       setCreated({ service, name: trimmed, color });
       if (imageUri && !uploadFailed) {
         try {
-          service = await servicesApi.uploadLogo(service.id, imageUri);
+          service = await uploadLogo.mutateAsync({ id: service.id, uri: imageUri });
         } catch (uploadError) {
           // The service exists; the user may continue with the letter tile.
           setUploadFailed(true);
