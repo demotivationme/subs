@@ -60,7 +60,7 @@ it('uploads a logo, replaces it and removes it', function () {
 
     $first = $this->postJson("/api/v1/services/{$service->id}/logo", ['logo' => logo()])->assertOk();
     $firstPath = $service->fresh()->logo_path;
-    expect($firstPath)->toStartWith('service-logos/');
+    expect($firstPath)->toStartWith('service-logos/custom/');
     Storage::disk('public')->assertExists($firstPath);
     expect($first->json('data.logo_url'))->toBe(Storage::disk('public')->url($firstPath));
 
@@ -84,7 +84,7 @@ it('stores logos on the configured logo disk and keeps only the relative path', 
     $response = $this->postJson("/api/v1/services/{$service->id}/logo", ['logo' => logo()])->assertOk();
 
     $path = $service->fresh()->logo_path;
-    expect($path)->toStartWith('service-logos/')->not->toContain('://');
+    expect($path)->toStartWith('service-logos/custom/')->not->toContain('://');
     Storage::disk('r2')->assertExists($path);
     Storage::disk('public')->assertMissing($path);
     expect($response->json('data.logo_url'))->toBe(Storage::disk('r2')->url($path));

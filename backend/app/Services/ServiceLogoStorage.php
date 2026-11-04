@@ -17,7 +17,7 @@ final class ServiceLogoStorage
     /** @return string the stored path, relative to the disk */
     public function store(UploadedFile $file): string
     {
-        return (string) $this->disk()->putFile(self::DIRECTORY, $file);
+        return (string) $this->disk()->putFile(self::DIRECTORY.'/custom', $file);
     }
 
     /**
