@@ -11,7 +11,7 @@ it('lists presets plus my own categories only', function () {
 
     $labels = collect($this->getJson('/api/v1/categories')->assertOk()->json('data'))->pluck('label');
 
-    expect($labels)->toHaveCount(13)->toContain('Kids', 'Other')->not->toContain('Someone else');
+    expect($labels)->toHaveCount(14)->toContain('Kids', 'Other')->not->toContain('Someone else');
 });
 
 it('creates, renames and validates a custom category', function () {

@@ -13,6 +13,7 @@ class CategorySeeder extends Seeder
         'video_streaming' => ['tv', '#EF4444'],
         'gaming' => ['game-controller', '#8B5CF6'],
         'software_cloud' => ['cloud', '#3B82F6'],
+        'ai' => ['hardware-chip', '#6366F1'],
         'news_reading' => ['newspaper', '#6B7280'],
         'fitness_health' => ['fitness', '#EC4899'],
         'education' => ['school', '#14B8A6'],

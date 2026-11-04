@@ -6,6 +6,7 @@ return [
     'video_streaming' => 'Video Streaming',
     'gaming' => 'Gaming',
     'software_cloud' => 'Software & Cloud',
+    'ai' => 'AI',
     'news_reading' => 'News & Reading',
     'fitness_health' => 'Fitness & Health',
     'education' => 'Education',
