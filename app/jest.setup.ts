@@ -61,5 +61,16 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file:///logo.jpg' }] })),
 }));
 
+// A Blob named after the uri's last segment, as expo-file-system's File is.
+jest.mock('expo-file-system', () => ({
+  File: class extends Blob {
+    name: string;
+    constructor(uri: string) {
+      super(['image']);
+      this.name = uri.split('/').pop() ?? '';
+    }
+  },
+}));
+
 // useSafeAreaInsets needs a provider; the library's mock supplies zero insets.
 jest.mock('react-native-safe-area-context', () => require('react-native-safe-area-context/jest/mock').default);
