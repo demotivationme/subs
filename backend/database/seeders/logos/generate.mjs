@@ -38,7 +38,7 @@ const MAP = {
   'supabase-pro': 'supabase', railway: 'railway', render: 'render', flyio: 'flydotio', sentry: 'sentry',
   'figma-professional': 'figma', framer: 'framer', webflow: 'webflow', linear: 'linear', jira: 'jira',
   trello: 'trello', asana: 'asana', clickup: 'clickup', miro: 'miro', 'slack-pro': 'slack',
-  'zoom-workplace': 'zoom', 'raycast-pro': 'raycast', setapp: 'setapp', 'obsidian-sync': 'obsidian',
+  'google-workspace': 'google', 'zoom-workplace': 'zoom', 'raycast-pro': 'raycast', setapp: 'setapp', 'obsidian-sync': 'obsidian',
   'todoist-pro': 'todoist', evernote: 'evernote', 'grammarly-premium': 'grammarly',
   'proton-unlimited': 'proton', expressvpn: 'expressvpn', surfshark: 'surfshark',
   'bitwarden-premium': 'bitwarden', dashlane: 'dashlane', lastpass: 'lastpass',

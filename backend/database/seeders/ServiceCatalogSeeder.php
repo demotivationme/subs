@@ -50,6 +50,7 @@ class ServiceCatalogSeeder extends Seeder
         'Figma Professional' => 'software_cloud', 'Framer' => 'software_cloud', 'Webflow' => 'software_cloud',
         'Linear' => 'software_cloud', 'Jira' => 'software_cloud', 'Trello' => 'software_cloud',
         'Asana' => 'software_cloud', 'ClickUp' => 'software_cloud', 'Miro' => 'software_cloud',
+        'Google Workspace' => 'software_cloud', 'Microsoft Teams' => 'software_cloud',
         'Slack Pro' => 'software_cloud', 'Zoom Workplace' => 'software_cloud', 'Raycast Pro' => 'software_cloud',
         'Setapp' => 'software_cloud', 'Obsidian Sync' => 'software_cloud', 'Todoist Pro' => 'software_cloud',
         'Evernote' => 'software_cloud', 'Grammarly Premium' => 'software_cloud',
@@ -69,7 +70,7 @@ class ServiceCatalogSeeder extends Seeder
         'adobe-acrobat-pro' => '#B30B00', 'the-economist' => '#E3120B', 'kindle-unlimited' => '#146EB4',
         'calm' => '#2E6BC6', 'myfitnesspal-premium' => '#0066EE', 'masterclass' => '#000000',
         'linkedin-premium' => '#0A66C2', 'amazon-prime' => '#232F3E', 'ynab' => '#3C5FD9',
-        'microsoft-copilot-pro' => '#0078D4',
+        'microsoft-copilot-pro' => '#0078D4', 'microsoft-teams' => '#4B53BC',
     ];
 
     public function run(): void

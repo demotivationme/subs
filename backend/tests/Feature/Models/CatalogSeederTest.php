@@ -52,7 +52,7 @@ it('gives every catalog service a logo or a brand color that keeps the white let
 it('lists JetBrains and the other developer tools under software', function () {
     $software = Category::where('key', 'software_cloud')->first()->id;
 
-    foreach (['phpstorm' => 'PhpStorm', 'jetbrains-all-products-pack' => 'JetBrains All Products Pack', 'github-pro' => 'GitHub Pro', 'figma-professional' => 'Figma Professional', 'adobe-photoshop' => 'Adobe Photoshop'] as $slug => $name) {
+    foreach (['phpstorm' => 'PhpStorm', 'jetbrains-all-products-pack' => 'JetBrains All Products Pack', 'github-pro' => 'GitHub Pro', 'figma-professional' => 'Figma Professional', 'adobe-photoshop' => 'Adobe Photoshop', 'google-workspace' => 'Google Workspace', 'microsoft-teams' => 'Microsoft Teams'] as $slug => $name) {
         $service = Service::whereNull('user_id')->where('slug', $slug)->first();
         expect($service?->name)->toBe($name)
             ->and($service->default_category_id)->toBe($software);
