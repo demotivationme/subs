@@ -1,0 +1,63 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Full commit SHA of a version that was released before (its images must still exist in GHCR)
+        required: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  rollback:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: production-subs
+      cancel-in-progress: false
+    steps:
+      - name: Check the input
+        env:
+          SHA: ${{ inputs.sha }}
+        run: '[[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "Not a full commit SHA" >&2; exit 1; }'
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Production images for this content
+        id: images
+        env:
+          REF: ${{ inputs.sha }}
+        run: |
+          tree="$(git rev-parse "${REF}^{tree}")"
+          for tag in "tree-${tree}" "${REF}"; do
+            missing=""
+            for name in subs-api subs-nginx subs-edge subs-backup; do
+              docker manifest inspect "ghcr.io/demotivationme/${name}:${tag}" > /dev/null 2>&1 || missing="${missing} ${name}"
+            done
+            if [[ -z "$missing" ]]; then echo "tag=${tag}" >> "$GITHUB_OUTPUT"; echo "Deploying images ${tag}"; exit 0; fi
+          done
+          echo "::error::No production images for ${REF} (missing:${missing})." >&2
+          exit 1
+      - name: SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Deploy the chosen version
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          TAG: ${{ steps.images.outputs.tag }}
+        run: |
+          # shellcheck disable=SC2029 # expands here on purpose; TAG comes from the verified image lookup above
+          ssh "deploy@${HOST}" "/srv/subs/deploy.sh ${TAG}"

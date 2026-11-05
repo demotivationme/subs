@@ -1,6 +1,11 @@
 name: backend
 
+# Tests every push and pull request. On dev and main it also builds the production images, tagged with the commit
+# and with its content ("tree-<tree hash>"); Deploy on main only looks those up.
 on: [push, pull_request]
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -32,3 +37,62 @@ jobs:
       - run: ./vendor/bin/pest
         env:
           DB_HOST: 127.0.0.1
+
+  deploy-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell scripts
+        run: shellcheck deploy/*.sh deploy/backup/*.sh deploy/tests/*.sh docker/prod/entrypoint.sh
+      - name: Production compose file
+        run: |
+          cp deploy/.env.production.example .env
+          cp deploy/.env.backup.example .env.backup
+          REDIS_PASSWORD=x TAG=check CLOUDFLARE_IPS_DIR=/tmp docker compose -f compose.prod.yaml config -q
+      - name: Secrets stay separated (app vs backup)
+        run: bash deploy/tests/secrets-separation.sh
+      - name: deploy.sh decisions
+        run: bash deploy/tests/deploy-script-test.sh
+      - name: Edge routing
+        run: bash deploy/tests/edge-test.sh
+      - name: Backup and restore
+        run: bash deploy/tests/backup-harness.sh
+
+  images:
+    needs: [test, deploy-config]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - { name: subs-api, file: docker/prod/api.Dockerfile, target: app }
+          - { name: subs-nginx, file: docker/prod/api.Dockerfile, target: nginx }
+          - { name: subs-edge, file: docker/prod/edge.Dockerfile, target: '' }
+          - { name: subs-backup, file: docker/prod/backup.Dockerfile, target: '' }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Content tag
+        id: tree
+        run: echo "tag=tree-$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.file }}
+          target: ${{ matrix.target }}
+          push: true
+          # Re-pull the floating base images so security patches land on every rebuild.
+          pull: true
+          tags: |
+            ghcr.io/demotivationme/${{ matrix.name }}:${{ github.sha }}
+            ghcr.io/demotivationme/${{ matrix.name }}:${{ steps.tree.outputs.tag }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
