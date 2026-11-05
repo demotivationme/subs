@@ -100,22 +100,27 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
    - DNS: proxied `A` records `unsab.com`, `www`, `api`, `admin` → the server's IP (and `AAAA` if it has IPv6).
    - Rules → Origin Rules → Create: *Hostname* `ends with` `unsab.com` **and** *Hostname* `does not equal`
      `media.unsab.com` → Destination Port **8443**.
-   - Zero Trust → Access → Applications → Self-hosted: `admin.unsab.com`, policy *Allow* with your email.
-3. **Email (Brevo).** Senders & IP → Domains → add `unsab.com`; add the SPF, DKIM and DMARC records Brevo shows to
+   - Zero Trust → Access → Applications → Self-hosted: `admin.unsab.com`, policy *Allow* with the same emails as `ADMIN_EMAILS`.
+3. **Media (R2).** If not done yet: create the R2 bucket `unsab` with the custom domain `media.unsab.com`, and an R2
+   token with **Object Read & Write** on `unsab` only. Put it in `/srv/subs/.env` (step 6): `MEDIA_S3_KEY`,
+   `MEDIA_S3_SECRET`, `MEDIA_S3_ENDPOINT=https://<account id>.r2.cloudflarestorage.com`, `MEDIA_S3_BUCKET=unsab`,
+   `MEDIA_URL=https://media.unsab.com`. The first release's catalog seed uploads the bundled logos there; the
+   database stores only relative paths.
+4. **Email (Brevo).** Senders & IP → Domains → add `unsab.com`; add the SPF, DKIM and DMARC records Brevo shows to
    Cloudflare DNS (DNS only, not proxied). Create an SMTP key for `MAIL_PASSWORD`.
-4. **Backups.** In R2, create a token with **Object Read & Write** on `unsab-backup` only. On your own computer run
+5. **Backups.** In R2, create a token with **Object Read & Write** on `unsab-backup` only. On your own computer run
    `age-keygen -o subs-backup.key`; put the `age1…` public key in `.env.backup` and keep `subs-backup.key` in your
    password manager, never on the server.
-5. **Env files (as deploy).** Copy `deploy/.env.production.example` to `/srv/subs/.env` and
+6. **Env files (as deploy).** Copy `deploy/.env.production.example` to `/srv/subs/.env` and
    `deploy/.env.backup.example` to `/srv/subs/.env.backup`, fill every empty value, `chmod 600` both.
    `APP_KEY` comes from `php artisan key:generate --show`; use new random `DB_PASSWORD` and `REDIS_PASSWORD`.
-6. **Image access (as deploy).** The server pulls the images from GHCR: `docker login ghcr.io -u demotivationme` with a
+7. **Image access (as deploy).** The server pulls the images from GHCR: `docker login ghcr.io -u demotivationme` with a
    GitHub token that has `read:packages`. If deploy is already logged in to ghcr.io for musiband under the same
-   account, this is done (`cat ~/.docker/config.json` shows `ghcr.io`).
-7. **GitHub (subs repo → Settings → Secrets → Actions).** `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` —
+   account, this is done (`grep -q ghcr.io ~/.docker/config.json && echo logged in` prints `logged in`).
+8. **GitHub (subs repo → Settings → Secrets → Actions).** `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` —
    the same values musiband uses.
-8. **Check the firewall from outside** (any machine that is not Cloudflare): `nc -z -w3 <server-ip> 8443` must fail.
-9. **First release:** merge `dev` into `main` (or Actions → Deploy → Run workflow). Then open
+9. **Check the firewall from outside** (any machine that is not Cloudflare): `nc -z -w3 <server-ip> 8443` must fail.
+10. **First release:** merge `dev` into `main` (or Actions → Deploy → Run workflow). Then open
    `https://api.unsab.com/up`, `https://unsab.com` and `https://admin.unsab.com` (Access asks you to log in first).
 
 ### Operations
@@ -123,6 +128,7 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
 - Logs: `cd /srv/subs && TAG=$(cat current-tag) docker compose -f compose.prod.yaml logs -f app queue edge`.
 - Backups run at 03:00 UTC; `backups:check` logs an error hourly when the last success is older than 26 hours or the
   last run failed. Run one now: `TAG=$(cat current-tag) docker compose -f compose.prod.yaml run --rm backup backup.sh`.
+- Retention in `unsab-backup`: 14 daily, 8 weekly, 6 monthly; 3 copies stay on the server.
 - **Restore** into a separate database `subs_restore` (production is not touched):
   `./restore.sh daily/subs-YYYYMMDDTHHMMSSZ.dump.age`, then paste the private key. Switching production to it is a
   manual `DB_DATABASE=subs_restore` change in `.env` followed by a redeploy of the same tag.
