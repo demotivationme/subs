@@ -1,0 +1,2 @@
+# Nightly at 03:00 UTC (musiband runs at 02:30). Output goes to the container log.
+0 3 * * * /usr/local/bin/backup.sh > /proc/1/fd/1 2>&1
