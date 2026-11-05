@@ -55,26 +55,79 @@ npx expo start            # w = web (http://localhost:8081), i = iOS simulator, 
 2. Add `<xx>` to `locales` in `backend/config/subs.php`.
 3. In the app, add `app/src/i18n/locales/<xx>.json`, add `<xx>` to `SUPPORTED_LOCALES` and to `resources` in `app/src/i18n/index.ts`.
 
-## Production (OVH)
+## Production
 
-On the server, one time:
-1. Point DNS for `api.<domain>` and `app.<domain>` at the server.
-2. Clone the repo and create `backend/.env` from `.env.example`:
-   - `APP_ENV=production`, `APP_DEBUG=false`
-   - `APP_URL=https://api.<domain>`, `FRONTEND_URL=https://app.<domain>`
-   - a strong `DB_PASSWORD`, plus Postmark/SES `MAIL_*`
-   - VAPID keys and `EXPO_ACCESS_TOKEN`
-3. Copy `.env.prod.example` to `.env` (repo root, git-ignored; Docker Compose loads it automatically) and fill in `API_DOMAIN`, `APP_DOMAIN` and `POSTGRES_PASSWORD` (same value as `DB_PASSWORD`), plus `BACKUP_BUCKET` and `BACKUP_ENDPOINT`.
-4. Run `./docker/bin/deploy.sh`. Besides migrating, it seeds the preset categories and service catalog (`db:seed --class=CatalogSeeder`, safe to rerun) and fetches today's exchange rates (`rates:fetch`; if the ECB is unreachable it only warns, and the daily schedule retries).
-5. Cron: `0 3 * * * /path/to/subs/docker/bin/backup.sh` (reads `BACKUP_*` from the root `.env`).
+Subs runs on the OVH server next to musiband, in `/srv/subs`, as Docker Compose project `subs`. Its Caddy publishes
+only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, so musiband keeps 80/443 untouched.
 
-Service logos (catalog and custom) go to Cloudflare R2 when `LOGO_DISK=r2`:
-1. In Cloudflare, create an R2 bucket and turn on public access, either through the bucket's r2.dev URL or a custom domain such as `logos.<domain>`.
-2. Create an R2 API token with **Object Read & Write** on that bucket.
-3. Set `LOGO_DISK=r2` and the `R2_*` values in `backend/.env` (see `.env.example`), then run `php artisan config:clear` and `php artisan db:seed --class=CatalogSeeder` to upload the catalog logos.
+| Host | Serves |
+|---|---|
+| `api.unsab.com` | the API (`/horizon` and `/api/admin/*` answer 404 here) |
+| `admin.unsab.com` | behind Cloudflare Access: Horizon now, the admin panel later |
+| `unsab.com` (`www` redirects) | the landing page (`landing/index.html`) |
+| `media.unsab.com` | R2 bucket `unsab` (service logos) |
 
-The database stores only each logo's path inside the bucket, never a full URL. Moving to another storage provider means copying the files and changing the `.env` settings.
+### Releasing
 
-To deploy updates, run `./docker/bin/deploy.sh` again. The web app is exported into `app/dist` by the script (in a throwaway Node container) and served by Caddy. With the default `LOGO_DISK=public`, uploaded service logos live in the persistent `subs_storage_public` volume; with `r2` they live in the bucket.
+1. Push to `dev`. The backend workflow tests it and builds `subs-api`, `subs-nginx`, `subs-edge` and `subs-backup`
+   into GHCR, tagged with the commit and its content (`tree-<hash>`).
+2. Merge `dev` into `main`. **Deploy** finds those images, copies `compose.prod.yaml`, `deploy.sh` and `restore.sh`
+   to the server and runs `deploy.sh <tag>`: pull, migrate (a failure stops there), restart, seed the catalog, fetch
+   rates, health-check `https://api.unsab.com/up` and `https://unsab.com/` through the edge, and roll back to the
+   previous tag if they fail.
+3. To go back to an older release: Actions → **Rollback** → the full commit SHA. A rollback runs the previous code
+   against the already-migrated database, so migrations must stay backward-compatible with the previous release (add
+   columns and tables first, drop them in a later release).
 
-Note: the Horizon dashboard gate (`app/Providers/HorizonServiceProvider.php`) has an empty email list, so `/horizon` is denied outside local. Add the allowed admin emails there before using `/horizon` in production.
+### First-time setup
+
+1. **Server (root).** Create the folders, and let only Cloudflare reach 8443. Docker's published ports bypass ufw, so
+   this matters: without it 8443 is open to the internet. The storage tree must belong to the app's container user
+   (www-data, uid 82); otherwise Docker creates the bind-mount folders as root and the app cannot write to them.
+   ```bash
+   install -d -o deploy -g deploy /srv/subs /srv/subs/certs
+   install -d -o 82 -g 82 /srv/subs/data/storage /srv/subs/data/storage/app /srv/subs/data/storage/app/private /srv/subs/data/storage/app/private/backups
+   sed -i 's/for port in 80 443; do/for port in 80 443 8443; do/' /srv/musiband/cloudflare-ips.sh
+   /srv/musiband/cloudflare-ips.sh --firewall
+   iptables -S DOCKER-USER | grep -c 'ctorigdstport 8443'   # must print 1
+   ```
+   The same one-line change is on musiband's branch `subs-port-8443`; merge it there so a future musiband change to
+   the script keeps 8443.
+2. **Cloudflare (zone unsab.com).**
+   - SSL/TLS → Overview: **Full (strict)**.
+   - SSL/TLS → Origin Server → Create Certificate for `unsab.com, *.unsab.com` (15 years). Save the certificate as
+     `/srv/subs/certs/origin.pem` and the key as `/srv/subs/certs/origin.key` (mode 600, owner deploy).
+   - DNS: proxied `A` records `unsab.com`, `www`, `api`, `admin` → the server's IP (and `AAAA` if it has IPv6).
+   - Rules → Origin Rules → Create: *Hostname* `ends with` `unsab.com` **and** *Hostname* `does not equal`
+     `media.unsab.com` → Destination Port **8443**.
+   - Zero Trust → Access → Applications → Self-hosted: `admin.unsab.com`, policy *Allow* with your email.
+3. **Email (Brevo).** Senders & IP → Domains → add `unsab.com`; add the SPF, DKIM and DMARC records Brevo shows to
+   Cloudflare DNS (DNS only, not proxied). Create an SMTP key for `MAIL_PASSWORD`.
+4. **Backups.** In R2, create a token with **Object Read & Write** on `unsab-backup` only. On your own computer run
+   `age-keygen -o subs-backup.key`; put the `age1…` public key in `.env.backup` and keep `subs-backup.key` in your
+   password manager, never on the server.
+5. **Env files (as deploy).** Copy `deploy/.env.production.example` to `/srv/subs/.env` and
+   `deploy/.env.backup.example` to `/srv/subs/.env.backup`, fill every empty value, `chmod 600` both.
+   `APP_KEY` comes from `php artisan key:generate --show`; use new random `DB_PASSWORD` and `REDIS_PASSWORD`.
+6. **Image access (as deploy).** The server pulls the images from GHCR: `docker login ghcr.io -u demotivationme` with a
+   GitHub token that has `read:packages`. If deploy is already logged in to ghcr.io for musiband under the same
+   account, this is done (`cat ~/.docker/config.json` shows `ghcr.io`).
+7. **GitHub (subs repo → Settings → Secrets → Actions).** `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` —
+   the same values musiband uses.
+8. **Check the firewall from outside** (any machine that is not Cloudflare): `nc -z -w3 <server-ip> 8443` must fail.
+9. **First release:** merge `dev` into `main` (or Actions → Deploy → Run workflow). Then open
+   `https://api.unsab.com/up`, `https://unsab.com` and `https://admin.unsab.com` (Access asks you to log in first).
+
+### Operations
+
+- Logs: `cd /srv/subs && TAG=$(cat current-tag) docker compose -f compose.prod.yaml logs -f app queue edge`.
+- Backups run at 03:00 UTC; `backups:check` logs an error hourly when the last success is older than 26 hours or the
+  last run failed. Run one now: `TAG=$(cat current-tag) docker compose -f compose.prod.yaml run --rm backup backup.sh`.
+- **Restore** into a separate database `subs_restore` (production is not touched):
+  `./restore.sh daily/subs-YYYYMMDDTHHMMSSZ.dump.age`, then paste the private key. Switching production to it is a
+  manual `DB_DATABASE=subs_restore` change in `.env` followed by a redeploy of the same tag.
+
+### Local development and the media bucket
+
+Point your local `backend/.env` at a separate bucket (for example `unsab-dev` with its free `r2.dev` URL as
+`MEDIA_URL`), so dev uploads and catalog seeds never land in the production bucket `unsab`.
