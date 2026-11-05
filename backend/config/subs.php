@@ -16,5 +16,22 @@ return [
     // so switching storage providers means copying the files and changing this, not the database.
     'logo_disk' => env('LOGO_DISK', 'r2'),
 
+    // admin.unsab.com sits behind Cloudflare Access, which sets Cf-Access-Authenticated-User-Email.
+    'admin_domain' => env('ADMIN_DOMAIN', 'admin.unsab.com'),
+    'admin_emails' => array_values(array_filter(array_map(
+        fn (string $email) => strtolower(trim($email)),
+        explode(',', (string) env('ADMIN_EMAILS', '')),
+    ))),
+
+    // Proxies whose X-Forwarded-* Laravel believes. Production: only the Subs Docker network.
+    'trusted_proxies' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('TRUSTED_PROXIES', '10.0.0.0/8,172.16.0.0/12,192.168.0.0/16')),
+    ))),
+
+    // Written by the backup container (deploy/backup/backup.sh) through a shared mount.
+    // (dirname(__DIR__), not storage_path(): TranslationsTest requires this file before the app exists.)
+    'backup_status_file' => env('BACKUP_STATUS_FILE', dirname(__DIR__).'/storage/app/private/backups/status.json'),
+
     'ecb_url' => 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml',
 ];

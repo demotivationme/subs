@@ -16,9 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(append: [SetLocale::class]);
-        // Caddy reaches nginx/php over the Docker network: trust its X-Forwarded-* so the
-        // client IP (auth limiter) and https scheme (signed verification links) are real.
-        $middleware->trustProxies(at: ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*'));

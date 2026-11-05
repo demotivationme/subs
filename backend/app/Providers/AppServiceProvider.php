@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Events\DiagnosingHealth;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -30,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Caddy reaches nginx/php over the Docker network: trust its X-Forwarded-* so the
+        // client IP (auth limiter) and https scheme (signed verification links) are real.
+        TrustProxies::at(config('subs.trusted_proxies'));
+
         RateLimiter::for('auth', fn (Request $request) => Limit::perMinute(5)
             ->by(Str::lower(is_string($request->input('email')) ? $request->input('email') : '').'|'.$request->ip()));
 
