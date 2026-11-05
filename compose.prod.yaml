@@ -1,0 +1,104 @@
+name: subs
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: 10m, max-file: "3" }
+
+x-api: &api
+  image: ghcr.io/demotivationme/subs-api:${TAG:?TAG is required}
+  env_file: .env
+  volumes:
+    - ./data/storage:/var/www/html/storage
+  restart: unless-stopped
+  logging: *logging
+  depends_on:
+    db: { condition: service_healthy }
+    redis: { condition: service_started }
+  networks: [internal]
+
+services:
+  app:
+    <<: *api
+
+  queue:
+    <<: *api
+    command: php artisan horizon
+
+  scheduler:
+    <<: *api
+    command: php artisan schedule:work
+
+  nginx:
+    image: ghcr.io/demotivationme/subs-nginx:${TAG}
+    restart: unless-stopped
+    logging: *logging
+    depends_on: [app]
+    networks: [internal]
+
+  # The only published port. Cloudflare's Origin Rule sends *.unsab.com here; musiband keeps 80/443.
+  edge:
+    image: ghcr.io/demotivationme/subs-edge:${TAG}
+    ports: ["8443:443"]
+    volumes:
+      - ./certs:/etc/caddy/certs:ro
+      # musiband's cloudflare-ips.sh keeps cloudflare-ips.caddy here current (monthly cron).
+      - ${CLOUDFLARE_IPS_DIR:-/srv/musiband/caddy}:/etc/caddy/extra:ro
+      - caddy-data:/data
+    restart: unless-stopped
+    logging: *logging
+    depends_on: [nginx]
+    networks: [internal]
+
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+    networks: [internal]
+
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    volumes:
+      - ./data/redis:/data
+    restart: unless-stopped
+    logging: *logging
+    networks: [internal]
+
+  # Nightly encrypted database backup to unsab-backup (deploy/backup/backup.sh, cron 03:00 UTC).
+  backup:
+    image: ghcr.io/demotivationme/subs-backup:${TAG}
+    # Only its own settings: the app's secrets stay out, and the app never sees the bucket key.
+    env_file: .env.backup
+    environment:
+      DB_HOST: db
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - ./data/storage/app/private/backups:/status
+    restart: unless-stopped
+    logging: *logging
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [internal]
+
+networks:
+  internal:
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
+
+volumes:
+  caddy-data:
