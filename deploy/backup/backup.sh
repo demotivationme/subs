@@ -70,11 +70,16 @@ last_success_at="$now" last_object="daily/${name}" last_size="$size"
 printf '%s\n%s\n%s\n' "$last_success_at" "$last_object" "$last_size" > /status/last_success
 
 step=retention
-# Never deletes the backup this run made, even when the clock is behind and its name sorts oldest.
+# Keeps exactly the newest <keep> per prefix. Today's object is in daily/ always but in weekly/ and monthly/ only on
+# Sundays and the 1st, so it is skipped in the delete loop (never deleted, even when the clock is behind) instead of
+# being dropped from the list.
 prune() { # prune <prefix> <keep>: delete all but the newest <keep> backups under <prefix>/ (names sort by time)
-  rclone lsf "${remote}/$1/" --files-only 2> /dev/null | { grep -E "$pattern" || true; } | { grep -vxF "$name" || true; } \
-    | sort -r | tail -n +"$2" \
-    | while read -r old; do rclone deletefile "${remote}/$1/${old}"; echo "Deleted $1/${old}"; done
+  rclone lsf "${remote}/$1/" --files-only 2> /dev/null | { grep -E "$pattern" || true; } \
+    | sort -r | tail -n +"$(($2 + 1))" \
+    | while read -r old; do
+      [[ "$old" == "$name" ]] && continue
+      rclone deletefile "${remote}/$1/${old}"; echo "Deleted $1/${old}"
+    done
 }
 prune daily "$keep_daily"
 prune weekly "$keep_weekly"

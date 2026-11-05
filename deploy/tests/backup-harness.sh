@@ -92,6 +92,19 @@ check "last success unchanged" "$([[ $(status last_success_at) == "$before_succe
 check "no new object" "$([[ $(count daily) == "$before_daily" ]]; echo $?)"
 check "no partial files" "$([[ $(find "$work/backups" -name '*.partial' | wc -l | tr -d ' ') == 0 ]]; echo $?)"
 
+echo "== weekly/monthly keep exactly 8/6 on an ordinary day (Wednesday 2026-11-04)"
+for d in 0906 0913 0920 0927; do put weekly "subs-2026${d}T030000Z.dump.age"; done
+put weekly subs-20260830T030000Z.dump.age
+for m in 04 05 06 07 08 09 10; do put monthly "subs-2026${m}01T030000Z.dump.age"; done
+run_backup -e FAKE_NOW=2026-11-04T03:00:00Z > "$work/ordinary.log" 2>&1; code=$?
+check "ordinary-day run exit 0" "$([[ $code == 0 ]]; echo $?)" "($(tail -3 "$work/ordinary.log" | tr '\n' ' '))"
+check "weekly keeps exactly 8" "$([[ $(count weekly) == 8 ]]; echo $?)" "(found $(count weekly))"
+check "monthly keeps exactly 6" "$([[ $(count monthly) == 6 ]]; echo $?)" "(found $(count monthly))"
+check "weekly newest survive" "$(has weekly subs-20260913T030000Z.dump.age; echo $?)"
+check "weekly oldest pruned" "$(! has weekly subs-20260906T030000Z.dump.age; echo $?)"
+check "monthly newest survive" "$(has monthly subs-20260601T030000Z.dump.age; echo $?)"
+check "monthly oldest pruned" "$(! has monthly subs-20260501T030000Z.dump.age; echo $?)"
+
 echo "== restore"
 newest="$(find "$(bucket daily)" -name 'subs-*.dump.age' -exec basename {} \; | sort -r | head -1)"
 RESTORE_DOCKER_ARGS="$restore_args" RESTORE_IMAGE="$image" \
