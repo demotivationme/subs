@@ -11,9 +11,13 @@ docker-compose*.yml
 **/node_modules
 backend/vendor
 backend/.env
+backend/.env.*
+!backend/.env.example
 backend/storage/logs/*
 backend/storage/framework/cache/data/*
 backend/storage/framework/sessions/*
 backend/storage/framework/views/*
 backend/storage/app/*
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitignore
 backend/.phpunit.result.cache
