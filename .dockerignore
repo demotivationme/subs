@@ -5,12 +5,15 @@
 .DS_Store
 app/
 docs/
+data/
+backups/
 docker-compose*.yml
+**/node_modules
 backend/vendor
-backend/node_modules
 backend/.env
 backend/storage/logs/*
 backend/storage/framework/cache/data/*
 backend/storage/framework/sessions/*
 backend/storage/framework/views/*
+backend/storage/app/*
 backend/.phpunit.result.cache
