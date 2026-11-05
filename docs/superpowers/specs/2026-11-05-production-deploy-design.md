@@ -63,7 +63,7 @@ into the edge image.
 
 ## Cloudflare (set up by the user; README steps)
 
-- DNS: proxied `A` (and `AAAA` if the server has IPv6) for `unsab.com`, `www`, `api`, `admin` → the server.
+- DNS: proxied `A` records only (no `AAAA`: the origin is IPv4-only and the firewall guard covers IPv4) for `unsab.com`, `www`, `api`, `admin` → the server.
 - Origin Rule: *Hostname ends with `unsab.com`* and *not equals `media.unsab.com`* → destination port `8443`.
 - SSL/TLS mode **Full (strict)**; an Origin Certificate for `unsab.com, *.unsab.com` saved to `/srv/subs/certs/`.
 - Zero Trust Access application on `admin.unsab.com`, allowing only the owner's email.

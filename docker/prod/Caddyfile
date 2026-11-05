@@ -47,7 +47,7 @@ api.unsab.com {
 	import tls_origin
 	encode zstd gzip
 	# Horizon and the admin API only answer on admin.unsab.com (behind Cloudflare Access).
-	@private path /horizon /horizon/* /api/admin/*
+	@private path /horizon /horizon/* /api/admin*
 	respond @private 404
 	reverse_proxy nginx:80 {
 		import forwarded

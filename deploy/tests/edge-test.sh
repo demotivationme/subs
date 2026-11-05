@@ -36,6 +36,7 @@ check "api proxied" "$([[ $(req api.unsab.com /up) == "200 proxied /up" ]]; echo
 check "api hides horizon" "$([[ $(req api.unsab.com /horizon) == 404* ]]; echo $?)"
 check "api hides horizon subpaths" "$([[ $(req api.unsab.com /horizon/api/stats) == 404* ]]; echo $?)"
 check "api hides admin api" "$([[ $(req api.unsab.com /api/admin/v1/x) == 404* ]]; echo $?)"
+check "api hides bare admin api" "$([[ $(req api.unsab.com /api/admin) == 404* ]]; echo $?)"
 check "admin proxies horizon" "$([[ $(req admin.unsab.com /horizon) == "200 proxied /horizon" ]]; echo $?)"
 check "admin placeholder" "$([[ $(req admin.unsab.com /anything) == "200 "*"coming soon"* ]]; echo $?)"
 headers="$(curl -sk -D - -o /dev/null --resolve admin.unsab.com:18443:127.0.0.1 https://admin.unsab.com:18443/)"

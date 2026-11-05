@@ -46,7 +46,7 @@ compose "$new_tag" run --rm --no-deps app php artisan migrate --force
 if start "$new_tag" && healthy; then
   echo "$new_tag" > current-tag
   # Drop releases older than a week that no container uses; a rollback to one of them pulls it again from GHCR.
-  docker image prune -af --filter "until=168h" > /dev/null
+  docker image prune -af --filter "until=168h" > /dev/null || echo "Warning: image prune failed" >&2
   echo "Deployed ${new_tag}"
   exit 0
 fi

@@ -90,6 +90,7 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
    sed -i 's/for port in 80 443; do/for port in 80 443 8443; do/' /srv/musiband/cloudflare-ips.sh
    /srv/musiband/cloudflare-ips.sh --firewall
    iptables -S DOCKER-USER | grep -c 'ctorigdstport 8443'   # must print 1
+   test -s /srv/musiband/caddy/cloudflare-ips.caddy && echo ok   # musiband's Cloudflare list must exist before the first deploy
    ```
    The same one-line change is on musiband's branch `subs-port-8443`; merge it there so a future musiband change to
    the script keeps 8443.
@@ -97,7 +98,7 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
    - SSL/TLS → Overview: **Full (strict)**.
    - SSL/TLS → Origin Server → Create Certificate for `unsab.com, *.unsab.com` (15 years). Save the certificate as
      `/srv/subs/certs/origin.pem` and the key as `/srv/subs/certs/origin.key` (mode 600, owner deploy).
-   - DNS: proxied `A` records `unsab.com`, `www`, `api`, `admin` → the server's IP (and `AAAA` if it has IPv6).
+   - DNS: proxied `A` records `unsab.com`, `www`, `api`, `admin` → the server's IP. A records only, no `AAAA`: the origin is IPv4-only and the firewall guard covers IPv4 (Docker's IPv6 path would bypass it).
    - Rules → Origin Rules → Create: *Hostname* `ends with` `unsab.com` **and** *Hostname* `does not equal`
      `media.unsab.com` → Destination Port **8443**.
    - Zero Trust → Access → Applications → Self-hosted: `admin.unsab.com`, policy *Allow* with the same emails as `ADMIN_EMAILS`.
@@ -113,7 +114,7 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
    password manager, never on the server.
 6. **Env files (as deploy).** Copy `deploy/.env.production.example` to `/srv/subs/.env` and
    `deploy/.env.backup.example` to `/srv/subs/.env.backup`, fill every empty value, `chmod 600` both.
-   `APP_KEY` comes from `php artisan key:generate --show`; use new random `DB_PASSWORD` and `REDIS_PASSWORD`.
+   `APP_KEY` comes from `php artisan key:generate --show`; use new random `DB_PASSWORD` and `REDIS_PASSWORD`, alphanumeric only because compose interpolates them (e.g. `openssl rand -hex 32`).
 7. **Image access (as deploy).** The server pulls the images from GHCR: `docker login ghcr.io -u demotivationme` with a
    GitHub token that has `read:packages`. If deploy is already logged in to ghcr.io for musiband under the same
    account, this is done (`grep -q ghcr.io ~/.docker/config.json && echo logged in` prints `logged in`).
@@ -123,11 +124,21 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
 10. **First release:** merge `dev` into `main` (or Actions → Deploy → Run workflow). Then open
    `https://api.unsab.com/up`, `https://unsab.com` and `https://admin.unsab.com` (Access asks you to log in first).
 
+### Known gaps
+
+- Password-reset and reminder emails link to `FRONTEND_URL` (`https://unsab.com/...`), which the landing page does not
+  serve yet. Decide (a small reset page on unsab.com, or universal links into the app) before real users rely on email links.
+- The Horizon gate trusts the Cloudflare Access header. Verifying the Access JWT (`Cf-Access-Jwt-Assertion`) is
+  required before the admin panel ships.
+
 ### Operations
 
 - Logs: `cd /srv/subs && TAG=$(cat current-tag) docker compose -f compose.prod.yaml logs -f app queue edge`.
 - Backups run at 03:00 UTC; `backups:check` logs an error hourly when the last success is older than 26 hours or the
   last run failed. Run one now: `TAG=$(cat current-tag) docker compose -f compose.prod.yaml run --rm backup backup.sh`.
+- Backup alerts arrive through Sentry, so set `SENTRY_LARAVEL_DSN` in `/srv/subs/.env`.
+- musiband's monthly Cloudflare-range refresh restarts only musiband's edge, so run
+  `cd /srv/subs && TAG="$(cat current-tag)" docker compose -f compose.prod.yaml restart edge` after it (or just redeploy).
 - Retention in `unsab-backup`: 14 daily, 8 weekly, 6 monthly; 3 copies stay on the server.
 - **Restore** into a separate database `subs_restore` (production is not touched):
   `./restore.sh daily/subs-YYYYMMDDTHHMMSSZ.dump.age`, then paste the private key. Switching production to it is a
