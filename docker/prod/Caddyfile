@@ -1,0 +1,78 @@
+{
+	admin off
+	auto_https disable_certs
+	# Cloudflare always sends SNI; clients that send none still get the site's certificate.
+	default_sni unsab.com
+	servers {
+		# musiband's cloudflare-ips.sh writes this: `trusted_proxies static <Cloudflare ranges>`.
+		import /etc/caddy/extra/cloudflare-ips.caddy
+		client_ip_headers CF-Connecting-IP
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+(tls_origin) {
+	tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin.key
+}
+
+(forwarded) {
+	# Only these forwarding headers reach Laravel; client-supplied Port/Prefix would change generated URLs.
+	header_up -X-Forwarded-Port
+	header_up -X-Forwarded-Prefix
+	header_up X-Forwarded-For {client_ip}
+	header_up X-Forwarded-Proto https
+	header_up X-Forwarded-Host {host}
+}
+
+www.unsab.com {
+	import tls_origin
+	redir https://unsab.com{uri} permanent
+}
+
+unsab.com {
+	import tls_origin
+	encode zstd gzip
+	root * /srv/landing
+	file_server
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+}
+
+api.unsab.com {
+	import tls_origin
+	encode zstd gzip
+	# Horizon and the admin API only answer on admin.unsab.com (behind Cloudflare Access).
+	@private path /horizon /horizon/* /api/admin/*
+	respond @private 404
+	reverse_proxy nginx:80 {
+		import forwarded
+		# Only Cloudflare Access on admin.unsab.com may set this header; Cloudflare forwards
+		# client-supplied headers, so never pass one through from the api host.
+		header_up -Cf-Access-Authenticated-User-Email
+	}
+}
+
+admin.unsab.com {
+	import tls_origin
+	encode zstd gzip
+	handle /horizon* {
+		reverse_proxy nginx:80 {
+			import forwarded
+		}
+	}
+	handle {
+		root * /srv/admin
+		try_files {path} /index.html
+		file_server
+	}
+	header {
+		X-Frame-Options DENY
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+	}
+}

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unsab — every subscription, one place</title>
+<meta name="description" content="Unsab tracks your subscriptions, shows what they cost each month and reminds you before every payment.">
+<style>
+  :root { --bg: #F6F7F5; --ink: #12201A; --muted: #5B6B63; --brand: #0B7A57; --card: #FFFFFF; color-scheme: light; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0E1512; --ink: #E8EFEA; --muted: #9AABA2; --brand: #2FB383; --card: #16201B; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 32px 16px;
+    background: var(--bg); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 520px; text-align: center; }
+  .mark { width: 96px; height: 96px; border-radius: 28px; background: #0B7A57; display: inline-grid; place-items: center; }
+  h1 { font-size: clamp(32px, 6vw, 44px); margin: 24px 0 8px; letter-spacing: -0.02em; }
+  p { color: var(--muted); margin: 0 0 32px; font-size: 18px; }
+  .stores { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .store { background: var(--card); border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); border-radius: 14px;
+    padding: 12px 20px; min-width: 200px; text-align: left; }
+  .store small { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .store strong { font-size: 17px; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <span class="mark" aria-hidden="true">
+    <svg width="60" height="60" viewBox="0 -1.5 64 64" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M49.32 22A20 20 0 1 1 32 12"/><path d="M28 5.5L34.5 12L28 18.5"/><circle cx="32" cy="32" r="5"/>
+    </svg>
+  </span>
+  <h1>Unsab</h1>
+  <p>Every subscription in one place: what you pay each month, and a reminder before every renewal.</p>
+  <div class="stores">
+    <div class="store"><small>Coming soon</small><strong>App Store</strong></div>
+    <div class="store"><small>Coming soon</small><strong>Google Play</strong></div>
+  </div>
+  <footer>© 2026 Unsab</footer>
+</main>
+</body>
+</html>
