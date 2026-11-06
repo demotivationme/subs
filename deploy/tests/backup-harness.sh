@@ -27,7 +27,7 @@ has() { [[ -f "$(bucket "$1")/$2" ]]; }
 put() { mkdir -p "$(bucket "$1")" && echo x > "$(bucket "$1")/$2"; }
 
 run_backup() {
-  docker run --rm --network "$net" \
+  docker run --rm --user "$me" --network "$net" \
     -e DB_HOST="$pg" -e DB_DATABASE=subs -e DB_USERNAME=subs -e DB_PASSWORD=secret \
     -e BACKUP_AGE_RECIPIENT="$recipient" \
     -e BACKUP_S3_PROVIDER=Other -e BACKUP_S3_ENDPOINT="http://$s3:9000" -e BACKUP_S3_REGION=us-east-1 \
@@ -37,6 +37,9 @@ run_backup() {
 
 status() { sed -n "s/.*\"$1\":\([^,}]*\).*/\1/p" "$work/status/status.json" | tr -d '"'; }
 
+# Containers that write into $work run as the caller, so a Linux CI runner can read and seed those files.
+me="$(id -u):$(id -g)"
+
 restore_args="--network $net -e DB_HOST=$pg -e DB_DATABASE=subs -e DB_USERNAME=subs -e DB_PASSWORD=secret -e BACKUP_S3_PROVIDER=Other -e BACKUP_S3_ENDPOINT=http://$s3:9000 -e BACKUP_S3_REGION=us-east-1 -e BACKUP_S3_BUCKET=backups -e BACKUP_S3_KEY=key -e BACKUP_S3_SECRET=secret123"
 
 echo "== setup"
@@ -44,12 +47,12 @@ docker build -q -f "$repo/docker/prod/backup.Dockerfile" -t "$image" "$repo" > /
 docker network create "$net" > /dev/null
 docker run -d --name "$pg" --network "$net" -e POSTGRES_DB=subs -e POSTGRES_USER=subs -e POSTGRES_PASSWORD=secret postgres:18-alpine > /dev/null
 mkdir -p "$work/s3/backups"
-docker run -d --name "$s3" --network "$net" -v "$work/s3:/data" --entrypoint rclone "$image" serve s3 --auth-key key,secret123 --addr :9000 --dir-cache-time 0s /data > /dev/null
+docker run -d --name "$s3" --user "$me" --network "$net" -v "$work/s3:/data" --entrypoint rclone "$image" serve s3 --auth-key key,secret123 --addr :9000 --dir-cache-time 0s /data > /dev/null
 for _ in $(seq 1 30); do docker exec "$pg" pg_isready -U subs -d subs > /dev/null 2>&1 && break; sleep 1; done
 sleep 3
 docker exec "$pg" psql -U subs -d subs -qc "create table harness_rows(id int); insert into harness_rows values (1),(2),(3);"
 mkdir -p "$work/backups" "$work/status" "$work/key"
-docker run --rm -v "$work/key:/key" --entrypoint age-keygen "$image" -o /key/identity.txt 2> /dev/null
+docker run --rm --user "$me" -v "$work/key:/key" --entrypoint age-keygen "$image" -o /key/identity.txt 2> /dev/null
 recipient="$(sed -n 's/^# public key: //p' "$work/key/identity.txt")"
 [[ "$recipient" == age1* ]] || { echo "FAIL  age key"; exit 1; }
 

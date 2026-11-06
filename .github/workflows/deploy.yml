@@ -1,10 +1,10 @@
 name: Deploy
 
-# Releases what is on main. Builds nothing: the backend workflow built and tested the images when this content was
-# pushed to dev (tag tree-<tree hash>, identical for the dev commit and the merge on main).
+# Releases what is on master. Builds nothing: the backend workflow built and tested the images when this content was
+# pushed to dev (tag tree-<tree hash>, identical for the dev commit and the merge on master).
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     concurrency:
       group: production-subs

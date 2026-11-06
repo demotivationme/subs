@@ -6,7 +6,7 @@ Date: 2026-11-05 · Status: approved in conversation, awaiting spec review · Br
 
 Run Subs in production on the OVH server that already runs musiband, without either project being able to take
 the other down. `api.unsab.com` serves the API to the apps, `unsab.com` a landing page, and `admin.unsab.com` is
-reserved (behind Cloudflare Access) for the admin panel, which is a separate project. Releases go out from `main`
+reserved (behind Cloudflare Access) for the admin panel, which is a separate project. Releases go out from `master`
 through GitHub Actions with a health check and automatic rollback, and the database is backed up nightly.
 
 ## Decisions
@@ -14,7 +14,7 @@ through GitHub Actions with a health check and automatic rollback, and the datab
 | Topic | Decision |
 |---|---|
 | Sharing the server | **Own port.** Subs publishes only `8443`; a Cloudflare Origin Rule sends the unsab host names there. Musiband keeps `80/443` and its edge is never touched. |
-| Model | Copy musiband's pipeline: CI builds images to GHCR, a push to `main` deploys them over SSH, `deploy.sh` health-checks and rolls back. |
+| Model | Copy musiband's pipeline: CI builds images to GHCR, a push to `master` deploys them over SSH, `deploy.sh` health-checks and rolls back. |
 | Host names | `api.unsab.com` (API), `unsab.com` + `www` (landing), `admin.unsab.com` (placeholder now, admin panel later). `media.unsab.com` stays on R2. |
 | Web app | Not deployed. No `app.unsab.com`; the Expo web export leaves the production path. |
 | Backups | Nightly, encrypted with `age`, to the R2 bucket **`unsab-backup`** with its own token. |
@@ -80,10 +80,10 @@ first deploy.
 
 ## Images and CI
 
-`backend.yml` keeps its test job. A new `images` job runs after it on pushes to `dev` and `main`:
+`backend.yml` keeps its test job. A new `images` job runs after it on pushes to `dev` and `master`:
 
 - Builds and pushes `subs-api`, `subs-nginx`, `subs-edge`, `subs-backup` to GHCR, tagged `tree-<git tree hash>`
-  and the commit SHA. The tree tag is identical for a `dev` commit and its merge into `main`, so a release never
+  and the commit SHA. The tree tag is identical for a `dev` commit and its merge into `master`, so a release never
   rebuilds.
 - Dockerfiles live in `docker/prod/` (`api.Dockerfile`, `nginx.Dockerfile`, `edge.Dockerfile`,
   `backup.Dockerfile`), replacing `docker/php/Dockerfile.prod` and `docker/caddy/Caddyfile`.
@@ -94,7 +94,7 @@ first deploy.
 
 ### `deploy.yml`
 
-On push to `main` and `workflow_dispatch`: find the images for this content (tree tag, then SHA; fail with a clear
+On push to `master` and `workflow_dispatch`: find the images for this content (tree tag, then SHA; fail with a clear
 message if missing), load `DEPLOY_SSH_KEY` / `DEPLOY_KNOWN_HOSTS`, `scp` `compose.prod.yaml`, `deploy.sh`,
 `restore.sh` to `deploy@$DEPLOY_HOST:/srv/subs/`, run `/srv/subs/deploy.sh <tag>`. `concurrency: production-subs`.
 
@@ -165,7 +165,7 @@ Expo Go keep the LAN URL from `app/.env`.
 3. Write `/srv/subs/.env` and `/srv/subs/.env.backup`; generate the age key pair offline and keep the identity file
    off the server.
 4. GitHub (subs repo): secrets `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`.
-5. Merge `dev` into `main` (or run Deploy by hand); check `https://api.unsab.com/up`, `https://unsab.com`,
+5. Merge `dev` into `master` (or run Deploy by hand); check `https://api.unsab.com/up`, `https://unsab.com`,
    `https://admin.unsab.com` (Access login first), and that `<server-ip>:8443` refuses non-Cloudflare clients.
 
 ## Tests

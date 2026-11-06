@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   rollback:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     concurrency:
       group: production-subs

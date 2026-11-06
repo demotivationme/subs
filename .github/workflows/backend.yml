@@ -1,7 +1,7 @@
 name: backend
 
-# Tests every push and pull request. On dev and main it also builds the production images, tagged with the commit
-# and with its content ("tree-<tree hash>"); Deploy on main only looks those up.
+# Tests every push and pull request. On dev and master it also builds the production images, tagged with the commit
+# and with its content ("tree-<tree hash>"); Deploy on master only looks those up.
 on: [push, pull_request]
 
 permissions:
@@ -60,7 +60,7 @@ jobs:
 
   images:
     needs: [test, deploy-config]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     permissions:
       contents: read
