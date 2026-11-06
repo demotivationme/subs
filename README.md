@@ -71,7 +71,7 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
 
 1. Push to `dev`. The backend workflow tests it and builds `subs-api`, `subs-nginx`, `subs-edge` and `subs-backup`
    into GHCR, tagged with the commit and its content (`tree-<hash>`).
-2. Merge `dev` into `main`. **Deploy** finds those images, copies `compose.prod.yaml`, `deploy.sh` and `restore.sh`
+2. Open a pull request from `dev` to `master` and merge it. **Deploy** finds those images, copies `compose.prod.yaml`, `deploy.sh` and `restore.sh`
    to the server and runs `deploy.sh <tag>`: pull, migrate (a failure stops there), restart, seed the catalog, fetch
    rates, health-check `https://api.unsab.com/up` and `https://unsab.com/` through the edge, and roll back to the
    previous tag if they fail.
@@ -121,7 +121,7 @@ only port **8443**; a Cloudflare Origin Rule sends the unsab host names there, s
 8. **GitHub (subs repo → Settings → Secrets → Actions).** `DEPLOY_HOST`, `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` —
    the same values musiband uses.
 9. **Check the firewall from outside** (any machine that is not Cloudflare): `nc -z -w3 <server-ip> 8443` must fail.
-10. **First release:** merge `dev` into `main` (or Actions → Deploy → Run workflow). Then open
+10. **First release:** merge the `dev` → `master` pull request (or Actions → Deploy → Run workflow). Then open
    `https://api.unsab.com/up`, `https://unsab.com` and `https://admin.unsab.com` (Access asks you to log in first).
 
 ### Known gaps
