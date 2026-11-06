@@ -17,9 +17,27 @@ it('refuses Horizon without the Access header, for another email, or on another 
 ]);
 
 it('normalises ADMIN_EMAILS: trimmed, lowercased, blanks dropped', function () {
+    // Laravel reads $_SERVER and $_ENV before getenv(), and CI's .env (from .env.example) already sets ADMIN_EMAILS.
+    $saved = [$_SERVER['ADMIN_EMAILS'] ?? null, $_ENV['ADMIN_EMAILS'] ?? null, getenv('ADMIN_EMAILS')];
+    $_SERVER['ADMIN_EMAILS'] = $_ENV['ADMIN_EMAILS'] = ' Me@Example.com , ,Other@X.io';
     putenv('ADMIN_EMAILS= Me@Example.com , ,Other@X.io');
-    $config = require config_path('subs.php');
-    putenv('ADMIN_EMAILS');
+
+    try {
+        $config = require config_path('subs.php');
+    } finally {
+        [$server, $env, $getenv] = $saved;
+        if ($server === null) {
+            unset($_SERVER['ADMIN_EMAILS']);
+        } else {
+            $_SERVER['ADMIN_EMAILS'] = $server;
+        }
+        if ($env === null) {
+            unset($_ENV['ADMIN_EMAILS']);
+        } else {
+            $_ENV['ADMIN_EMAILS'] = $env;
+        }
+        putenv($getenv === false ? 'ADMIN_EMAILS' : 'ADMIN_EMAILS='.$getenv);
+    }
 
     expect($config['admin_emails'])->toBe(['me@example.com', 'other@x.io']);
 });
